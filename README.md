@@ -25,7 +25,7 @@
 	sont utiles pour passer à la phase en ligne:
 	-> git status [-s] : permet de connaître si des fichiers ne sont pas encore commité localement, donc les fichiers à l'état "Modifié".
 	"-s" permet un affichage compacté, avec l'état des fichiers, et leur noms.
-	-> git -add [nom fichier] : pour faire passer le fichier spécifié dans l'état "Stagé", c'est à dire qu'ils seront pris en compte au prochain commit.
+	-> git add [nom fichier] : pour faire passer le fichier spécifié dans l'état "Stagé", c'est à dire qu'ils seront pris en compte au prochain commit.
 	le nom fichier peut être remplacé par ".", donc il va add tout les fichiers modifiés du répertoire courant à l'état stagé.
 	-> git commit -m "message" : permet de faire passer tout les fichiers de l'était "Stagé" à l'état "Commité". -m permet de spécifier un message, il est important
 	(obligatoire) pour savoir les modifications, qui l'a commité, ou bien la date, savoir le combientième de commit est-ce de la personne...
