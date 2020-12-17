@@ -1,5 +1,5 @@
 # projet-S1
-	test
+
 # Participants:
 	FOUCRAS Baptiste,
 	GAUGIRARD Florian,
