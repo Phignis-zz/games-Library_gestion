@@ -67,3 +67,8 @@
 	Des commits réguliers sont intéressants, car git offre l'opportunité de revenir en arrière dans les versions des fichiers locaux au moment des commits.
 	-> git reset : même effet que git reset --soft mais replace les fichiers "Commités" au format "Modifié", plutôt que "Stagé"
 	-> git reset --hard : supprime tout les fichiers existants, et les remets à la version du dernier commitage existant.
+
+# Supprimer le répertoire
+	Pour quelques raisons, vous pourriez vouloir supprimer votre répertoire local. Sur linux, (ou sur le bash de git), il vous faudra forcer la suppression du directory,
+	avec la commande " rm -rf directory, r pour récursif (on supprime tout les fichiers du repertory et le repertory), et f pour forced, pour ne pas demander de
+	confirmation. Si vous ne me croyez pas pour -f, essayez sans sur un gros projet ^^.
