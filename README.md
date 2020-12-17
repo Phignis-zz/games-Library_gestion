@@ -59,8 +59,8 @@
 	backup, et continuer à développer en parallèle sur une autre branche. Elle peut servir à tester des choses, comme des fonctionnalités auquelles vous pensez qu'elle ne
 	marcheront pas. Une fois le développement terminé sur une branche parallèle, vous pouvez fusionner celle-ci avec la principale. La branche principale est soit nommée 
 	"main", soit "master".
-	-> git checkout -[brR] nom_de_la_branche: sans option, cela permet d'aller sur la branche, "-b" permet de créer la branche,
-	-d permet de supprimer la branche mergé avec une autre au préalable, -D pour forcer la deletion (même si nous mergé)
+	-> git checkout -[b] nom_de_la_branche: sans option, cela permet d'aller sur la branche, "-b" permet de créer la branche,
+	-> git branch -[dD] nom_branche : -d permet de supprimer la branche mergé avec une autre au préalable, -D pour forcer la deletion (même si non mergé)
 	-> git merge nom_branche : fusionne (merge) la branche de la commande avec la branche courante, dans laquelle vous êtes.
 
 # Retournez en arrière sur des commits
