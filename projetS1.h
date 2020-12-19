@@ -2,7 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-
+/*
+	Définition des structures nécessaires
+*/
 typedef struct
 {
 	int idAdherent;
@@ -13,3 +15,9 @@ typedef struct
 	int mois_inscrip;
 	int annee_inscrip;
 }Adherent;
+
+/*
+	Définition des prototypes de fonctions
+*/
+
+int chargTAdherent( Adherent* tAdherent[], int taille_physique);
