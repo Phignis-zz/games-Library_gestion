@@ -1,0 +1,12 @@
+Explication du Projet tutoré S1 2020-2021:
+
+Membres du groupe:
+	FOUCRAS Baptiste 1A G1
+	GAUGIRARD Florian 1A G1
+	POLLET Matéo 1A G1
+
+
+Format des fichiers de ressurces (jeux.don, adherant.don, emprunt.bin, reservation.bin):
+	Les fichiers répertoriant les jeux et adhérant seront susceptibles d'être ouvert pour édition ou consultations par divers ordinateurs (vendeurs, gérant de la ludothèque...), donc potentiellement plusieurs ordianteurs, avec divers systèmes d'exploitations (Linux, Windows...). Ces fichiers ont donc besoin d'une forte comptabilité inter-systèmes, ce qu'offre un fichier texte. De plus ces fichiers seront normalement bien moins édités et même consultés que les fichiers répertoriant les emprunts et réservations. Il est donc fait le choix de prendre le format texte pour les fichiers répertoriant les jeux et adherants.
+	En revanche, les fichiers enregistrant emprunts et réservations vont subir des consultations et très souvent des modifications. Ici, un accès lecture / écriture est justifiable par le grand nombre de tâches lourdes dessus (plusieurs ajouts ou délétion par jour). De plus, ces fichiers vont n'être essentiellement consultés que par les ordinateurs des vendeurs, et donc sûrement depuis le même système d'exploitation; le soucis de portabilité se pose donc moins ici. Pour ces raisons, le format binaire sera préféré pour les fichiers répertoriant emprunts et réservations.
+
