@@ -5,19 +5,41 @@
 /*
 	Définition des structures nécessaires
 */
+
+typedef struct
+{
+	int jour;
+	int mois;
+	int annee;
+}Date;
+
 typedef struct
 {
 	int idAdherent;
-	char civilite[3];
-	char nom[20];
-	char prenom[20];
-	int jour_inscrip;
-	int mois_inscrip;
-	int annee_inscrip;
+	char civilite[4];
+	char nom[22];
+	char prenom[22];
+	Date date_inscrip;
 }Adherent;
 
 /*
 	Définition des prototypes de fonctions
 */
 
+/*
+	programme:	fgets_like
+	auteur:		FOUCRAS Baptiste
+	date:		20/12/20
+	finalité:	Prends un nombre de caractères, avec un maximum de caractère définit en second argument, ou jusqu'à ce qu'il rencontre un certain caractère,
+				définit en dernier argument
+*/
+void fgets_like(char str[] , int max_saisie, FILE *flot, char char_arret);
+
+/*
+	programme:	chargTAdherent
+	auteur:		FOUCRAS Baptiste
+	date:		??/12/20
+	finalité:	Prends un nombre de caractères, avec un maximum de caractère définit en second argument, ou jusqu'à ce qu'il rencontre un certain caractère,
+				définit en dernier argument
+*/
 int chargTAdherent( Adherent* tAdherent[], int taille_physique);
