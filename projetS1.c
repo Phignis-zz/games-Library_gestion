@@ -7,7 +7,7 @@ void fget(char *str , int max_saisie, FILE *flot, char char_arret)
 		Finalité: 	Retourne par adresse un str contenant un maximum de caractères définit pris d'un fichier, ou jusqu'à ce qu'il rencontre un certain caractère d'arrêt.
 		Description générale:
 			initialise le str passé en paramètre à '\0', pour éviter d'y avoir n'importe quoi
-			tant que le nombre d'itérations est inférieur au nombre max_saisie - 1 ( -1 pour garder une place pour le \0) il est fait:
+			tant que le nombre d'itérations est strictement inférieur au nombre max_saisie - 1 ( -1 pour garder une place pour le \0) il est fait:
 				stocke dans l'index de str, correspondant au nombre d'itération, un charactère pris depuis le fichier pointé par flot
 				teste si jamais le charactère pris équivaut à celui qui doit arrêter la fonction
 					si oui la boucle while se brise
@@ -20,7 +20,7 @@ void fget(char *str , int max_saisie, FILE *flot, char char_arret)
 		max_saisie	nombre entier maximal de charactères lu par la fonction
 		flot		pointeur vers le fichier d'où est pris les informations de l'adhérent
 		char_arret	charactère obligeant l'arrêt de la lecture par la fonction lors de son encontre
-		i			variable d'incrémentation pour le test de la boucle while
+		i			variable d'incrémentation pour le test de la boucle for
 	*/
 
 	int i = 0;
@@ -59,11 +59,12 @@ Adherent chargeAdherent(FILE *flot)
 	return a;
 }
 
-int chargTAdherent( Adherent* tAdherent[], int taille_physique)
+int chargTAdherent( Adherent* tAdherent[], int *taille_physique)
 {
 	/*
 		Nom:		chargTAdherent
-		Finalité:	charger le fichier adherent.don dans le tableau de pointeurs tAdherent, ligne par ligne.
+		Finalité:	charger entièrement le fichier adherent.don dans le tableau de pointeurs tAdherent, ligne par ligne. Retourne la taille logique de tAdherent,
+					et par adresse tAdherent.
 
 		Description générale:
 			renvoit par adresse la taille logique du tableau
@@ -74,15 +75,73 @@ int chargTAdherent( Adherent* tAdherent[], int taille_physique)
 			adherent_fichier	pointeur ouvrant le fichier adherent.don
 			nouv_adhe			variable intermédiaire pour charger les données du fichier don , et les transmettre ensuite vers le tableau
 			tNouvAdherent		tableau de pointeur, servant au realloc du tableau principal, pour augmenter sa taille
-			taille_logique		variable qui permet de connaitre le nombre de pointeurs dans le tableau tAdherent, renvoyé par return
+			taille_logique		nombre d'élément dans le tableau tAdherent, renvoyé par return
+			i					variable d'incrémentation pour le test de la boucle while
 	*/
 
 	FILE *adherent_fichier;
 	Adherent nouv_adhe, **tNouvAdherent;
-	int taille_logique = 0;
-	adherent_fichier = fopen("adherent", "r");
+	int taille_logique = 0, i = 0;
+	adherent_fichier = fopen("adherent.don", "r");
+	if(adherent_fichier == NULL)
+	{
+		printf("Erreur lors de l'ouverture du fichier\n");
+		return -1;
+	}
 	nouv_adhe = chargeAdherent(adherent_fichier);
-
+	while(!feof(adherent_fichier))
+	{
+		if(taille_logique == *taille_physique)
+		{
+			printf("Le tableau est trop petit, ajout de 5 espaces");
+			tNouvAdherent = (Adherent**) realloc (tAdherent, (*taille_physique + 5) * sizeof(Adherent*));
+			if(tNouvAdherent == NULL)
+			{
+				printf("Problème lors du realloc, la mémoire n'a pû être allouée.\n");
+				return -1;
+			}
+			else
+			{
+				tAdherent = tNouvAdherent;
+				*taille_physique += 5; // on ne prends en compte le changement de taille physique que si le realloc à marché, pour garder une réelle taille physique
+			}
+		}
+		tAdherent[i] = (Adherent*) calloc (1, sizeof(Adherent));
+		if(tAdherent[i] == NULL)
+		{
+			printf("Problème de calloc, la mémoire n'a pas été allouée.\n");
+			return -1;
+		}
+		*tAdherent[i] = nouv_adhe;
+		i++;
+		taille_logique ++;
+		nouv_adhe = chargeAdherent(adherent_fichier);
+	}
 	fclose(adherent_fichier);
 	return taille_logique;
+}
+
+void afficheTAdherent(Adherent* tAdherent[], int taille_logique)
+{
+	/*
+		Nom:		afficheTAdherent
+		Finalité:	afficher le contenu des pointeurs du tableau tAdherent
+
+		Description générale:
+			renvoit par adresse la taille logique du tableau
+
+		Variables:
+			tAdherent			tableau de pointeurs d'Adherent
+			taille_logique		nombre d'éléments du tableau tAdherent
+			i					variable d'incrémentation pour le test de la boucle for
+	*/
+
+	int i;
+	printf("idAdherent\tcivilité\tnom\tprénom\tdate d'inscription (JJ/MM/YYYY)\n");
+	for(i = 0; i < taille_logique; i++)
+	{
+		printf("%03d\t%s\t", tAdherent[i]->idAdherent, tAdherent[i]->civilite);
+		printf("%s\t%s\t", tAdherent[i]->nom, tAdherent[i]->prenom);
+		printf("%02d/%02d/%02d\n", tAdherent[i]->date_inscrip.jour, tAdherent[i]->date_inscrip.mois, tAdherent[i]->date_inscrip.annee);
+	}
 }

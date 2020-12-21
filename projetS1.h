@@ -49,4 +49,6 @@ Adherent chargeAdherent(FILE *flot);
 	date:		??/12/20
 	finalité:	charger le fichier adherent.don dans le tableau de pointeurs tAdherent, ligne par ligne.
 */
-int chargTAdherent( Adherent* tAdherent[], int taille_physique);
+int chargTAdherent( Adherent* tAdherent[], int *taille_physique);
+
+void afficheTAdherent(Adherent* tAdherent[], int taille_logique);

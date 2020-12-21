@@ -7,7 +7,7 @@ void test_fget(void)
 	test_fichier = fopen("../test.txt", "r");
 	if(test_fichier == NULL)
 	{
-		printf("Erreur lors de l'ouverture du fichier test.txt");
+		printf("Erreur lors de l'ouverture du fichier test.txt\n");
 		return;
 	}
 	fget(str , 11, test_fichier, 'r');
@@ -22,7 +22,7 @@ void testchargeAdherent(void)
 	adherent_fichier = fopen("adherent.don", "r");
 	if(adherent_fichier == NULL)
 	{
-		printf("Erreur lors de l'ouverture du fichier test.txt");
+		printf("Erreur lors de l'ouverture du fichier test.txt\n");
 		return;
 	}
 	nouv_adhe = chargeAdherent(adherent_fichier);
@@ -31,9 +31,19 @@ void testchargeAdherent(void)
 		nouv_adhe.date_inscrip.annee);
 }
 
+void testchargeTAdherent(void)
+{
+	Adherent **tAdherent;
+	int taille_physique = 100, taille_logique;
+	tAdherent = (Adherent**) malloc (taille_physique * sizeof(Adherent*));
+	taille_logique = chargTAdherent( tAdherent, &taille_physique);
+	afficheTAdherent(tAdherent, taille_logique);
+}
+
 int main(void)
 {
 	//test_fget();
-	testchargeAdherent();
+	//testchargeAdherent();
+	testchargeTAdherent();
 	return 0;
 }
