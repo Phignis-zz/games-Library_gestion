@@ -76,12 +76,11 @@ int chargTAdherent( Adherent* tAdherent[], int *taille_physique)
 			nouv_adhe			variable intermédiaire pour charger les données du fichier don , et les transmettre ensuite vers le tableau
 			tNouvAdherent		tableau de pointeur, servant au realloc du tableau principal, pour augmenter sa taille
 			taille_logique		nombre d'élément dans le tableau tAdherent, renvoyé par return
-			i					variable d'incrémentation pour le test de la boucle while
 	*/
 
 	FILE *adherent_fichier;
 	Adherent nouv_adhe, **tNouvAdherent;
-	int taille_logique = 0, i = 0;
+	int taille_logique = 0;
 	adherent_fichier = fopen("adherent.don", "r");
 	if(adherent_fichier == NULL)
 	{
@@ -91,6 +90,7 @@ int chargTAdherent( Adherent* tAdherent[], int *taille_physique)
 	nouv_adhe = chargeAdherent(adherent_fichier);
 	while(!feof(adherent_fichier))
 	{
+		printf("fait\n");
 		if(taille_logique == *taille_physique)
 		{
 			printf("Le tableau est trop petit, ajout de 5 espaces");
@@ -106,17 +106,18 @@ int chargTAdherent( Adherent* tAdherent[], int *taille_physique)
 				*taille_physique += 5; // on ne prends en compte le changement de taille physique que si le realloc à marché, pour garder une réelle taille physique
 			}
 		}
-		tAdherent[i] = (Adherent*) calloc (1, sizeof(Adherent));
-		if(tAdherent[i] == NULL)
+		tAdherent[taille_logique] = (Adherent*) calloc (1, sizeof(Adherent));
+		if(tAdherent[taille_logique] == NULL)
 		{
 			printf("Problème de calloc, la mémoire n'a pas été allouée.\n");
 			return -1;
 		}
-		*tAdherent[i] = nouv_adhe;
-		i++;
+		*tAdherent[taille_logique] = nouv_adhe;
 		taille_logique ++;
 		nouv_adhe = chargeAdherent(adherent_fichier);
 	}
+	tAdherent[taille_logique] = (Adherent*) calloc (1, sizeof(Adherent));
+	*tAdherent[taille_logique] = nouv_adhe;
 	fclose(adherent_fichier);
 	return taille_logique;
 }
@@ -138,7 +139,7 @@ void afficheTAdherent(Adherent* tAdherent[], int taille_logique)
 
 	int i;
 	printf("idAdherent\tcivilité\tnom\tprénom\tdate d'inscription (JJ/MM/YYYY)\n");
-	for(i = 0; i < taille_logique; i++)
+	for(i = 0; i <= taille_logique; i++)
 	{
 		printf("%03d\t%s\t", tAdherent[i]->idAdherent, tAdherent[i]->civilite);
 		printf("%s\t%s\t", tAdherent[i]->nom, tAdherent[i]->prenom);
