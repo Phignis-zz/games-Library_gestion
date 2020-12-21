@@ -26,6 +26,7 @@ typedef struct
 	Définition des prototypes de fonctions
 */
 
+
 /*
 	programme:	fgets_like
 	auteur:		FOUCRAS Baptiste
@@ -33,7 +34,9 @@ typedef struct
 	finalité:	Prends un nombre de caractères, avec un maximum de caractère définit en second argument, ou jusqu'à ce qu'il rencontre un certain caractère,
 				définit en dernier argument
 */
-void fgets_like(char str[] , int max_saisie, FILE *flot, char char_arret);
+void fget(char str[] , int max_saisie, FILE *flot, char char_arret);
+
+Adherent chargeAdherent(FILE *flot);
 
 /*
 	programme:	chargTAdherent
