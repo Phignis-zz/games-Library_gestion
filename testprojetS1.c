@@ -1,6 +1,6 @@
 #include "projetS1.h"
 
-void testgets_like(void)
+void test_fget(void)
 {
 	FILE *test_fichier;
 	char str[11];
@@ -33,7 +33,7 @@ void testchargeAdherent(void)
 
 int main(void)
 {
-	//testgets_like();
+	//test_fget();
 	testchargeAdherent();
 	return 0;
 }

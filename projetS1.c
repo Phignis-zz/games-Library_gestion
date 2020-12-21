@@ -3,9 +3,16 @@
 void fget(char *str , int max_saisie, FILE *flot, char char_arret)
 {
 	/*
-		Nom:		fgets_like
-		Finalité: 	Retourne un str contenant un nombre de caractères, avec un maximum de caractères définit, ou jusqu'à ce qu'il rencontre un certain caractère d'arrêt.
+		Nom:		fget
+		Finalité: 	Retourne par adresse un str contenant un maximum de caractères définit pris d'un fichier, ou jusqu'à ce qu'il rencontre un certain caractère d'arrêt.
 		Description générale:
+			initialise le str passé en paramètre à '\0', pour éviter d'y avoir n'importe quoi
+			tant que le nombre d'itérations est inférieur au nombre max_saisie - 1 ( -1 pour garder une place pour le \0) il est fait:
+				stocke dans l'index de str, correspondant au nombre d'itération, un charactère pris depuis le fichier pointé par flot
+				teste si jamais le charactère pris équivaut à celui qui doit arrêter la fonction
+					si oui la boucle while se brise
+				on incrémente i de 1, pour converger vers max_saisie - 1 dans le test, et stocker le prochain caractère
+			on ajoute à la fin du str complété un '\0'
 
 
 		Variables:
@@ -18,14 +25,13 @@ void fget(char *str , int max_saisie, FILE *flot, char char_arret)
 
 	int i = 0;
 	str[0] = '\0';
-	while(i < max_saisie - 1) // ici on a décrémenté une fois, car c'est à partir de max saisie -1 que des erreurs se produisent
+	for(i = 0; i < max_saisie - 1; i++) // le choix est fait ici de mettre a -1, pour que à l'appel de la fonction, on appelle directement avec le nombre de place de str
 	{
 		str[i] = (char)fgetc(flot);
 		if(str[i] == char_arret)
 		{
 			break;
 		}
-		i++;
 	}
 	str[i] = '\0';
 }
@@ -34,10 +40,11 @@ Adherent chargeAdherent(FILE *flot)
 {
 	/*
 		Nom:		chargeAdherent
-		Finalité:	charger une ligne du fichier pointé par *flot dans une structure Adherent.
+		Finalité:	Charger une ligne du fichier pointé par *flot dans une structure Adherent.
 
 		Description générale:
-			renvoit par adresse la taille logique du tableau
+			prends les informations d'une ligne du fichier sur lequel pointe le flot, et le met dans les champs correspondant de a
+			retourne la variable contenant l'adherent
 
 		Variables:
 			flot	pointeur sur un fichier de données
@@ -45,7 +52,6 @@ Adherent chargeAdherent(FILE *flot)
 	*/
 
 	Adherent a;
-	char toto[22];
 	fscanf(flot, "%d%*c%s%*c", &a.idAdherent, a.civilite);
 	fget(a.nom , 22, flot, '\t');
 	fget(a.prenom , 22, flot, '\t');
@@ -57,7 +63,7 @@ int chargTAdherent( Adherent* tAdherent[], int taille_physique)
 {
 	/*
 		Nom:		chargTAdherent
-		Finalité:	charger le fichier adherent.don dans le tableau de pointeurs tAdherent.
+		Finalité:	charger le fichier adherent.don dans le tableau de pointeurs tAdherent, ligne par ligne.
 
 		Description générale:
 			renvoit par adresse la taille logique du tableau
