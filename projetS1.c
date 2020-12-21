@@ -90,7 +90,6 @@ int chargTAdherent( Adherent* tAdherent[], int *taille_physique)
 	nouv_adhe = chargeAdherent(adherent_fichier);
 	while(!feof(adherent_fichier))
 	{
-		printf("fait\n");
 		if(taille_logique == *taille_physique)
 		{
 			printf("Le tableau est trop petit, ajout de 5 espaces");
@@ -103,7 +102,7 @@ int chargTAdherent( Adherent* tAdherent[], int *taille_physique)
 			else
 			{
 				tAdherent = tNouvAdherent;
-				*taille_physique += 5; // on ne prends en compte le changement de taille physique que si le realloc à marché, pour garder une réelle taille physique
+				*taille_physique += 5; // on ne prends en compte le changement de taille physique que si le realloc à marché, pour garder une taille physique réelle
 			}
 		}
 		tAdherent[taille_logique] = (Adherent*) calloc (1, sizeof(Adherent));
@@ -146,3 +145,4 @@ void afficheTAdherent(Adherent* tAdherent[], int taille_logique)
 		printf("%02d/%02d/%02d\n", tAdherent[i]->date_inscrip.jour, tAdherent[i]->date_inscrip.mois, tAdherent[i]->date_inscrip.annee);
 	}
 }
+

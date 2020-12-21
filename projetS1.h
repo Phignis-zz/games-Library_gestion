@@ -46,9 +46,15 @@ Adherent chargeAdherent(FILE *flot);
 /*
 	programme:	chargTAdherent
 	auteur:		FOUCRAS Baptiste
-	date:		??/12/20
+	date:		21/12/20
 	finalité:	charger le fichier adherent.don dans le tableau de pointeurs tAdherent, ligne par ligne.
 */
 int chargTAdherent( Adherent* tAdherent[], int *taille_physique);
 
+/*
+	programme:	afficheTAdherent
+	auteur:		FOUCRAS Baptiste
+	date:		21/12/20
+	finalité:	afficher le contenu des pointeurs du tableau tAdherent.
+*/
 void afficheTAdherent(Adherent* tAdherent[], int taille_logique);
