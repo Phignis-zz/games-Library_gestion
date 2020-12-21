@@ -40,10 +40,16 @@ void testchargeTAdherent(void)
 	afficheTAdherent(tAdherent, taille_logique);
 }
 
+void test(void)
+{
+	menu();
+}
+
 int main(void)
 {
 	//test_fget();
 	//testchargeAdherent();
-	testchargeTAdherent();
+	//testchargeTAdherent();
+	global();
 	return 0;
 }

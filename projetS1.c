@@ -1,5 +1,16 @@
 #include "projetS1.h"
 
+void global()
+{
+	/* Comme cela, à chaque fois que le programme se lancera, il chargera automatiquement les fichiers en mémoire */
+	
+	//chargeAdherent();
+	//chargeJeu();
+	//chargeEmprunt();
+	//chargeReservation();
+	menu();
+}
+
 void fget(char *str , int max_saisie, FILE *flot, char char_arret)
 {
 	/*
@@ -146,3 +157,77 @@ void afficheTAdherent(Adherent* tAdherent[], int taille_logique)
 	}
 }
 
+void menu()
+{
+	/*
+		Nom:		menu
+		Finalité:	Accéder aux fonctions nécéssaire au bon fonctionnement de la gestion d'une ludothèque facilement.
+
+		Description générale:
+			Choisir une fonction en tapant un nombre.
+
+		Variables:
+			rep					Réponse de l'utilisateur
+			bug					Retour d'une fonction si il y a
+			get					Variable utilisé pour appuyer sur une touche pour continuer
+	*/
+
+	/* Note temporaire : Pour les noms des variables j'étais à court d'inspiration, je fixerais plus tard, ou alors si vous avez des idées vous pouvez fixe aussi */
+	/* Note temporaire : Je vais trouver un autre moyen de rendre le menu un peu plus "pro" */
+	
+	system("@cls||clear"); //Clean de la console (fonctionne sur Windows/Linux/Mac)
+	int rep, bug;
+	char get;
+	printf("1. Jeux disponibles\n");
+	printf("2. Emprunts en cours\n");
+	printf("3. Réservation d'un jeu\n");
+	printf("4. Nouvel emprunt/réservation\n");
+	printf("5. Retour d'un jeu\n");
+	printf("6. Annuler une réservation\n");
+	scanf("%d",& rep);
+	if (rep==1)
+	{
+		system("@cls||clear");
+		printf("Jeu(x) disponible(s) :\n");
+		// Fonction affichage jeu
+		printf("\nAppuyez sur une touche pour continuer...\n");
+		scanf("%c%*c", &get);
+	}
+	if (rep==2)
+	{
+		system("@cls||clear");
+		printf("Emprunt(s) en cours :\n");
+		// Fonction affichage emprunt
+		printf("\nAppuyez sur une touche pour continuer...\n");
+		scanf("%c%*c", &get);
+	}
+	if (rep==3)
+	{
+		system("@cls||clear");
+		// Fonction affichage emprunt
+		printf("\nAppuyez sur une touche pour continuer...\n");
+		scanf("%c%*c", &get);
+	}
+	if (rep==4)
+	{
+		system("@cls||clear");
+		// Fonction affichage emprunt
+		printf("\nAppuyez sur une touche pour continuer...\n");
+		scanf("%c%*c", &get);
+	} 
+	if (rep==5)
+	{
+		system("@cls||clear");
+		// Fonction affichage emprunt
+		printf("\nAppuyez sur une touche pour continuer...\n");
+		scanf("%c%*c", &get);
+	}
+	if (rep==6)
+	{
+		system("@cls||clear");
+		// Fonction affichage emprunt
+		printf("\nAppuyez sur une touche pour continuer...\n");
+		scanf("%c%*c", &get);
+	}
+	menu();
+}
