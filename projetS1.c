@@ -5,10 +5,10 @@ void global()
 	/* Comme cela, à chaque fois que le programme se lancera, il chargera automatiquement les fichiers en mémoire */
 	
 	//chargeAdherent();
-	//chargeJeu();
+	//chargeJeux();
 	//chargeEmprunt();
 	//chargeReservation();
-	menu();
+	//menu();
 }
 
 void fget(char *str , int max_saisie, FILE *flot, char char_arret)
@@ -68,6 +68,107 @@ Adherent chargeAdherent(FILE *flot)
 	fget(a.prenom , 22, flot, '\t');
 	fscanf(flot, "%d/%d/%d", &a.date_inscrip.jour, &a.date_inscrip.mois, &a.date_inscrip.annee);
 	return a;
+}
+
+Jeux chargeJeux(FILE *flot)
+{
+	/*
+		Nom:		chargeJeux
+		Finalité:	Charger une ligne du fichier pointé par *flot dans une structure Jeux.
+
+		Description générale:
+			prends les informations d'une ligne du fichier sur lequel pointe le flot, et le met dans les champs correspondant de j
+			retourne la variable contenant le jeu
+
+		Variables:
+			flot	pointeur sur un fichier de données
+			j		variable rendu par la fonction, de type Jeux et servant de conteneur pour les informations du fichier
+	*/
+
+	Jeux j;
+	fscanf(flot, "%d%*c", &j.idJeux);
+	fget(j.nom , 20, flot, '\t');
+	fget(j.type , 15, flot, '\t');
+	fscanf(flot, "%d", &j.quantite);
+	return j;
+}
+
+Jeux *chargeTJeux(Jeux tJeux[], int *nbJeux, int *tMax)
+{
+	/*
+		Nom:		chargeTJeux
+		Finalité:	charger entièrement le fichier jeu.don dans le tableau tJeux, ligne par ligne. Retourne le tableau tJeux.
+
+		Description générale:
+			Renvoit le tableau tJeux alloué dynamiquement en mémoire.
+
+		Variables:
+			tJeux				tableau des Jeux disponibles.
+			tMax				taille maximale physique du tableau tJeux
+			jeu_fichier			pointeur ouvrant le fichier jeu.don
+			j					variable intermédiaire pour charger les données du fichier don , et les transmettre ensuite vers le tableau
+			tNouvJeux			tableau temporaire servant au realloc du tableau principal, pour augmenter sa taille
+			nbJeux				nombre d'élément dans le tableau tJeux
+	*/
+
+	Jeux *tNouvJeux, j;
+	FILE *jeu_fichier;
+	jeu_fichier = fopen("jeu.don", "r");
+	if (jeu_fichier == NULL)
+	{
+		printf("Problème lors de l'ouverture du fichier\n");
+		return NULL;
+	}
+	*tMax = 5;
+	tJeux = (Jeux *) malloc(*tMax * sizeof(Jeux));
+	if (tJeux == NULL)
+	{
+		printf("Problème malloc\n");
+		return NULL;
+	}
+	j = chargeJeux(jeu_fichier);
+	while (!feof(jeu_fichier))
+	{
+		if (*nbJeux == *tMax)
+		{
+			*tMax = *tMax + 5;
+			tNouvJeux = ((Jeux*) realloc (tJeux, *tMax *sizeof(Jeux)));
+			if (tNouvJeux == NULL)
+			{
+				printf("Problème lors du realloc\n");
+				return NULL;
+			}
+			tJeux = tNouvJeux;
+		}
+		tJeux[*nbJeux] = j;
+		*nbJeux = *nbJeux + 1;
+		j = chargeJeux(jeu_fichier);
+	}
+	fclose(jeu_fichier);
+	return tJeux;
+}
+
+void afficheTJeux(Jeux tJeux[], int nbJeux)
+{
+	/*
+		Nom:		afficheTJeux
+		Finalité:	afficher le contenu du tableau tJeux
+
+		Description générale:
+			Affiche le contenu du tableau tJeux
+
+		Variables:
+			tJeux				tableau tJeux
+			nbJeux				nombre d'éléments du tableau tJeux
+			i					variable d'incrémentation pour le test de la boucle for
+	*/
+
+	int i;
+	printf("\n");
+	for(i = 0; i <= nbJeux; i++)
+	{
+		printf("%03d\t%s\t%s\t%d\n", tJeux[i].idJeux, tJeux[i].nom, tJeux[i].type, tJeux[i].quantite);
+	}
 }
 
 int chargTAdherent( Adherent* tAdherent[], int *taille_physique)
@@ -190,7 +291,7 @@ void menu()
 		{
 			case 1:
 				system("@cls||clear");
-				// Fonction affichage jeu
+				// Fonction affichage jeux
 				printf("\nAppuyez sur entrer pour continuer...\n");
 				scanf("%c%*c", &get);
 				break;

@@ -45,11 +45,38 @@ void test(void)
 	menu();
 }
 
+void testchargeJeux(void)
+{
+	Jeux nouv_jeu;
+	FILE *jeu_fichier;
+	jeu_fichier = fopen("jeu.don", "r");
+	if(jeu_fichier == NULL)
+	{
+		printf("Erreur lors de l'ouverture du fichier jeu.don\n");
+		return;
+	}
+	nouv_jeu = chargeJeux(jeu_fichier);
+	fclose(jeu_fichier);
+	printf("%03d\t%s\t%s\t%d\n", nouv_jeu.idJeux, nouv_jeu.nom, nouv_jeu.type, nouv_jeu.quantite);
+}
+
+void testchargeTJeux(void)
+{
+	Jeux *tJeux;
+	int tMax = 100, nbJeux = 0;
+	tJeux = chargeTJeux(tJeux, &nbJeux, &tMax);
+	if(tJeux == NULL)
+		return;
+	afficheTJeux(tJeux, nbJeux);
+}
+
 int main(void)
 {
 	//test_fget();
 	//testchargeAdherent();
 	//testchargeTAdherent();
-	global();
+	//global();
+	//testchargeJeux();
+	//testchargeTJeux();
 	return 0;
 }

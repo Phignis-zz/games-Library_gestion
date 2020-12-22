@@ -22,6 +22,14 @@ typedef struct
 	Date date_inscrip;
 }Adherent;
 
+typedef struct
+{
+	int idJeux;
+	char nom[20];
+	char type[15];
+	int quantite;
+}Jeux;
+
 /*
 	Définition des prototypes de fonctions
 */
@@ -60,11 +68,39 @@ int chargTAdherent( Adherent* tAdherent[], int *taille_physique);
 void afficheTAdherent(Adherent* tAdherent[], int taille_logique);
 
 /*
+	programme:	chargeJeux
+	auteur:		POLLET Matéo
+	date:		22/12/20
+	finalité:	Charger une ligne du fichier pointé par *flot dans une structure Jeux.
+*/
+
+Jeux chargeJeux(FILE *flot);
+
+/*
+	programme:	chargeTJeux
+	auteur:		POLLET Matéo
+	date:		22/12/20
+	finalité:	Charger entièrement le fichier jeu.don dans le tableau tJeux, ligne par ligne. Retourne le tableau tJeux.
+*/
+
+Jeux *chargeTJeux( Jeux tJeux[], int *nbJeux, int *tMax);
+
+/*
+	programme:	afficheTJeux
+	auteur:		POLLET Matéo
+	date:		22/12/20
+	finalité:	Affiche le contenu du tableau tJeux
+*/
+
+void afficheTJeux(Jeux tJeux[], int nbJeux);
+
+/*
 	programme:	menu
 	auteur:		POLLET Matéo
 	date:		21/12/20
 	finalité:	Choisir une fonction en tapant un nombre.
 */
+
 void menu();
 
 void global();
