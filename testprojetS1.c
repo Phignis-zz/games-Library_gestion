@@ -70,6 +70,7 @@ void testchargeTJeux(void)
 	afficheTJeux(tJeux, nbJeux);
 }
 
+
 int main(void)
 {
 	//test_fget();

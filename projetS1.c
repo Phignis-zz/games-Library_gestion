@@ -161,10 +161,21 @@ void afficheTJeux(Jeux tJeux[], int nbJeux)
 			tJeux				tableau tJeux
 			nbJeux				nombre d'éléments du tableau tJeux
 			i					variable d'incrémentation pour le test de la boucle for
+			cmp					Variable résultat d'une comparaison entre deux chaînes.
+			pge					Plus grand nom alphabétiquement du tableau
+			i					variable d'incrémentation pour le test de la boucle for
 	*/
 
-	int i, cmp;
-	printf("\n");
+	//Tri du tableau par ordre alphabétique
+
+	int pge, i, cmp;
+	int n = nbJeux;
+	while (n > 1)
+	{
+		pge = plusGrand(tJeux, n);
+		echange(tJeux, pge, n-1);
+		n = n-1;
+	}
 
 	//Logique
 	printf("\nJeux de logique :\n\n");
@@ -211,6 +222,60 @@ void afficheTJeux(Jeux tJeux[], int nbJeux)
 			printf("%03d\t%s\t%d restant(s)\n", tJeux[i].idJeux, tJeux[i].nom, tJeux[i].quantite);
 	}
 	
+}
+
+int plusGrand(Jeux tJeux[], int n)
+{
+	/*
+		Nom:		plusGrand
+		Finalité:	Compare  les noms des jeux entre-eux pour obtenir le plus grand alphabétiquement
+
+		Description générale:
+			Renvoie le plus grand nom alphabétiquement
+
+		Variables:
+			cmp					Variable résultat d'une comparaison entre deux chaînes.
+			pge					Plus grand nom alphabétiquement du tableau
+			i					variable d'incrémentation pour le test de la boucle for
+	*/
+
+	int i, pge = 0, cmp;
+	for (i=1;i<n;i++)
+	{
+		cmp = strcmp (tJeux[i].nom, tJeux[pge].nom);
+		if (cmp > 0)
+			pge = i;
+	}
+	return pge;
+}
+
+void echange(Jeux tJeux[], int i, int j)
+{
+	/*
+		Nom:		echange
+		Finalité:	Echange les lignes du tableau pour les triées.
+
+		Description générale:
+			Echange les lignes du tableau pour les triées.
+
+		Variables:
+			auxID, auxQT		Variables int temporaires de l'ID et de la quantité
+			auxNOM, auxTYPE		Variables char temporaires du nom et du type
+	*/
+	int auxID, auxQT;
+	char auxNOM[20], auxTYPE[15];
+	auxID = tJeux[i].idJeux;
+	strcpy(auxNOM, tJeux[i].nom);
+	strcpy(auxTYPE, tJeux[i].type);
+	auxQT = tJeux[i].quantite;
+	tJeux[i].idJeux = tJeux[j].idJeux;
+	strcpy(tJeux[i].nom, tJeux[j].nom);
+	strcpy(tJeux[i].type, tJeux[j].type);
+	tJeux[i].quantite = tJeux[j].quantite;
+	tJeux[j].idJeux = auxID;
+	strcpy(tJeux[j].nom, auxNOM);
+	strcpy(tJeux[j].type, auxTYPE);
+	tJeux[j].quantite = auxQT;
 }
 
 int chargTAdherent( Adherent* tAdherent[], int *taille_physique)

@@ -103,4 +103,22 @@ void afficheTJeux(Jeux tJeux[], int nbJeux);
 
 void menu();
 
+/*
+	programme:	plusGrand
+	auteur:		POLLET Matéo
+	date:		22/12/20
+	finalité:	Compare  les noms des jeux entre-eux pour obtenir le plus grand alphabétiquement.
+*/
+
+int plusGrand(Jeux tJeux[], int n);
+
+/*
+	programme:	echange
+	auteur:		POLLET Matéo
+	date:		22/12/20
+	finalité:	Echange les lignes du tableau pour les triées.
+*/
+
+void echange(Jeux tJeux[], int i, int j);
+
 void global();
