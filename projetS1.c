@@ -152,7 +152,7 @@ void afficheTJeux(Jeux tJeux[], int nbJeux)
 {
 	/*
 		Nom:		afficheTJeux
-		Finalité:	afficher le contenu du tableau tJeux
+		Finalité:	afficher le contenu du tableau tJeux triée par type de Jeux, puis par ordre alphabétique de leur nom
 
 		Description générale:
 			Affiche le contenu du tableau tJeux
@@ -163,12 +163,54 @@ void afficheTJeux(Jeux tJeux[], int nbJeux)
 			i					variable d'incrémentation pour le test de la boucle for
 	*/
 
-	int i;
+	int i, cmp;
 	printf("\n");
-	for(i = 0; i <= nbJeux; i++)
+
+	//Logique
+	printf("\nJeux de logique :\n\n");
+	for(i = 0; i <= nbJeux-1; i++)
 	{
-		printf("%03d\t%s\t%s\t%d\n", tJeux[i].idJeux, tJeux[i].nom, tJeux[i].type, tJeux[i].quantite);
+		cmp = strcmp(tJeux[i].type, "Logique");
+		if (cmp==0)
+			printf("%03d\t%s\t%d restant(s)\n", tJeux[i].idJeux, tJeux[i].nom, tJeux[i].quantite);
 	}
+
+	//Plateau
+	printf("\nJeux de plateau :\n\n");
+	for(i = 0; i <= nbJeux-1; i++)
+	{
+		cmp = strcmp(tJeux[i].type, "Plateau");
+		if (cmp==0)
+			printf("%03d\t%s\t%d restant(s)\n", tJeux[i].idJeux, tJeux[i].nom, tJeux[i].quantite);
+	}
+
+	//Cartes
+	printf("\nJeux de cartes :\n\n");
+	for(i = 0; i <= nbJeux-1; i++)
+	{
+		cmp = strcmp(tJeux[i].type, "Cartes");
+		if (cmp==0)
+			printf("%03d\t%s\t%d restant(s)\n", tJeux[i].idJeux, tJeux[i].nom, tJeux[i].quantite);
+	}
+
+	//Construction
+	printf("\nJeux de construction :\n\n");
+	for(i = 0; i <= nbJeux-1; i++)
+	{
+		cmp = strcmp(tJeux[i].type, "Construction");
+		if (cmp==0)
+			printf("%03d\t%s\t%d restant(s)\n", tJeux[i].idJeux, tJeux[i].nom, tJeux[i].quantite);
+	}
+
+	//Tuiles
+	printf("\nJeux de tuiles :\n\n");
+	for(i = 0; i <= nbJeux-1; i++)
+	{
+		cmp = strcmp(tJeux[i].type, "Tuiles");
+		if (cmp==0)
+			printf("%03d\t%s\t%d restant(s)\n", tJeux[i].idJeux, tJeux[i].nom, tJeux[i].quantite);
+	}
+	
 }
 
 int chargTAdherent( Adherent* tAdherent[], int *taille_physique)

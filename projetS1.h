@@ -89,7 +89,7 @@ Jeux *chargeTJeux( Jeux tJeux[], int *nbJeux, int *tMax);
 	programme:	afficheTJeux
 	auteur:		POLLET Matéo
 	date:		22/12/20
-	finalité:	Affiche le contenu du tableau tJeux
+	finalité:	Affiche le contenu du tableau tJeux triée par type de Jeux, puis par ordre alphabétique de leur nom
 */
 
 void afficheTJeux(Jeux tJeux[], int nbJeux);
