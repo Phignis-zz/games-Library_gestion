@@ -1,5 +1,9 @@
 #include "projetS1.h"
 
+/*
+	Fonctions globales, utilisables partout
+*/
+
 void fget(char *str , int max_saisie, FILE *flot, char char_arret)
 {
 	/*
@@ -36,6 +40,10 @@ void fget(char *str , int max_saisie, FILE *flot, char char_arret)
 	str[i] = '\0';
 }
 
+/*
+	Fonction de traitement du fichier adherent.don
+*/
+
 Adherent chargeAdherent(FILE *flot)
 {
 	/*
@@ -44,6 +52,7 @@ Adherent chargeAdherent(FILE *flot)
 
 		Description générale:
 			prends les informations d'une ligne du fichier sur lequel pointe le flot, et le met dans les champs correspondant de a
+			fget permettra de prendre des noms et prénoms à espace (rares mais possibles)
 			retourne la variable contenant l'adherent
 
 		Variables:
@@ -72,23 +81,23 @@ int chargTAdherent( Adherent* tAdherent[], int *taille_physique)
 		Variables:
 			tAdherent			tableau de pointeurs d'Adherent
 			taille_physique		taille maximale physique du tableau tAdherent
-			adherent_fichier	pointeur ouvrant le fichier adherent.don
+			fichier_adherent	pointeur ouvrant le fichier adherent.don
 			nouv_adhe			variable intermédiaire pour charger les données du fichier don , et les transmettre ensuite vers le tableau
 			tNouvAdherent		tableau de pointeur, servant au realloc du tableau principal, pour augmenter sa taille
 			taille_logique		nombre d'élément dans le tableau tAdherent, renvoyé par return
 	*/
 
-	FILE *adherent_fichier;
+	FILE *fichier_adherent;
 	Adherent nouv_adhe, **tNouvAdherent;
 	int taille_logique = 0;
-	adherent_fichier = fopen("adherent.don", "r");
-	if(adherent_fichier == NULL)
+	fichier_adherent = fopen("adherent.don", "r");
+	if(fichier_adherent == NULL)
 	{
 		printf("Erreur lors de l'ouverture du fichier\n");
 		return -1;
 	}
-	nouv_adhe = chargeAdherent(adherent_fichier);
-	while(!feof(adherent_fichier))
+	nouv_adhe = chargeAdherent(fichier_adherent);
+	while(!feof(fichier_adherent))
 	{
 		if(taille_logique == *taille_physique)
 		{
@@ -113,11 +122,11 @@ int chargTAdherent( Adherent* tAdherent[], int *taille_physique)
 		}
 		*tAdherent[taille_logique] = nouv_adhe;
 		taille_logique ++;
-		nouv_adhe = chargeAdherent(adherent_fichier);
+		nouv_adhe = chargeAdherent(fichier_adherent);
 	}
 	tAdherent[taille_logique] = (Adherent*) calloc (1, sizeof(Adherent));
 	*tAdherent[taille_logique] = nouv_adhe;
-	fclose(adherent_fichier);
+	fclose(fichier_adherent);
 	return taille_logique;
 }
 
@@ -128,7 +137,9 @@ void afficheTAdherent(Adherent* tAdherent[], int taille_logique)
 		Finalité:	afficher le contenu des pointeurs du tableau tAdherent
 
 		Description générale:
-			renvoit par adresse la taille logique du tableau
+			affiche la présentation des données
+			tant qu'il n'a pas répété 
+			affiche tout les adhérents du tableau tAdherent
 
 		Variables:
 			tAdherent			tableau de pointeurs d'Adherent
@@ -146,3 +157,39 @@ void afficheTAdherent(Adherent* tAdherent[], int taille_logique)
 	}
 }
 
+int ajoutAdherent(Adherent* tAdherent[], int taille_logique, int *taille_physique)
+{
+	/*
+		Nom:		ajoutAdherent
+		Finalité:	Insérer un adhérent dans le tableau trié tAdherent et dans le fichier adherent.don
+
+		Description générale:
+			renvoit par adresse la taille logique du tableau
+
+		Variables:
+			tAdherent			tableau de pointeurs d'Adherent
+			taille_logique		nombre d'éléments du tableau tAdherent
+			taille_physique		variable d'incrémentation pour le test de la boucle for
+	*/
+
+	FILE *fichier_adherent;
+	Adherent a, **tNouvAdherent;
+	int pos_insert;
+	//pos_insert = recherchDich(tAdherent, taille_logique);
+	if(pos_insert == *taille_physique - 1)
+	{
+		printf("Le tableau est trop petit, ajout d'un espace");
+		tNouvAdherent = (Adherent**) realloc (tAdherent, (*taille_physique + 1) * sizeof(Adherent*));
+		if(tNouvAdherent == NULL)
+		{
+			printf("Problème lors du realloc, la mémoire n'a pû être allouée.\n");
+			return -1;
+		}
+		else
+		{
+			tAdherent = tNouvAdherent;
+			*taille_physique += 1; // on ne prends en compte le changement de taille physique que si le realloc à marché, pour garder une taille physique réelle
+		}
+	}
+
+}

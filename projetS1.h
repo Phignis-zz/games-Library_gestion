@@ -58,3 +58,11 @@ int chargTAdherent( Adherent* tAdherent[], int *taille_physique);
 	finalité:	afficher le contenu des pointeurs du tableau tAdherent.
 */
 void afficheTAdherent(Adherent* tAdherent[], int taille_logique);
+
+/*
+	programme:	ajoutAdherent
+	auteur:		FOUCRAS Baptiste
+	date:		??/12/20
+	finalité:	Insérer un adhérent dans le tableau trié tAdherent et dans le fichier adherent.don
+*/
+int ajoutAdherent(Adherent* tAdherent[], int taille_logique, int *taille_physique);
