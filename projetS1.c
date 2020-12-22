@@ -174,60 +174,60 @@ void menu()
 
 	/* Note temporaire : Pour les noms des variables j'étais à court d'inspiration, je fixerais plus tard, ou alors si vous avez des idées vous pouvez fixe aussi */
 	/* Note temporaire : Je vais trouver un autre moyen de rendre le menu un peu plus "pro" */
-	
-	system("@cls||clear"); //Clean de la console (fonctionne sur Windows/Linux/Mac)
 	int rep, bug;
-	char get;
-	printf("1. Jeux disponibles\n");
-	printf("2. Emprunts en cours\n");
-	printf("3. Réservation d'un jeu\n");
-	printf("4. Nouvel emprunt/réservation\n");
-	printf("5. Retour d'un jeu\n");
-	printf("6. Annuler une réservation\n");
-	scanf("%d",& rep);
-	if (rep==1)
+	char get = '\n';
+	while( get == '\n' )
 	{
-		system("@cls||clear");
-		printf("Jeu(x) disponible(s) :\n");
-		// Fonction affichage jeu
-		printf("\nAppuyez sur une touche pour continuer...\n");
-		scanf("%c%*c", &get);
-	}
-	if (rep==2)
-	{
-		system("@cls||clear");
-		printf("Emprunt(s) en cours :\n");
-		// Fonction affichage emprunt
-		printf("\nAppuyez sur une touche pour continuer...\n");
-		scanf("%c%*c", &get);
-	}
-	if (rep==3)
-	{
-		system("@cls||clear");
-		// Fonction affichage emprunt
-		printf("\nAppuyez sur une touche pour continuer...\n");
-		scanf("%c%*c", &get);
-	}
-	if (rep==4)
-	{
-		system("@cls||clear");
-		// Fonction affichage emprunt
-		printf("\nAppuyez sur une touche pour continuer...\n");
-		scanf("%c%*c", &get);
-	} 
-	if (rep==5)
-	{
-		system("@cls||clear");
-		// Fonction affichage emprunt
-		printf("\nAppuyez sur une touche pour continuer...\n");
-		scanf("%c%*c", &get);
-	}
-	if (rep==6)
-	{
-		system("@cls||clear");
-		// Fonction affichage emprunt
-		printf("\nAppuyez sur une touche pour continuer...\n");
-		scanf("%c%*c", &get);
-	}
-	menu();
+		system("@cls||clear"); //Clean de la console (fonctionne sur Windows/Linux/Mac)
+		printf("1. Jeux disponibles\n");
+		printf("2. Emprunts en cours\n");
+		printf("3. Réservation d'un jeu\n");
+		printf("4. Nouvel emprunt/réservation\n");
+		printf("5. Retour d'un jeu\n");
+		printf("6. Annuler une réservation\n");
+		scanf("%d", &rep);
+		switch(rep)
+		{
+			case 1:
+				system("@cls||clear");
+				// Fonction affichage jeu
+				printf("\nAppuyez sur entrer pour continuer...\n");
+				scanf("%c%*c", &get);
+				break;
+			case 2:
+				system("@cls||clear");
+				// Fonction affichage emprunt
+				printf("\nAppuyez sur entrer pour continuer...\n");
+				scanf("%c%*c", &get);
+				break;
+			case 3:
+				system("@cls||clear");
+				// Fonction affichage emprunt
+				printf("\nAppuyez sur entrer pour continuer...\n");
+				scanf("%c%*c", &get);
+				break;
+			case 4:
+				system("@cls||clear");
+				// Fonction affichage emprunt
+				printf("\nAppuyez sur entrer pour continuer...\n");
+				scanf("%c%*c", &get);
+				break;
+			case 5:
+				system("@cls||clear");
+				// Fonction affichage emprunt
+				printf("\nAppuyez sur entrer pour continuer...\n");
+				scanf("%c%*c", &get);
+				break;
+			case 6:
+				system("@cls||clear");
+				// Fonction affichage emprunt
+				printf("\nAppuyez sur entrer pour continuer...\n");
+				scanf("%c%*c", &get);
+				break;
+			default:
+				printf("\nErreur\n");
+				break;
+		}
+
+	}	
 }
