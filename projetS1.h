@@ -121,4 +121,13 @@ int plusGrand(Jeux tJeux[], int n);
 
 void echange(Jeux tJeux[], int i, int j);
 
+/*
+	programme:	retourJeux
+	auteur:		POLLET Matéo
+	date:		22/12/20
+	finalité:	Le retour déclenche l’examen des réservations pour peut être transformer une réservation en emprunt et faire parvenir le jeu à l’adhérent l’ayant réservé.
+*/
+
+void retourJeux(void);
+
 void global();

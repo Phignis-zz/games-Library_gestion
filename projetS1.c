@@ -278,6 +278,34 @@ void echange(Jeux tJeux[], int i, int j)
 	tJeux[j].quantite = auxQT;
 }
 
+void retourJeux(void)
+{
+	/*
+		Nom:		retourJeux
+		Finalité:	 Le retour déclenche l’examen des réservations pour peut être transformer une réservation en emprunt et faire parvenir le jeu à l’adhérent l’ayant réservé. 
+
+		Description générale:
+			Modifie la quantité d'un jeu, enlève un emprunt, et transforme (si possible) une réservation en emprunt.
+
+		Variables:
+
+
+	*/
+	printf("Saisir l'ID de l'adhérent : ");
+	//Saisie de l'ID de l'adhérent
+	//Check quel jeu est emprunté par l'adhérent dans la liste emprunts.
+	//Si aucun jeu n'est emprunté par l'adhérent -> Stop.
+	//Si un jeu est emprunté par l'adhérent :
+	//Suppresion de l'emprunt.
+	//+1 dans la quantité du jeu en question dans tJeux.
+	//Check si l'adhérent à d'autre réservation dans la liste réservations.
+	//Si l'adhérent n'a aucune autre réservation -> Stop. 
+	//Si l'adhérent a une autre réservation :
+	//Prendre la réservation de l'adhérent la plus haute dans la liste réservation
+	//Transformer la réservation en emprunt
+	//-1 dans la quantité du jeu en question dans tJeux.
+}
+
 int chargTAdherent( Adherent* tAdherent[], int *taille_physique)
 {
 	/*
