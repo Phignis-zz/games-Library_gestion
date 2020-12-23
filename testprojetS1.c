@@ -34,10 +34,15 @@ void testchargeAdherent(void)
 void testchargeTAdherent(void)
 {
 	Adherent **tAdherent;
-	int taille_physique = 100, taille_logique;
+	int taille_physique = 7, taille_logique = 0;
 	tAdherent = (Adherent**) malloc (taille_physique * sizeof(Adherent*));
-	taille_logique = chargTAdherent( tAdherent, &taille_physique);
+	tAdherent = chargTAdherent( tAdherent, &taille_logique, &taille_physique);
 	afficheTAdherent(tAdherent, taille_logique);
+}
+
+void test(void)
+{
+	menu();
 }
 
 int main(void)
@@ -45,5 +50,6 @@ int main(void)
 	//test_fget();
 	//testchargeAdherent();
 	testchargeTAdherent();
+	//global();
 	return 0;
 }

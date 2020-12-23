@@ -26,6 +26,7 @@ typedef struct
 	Définition des prototypes de fonctions
 */
 
+void global();
 
 /*
 	programme:	fget
@@ -49,7 +50,7 @@ Adherent chargeAdherent(FILE *flot);
 	date:		21/12/20
 	finalité:	charger le fichier adherent.don dans le tableau de pointeurs tAdherent, ligne par ligne.
 */
-int chargTAdherent( Adherent* tAdherent[], int *taille_physique);
+Adherent** chargTAdherent( Adherent* tAdherent[], int *taille_logique, int *taille_physique);
 
 /*
 	programme:	afficheTAdherent
@@ -66,3 +67,11 @@ void afficheTAdherent(Adherent* tAdherent[], int taille_logique);
 	finalité:	Insérer un adhérent dans le tableau trié tAdherent et dans le fichier adherent.don
 */
 int ajoutAdherent(Adherent* tAdherent[], int taille_logique, int *taille_physique);
+
+/*
+	programme:	menu
+	auteur:		POLLET Matéo
+	date:		21/12/20
+	finalité:	Choisir une fonction en tapant un nombre.
+*/
+void menu();

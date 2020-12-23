@@ -4,6 +4,17 @@
 	Fonctions globales, utilisables partout
 */
 
+void global(void)
+{
+	/* Comme cela, à chaque fois que le programme se lancera, il chargera automatiquement les fichiers en mémoire */
+	
+	//chargeAdherent();
+	//chargeJeu();
+	//chargeEmprunt();
+	//chargeReservation();
+	menu();
+}
+
 void fget(char *str , int max_saisie, FILE *flot, char char_arret)
 {
 	/*
@@ -68,7 +79,7 @@ Adherent chargeAdherent(FILE *flot)
 	return a;
 }
 
-int chargTAdherent( Adherent* tAdherent[], int *taille_physique)
+Adherent** chargTAdherent( Adherent* tAdherent[], int *taille_logique, int *taille_physique)
 {
 	/*
 		Nom:		chargTAdherent
@@ -89,24 +100,24 @@ int chargTAdherent( Adherent* tAdherent[], int *taille_physique)
 
 	FILE *fichier_adherent;
 	Adherent nouv_adhe, **tNouvAdherent;
-	int taille_logique = 0;
 	fichier_adherent = fopen("adherent.don", "r");
 	if(fichier_adherent == NULL)
 	{
 		printf("Erreur lors de l'ouverture du fichier\n");
-		return -1;
+		return NULL;
 	}
 	nouv_adhe = chargeAdherent(fichier_adherent);
 	while(!feof(fichier_adherent))
 	{
-		if(taille_logique == *taille_physique)
+		if(*taille_logique == *taille_physique)
 		{
-			printf("Le tableau est trop petit, ajout de 5 espaces");
+			printf("Le tableau est trop petit, ajout de 5 espaces\n");
 			tNouvAdherent = (Adherent**) realloc (tAdherent, (*taille_physique + 5) * sizeof(Adherent*));
+
 			if(tNouvAdherent == NULL)
 			{
 				printf("Problème lors du realloc, la mémoire n'a pû être allouée.\n");
-				return -1;
+				return NULL;
 			}
 			else
 			{
@@ -114,20 +125,21 @@ int chargTAdherent( Adherent* tAdherent[], int *taille_physique)
 				*taille_physique += 5; // on ne prends en compte le changement de taille physique que si le realloc à marché, pour garder une taille physique réelle
 			}
 		}
-		tAdherent[taille_logique] = (Adherent*) calloc (1, sizeof(Adherent));
-		if(tAdherent[taille_logique] == NULL)
+		tAdherent[*taille_logique] = (Adherent*) calloc (1, sizeof(Adherent));
+		if(tAdherent[*taille_logique] == NULL)
 		{
 			printf("Problème de calloc, la mémoire n'a pas été allouée.\n");
-			return -1;
+			return NULL;
 		}
-		*tAdherent[taille_logique] = nouv_adhe;
-		taille_logique ++;
+		*tAdherent[*taille_logique] = nouv_adhe;
+		(*taille_logique) ++;
+
 		nouv_adhe = chargeAdherent(fichier_adherent);
 	}
-	tAdherent[taille_logique] = (Adherent*) calloc (1, sizeof(Adherent));
-	*tAdherent[taille_logique] = nouv_adhe;
+	tAdherent[*taille_logique] = (Adherent*) calloc (1, sizeof(Adherent));
+	*tAdherent[*taille_logique] = nouv_adhe;
 	fclose(fichier_adherent);
-	return taille_logique;
+	return tAdherent;
 }
 
 void afficheTAdherent(Adherent* tAdherent[], int taille_logique)
@@ -174,9 +186,17 @@ int ajoutAdherent(Adherent* tAdherent[], int taille_logique, int *taille_physiqu
 
 	FILE *fichier_adherent;
 	Adherent a, **tNouvAdherent;
-	int pos_insert;
-	//pos_insert = recherchDich(tAdherent, taille_logique);
-	if(pos_insert == *taille_physique - 1)
+	int pos_insert, trouve;
+	printf("Saisissez d'abord un identifiant pour votre nouvel adhérent:");
+	scanf("%d%*c", a.idAdherent);
+	//pos_insert = recherchDich(tAdherent, taille_logique, &trouve, a.idAdherent);
+	while(trouve == 1)
+	{
+		printf("L'identifiant saisi existe déjà. Veuillez en sélectionner un nouveau:\t");
+		scanf("%d%*c", a.idAdherent);
+		//pos_insert = recherchDich(tAdherent, taille_logique, &trouve, a.idAdherent);
+	}
+	if(taille_logique == *taille_physique)
 	{
 		printf("Le tableau est trop petit, ajout d'un espace");
 		tNouvAdherent = (Adherent**) realloc (tAdherent, (*taille_physique + 1) * sizeof(Adherent*));
@@ -192,4 +212,80 @@ int ajoutAdherent(Adherent* tAdherent[], int taille_logique, int *taille_physiqu
 		}
 	}
 
+}
+
+
+void menu(void)
+{
+	/*
+		Nom:		menu
+		Finalité:	Accéder aux fonctions nécessaires au bon fonctionnement de la gestion d'une ludothèque facilement.
+
+		Description générale:
+			Choisir une fonction en tapant un nombre.
+
+		Variables:
+			rep		Réponse de l'utilisateur
+			bug		Retour d'une fonction si il y a
+			get		Variable utilisé pour appuyer sur une touche pour continuer
+	*/
+
+	/* Note temporaire : Pour les noms des variables j'étais à court d'inspiration, je fixerais plus tard, ou alors si vous avez des idées vous pouvez fixe aussi */
+	/* Note temporaire : Je vais trouver un autre moyen de rendre le menu un peu plus "pro" */
+	
+	system("@cls||clear"); //Clean de la console (fonctionne sur Windows/Linux/Mac)
+	int rep, bug;
+	char get;
+	printf("1. Jeux disponibles\n");
+	printf("2. Emprunts en cours\n");
+	printf("3. Réservation d'un jeu\n");
+	printf("4. Nouvel emprunt/réservation\n");
+	printf("5. Retour d'un jeu\n");
+	printf("6. Annuler une réservation\n");
+	scanf("%d", &rep);
+	if (rep==1)
+	{
+		system("@cls||clear");
+		printf("Jeu(x) disponible(s) :\n");
+		// Fonction affichage jeu
+		printf("\nAppuyez sur une touche pour continuer...\n");
+		scanf("%c%*c", &get);
+	}
+	if (rep==2)
+	{
+		system("@cls||clear");
+		printf("Emprunt(s) en cours :\n");
+		// Fonction affichage emprunt
+		printf("\nAppuyez sur une touche pour continuer...\n");
+		scanf("%c%*c", &get);
+	}
+	if (rep==3)
+	{
+		system("@cls||clear");
+		// Fonction affichage emprunt
+		printf("\nAppuyez sur une touche pour continuer...\n");
+		scanf("%c%*c", &get);
+	}
+	if (rep==4)
+	{
+		system("@cls||clear");
+		// Fonction affichage emprunt
+		printf("\nAppuyez sur une touche pour continuer...\n");
+		scanf("%c%*c", &get);
+	} 
+	if (rep==5)
+	{
+		system("@cls||clear");
+		// Fonction affichage emprunt
+		printf("\nAppuyez sur une touche pour continuer...\n");
+		scanf("%c%*c", &get);
+	}
+	if (rep==6)
+	{
+		system("@cls||clear");
+		// Fonction affichage emprunt
+		printf("\nAppuyez sur une touche pour continuer...\n");
+		scanf("%c%*c", &get);
+	}
+	menu();
 }
