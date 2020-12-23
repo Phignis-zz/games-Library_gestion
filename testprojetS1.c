@@ -78,6 +78,6 @@ int main(void)
 	//testchargeTAdherent();
 	//global();
 	//testchargeJeux();
-	testchargeTJeux();
+	test();
 	return 0;
 }

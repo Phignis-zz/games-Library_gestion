@@ -415,20 +415,54 @@ void menu()
 	while( get == '\n' )
 	{
 		system("@cls||clear"); //Clean de la console (fonctionne sur Windows/Linux/Mac)
-		printf("1. Jeux disponibles\n");
-		printf("2. Emprunts en cours\n");
-		printf("3. Réservation d'un jeu\n");
-		printf("4. Nouvel emprunt/réservation\n");
-		printf("5. Retour d'un jeu\n");
-		printf("6. Annuler une réservation\n");
+		printf("Gestion d'une Ludothèque\n\n");
+		printf("1. Jeux\n");
+		printf("2. Adhérents\n");
+		printf("3. Emprunts\n");
+		printf("4. Réservation\n");
 		scanf("%d", &rep);
 		switch(rep)
 		{
 			case 1:
 				system("@cls||clear");
-				// Fonction affichage jeux
-				printf("\nAppuyez sur entrer pour continuer...\n");
-				scanf("%c%*c", &get);
+				printf("1. Afficher jeux disponibles\n2. Ajouter un jeu\n");
+				printf("3. Retour d'un jeu\n4. Supprimer un jeu\n");
+				printf("\n\n5. Retour au menu\n\n");
+				scanf("%d", &rep);
+				switch(rep)
+				{
+					case 1:
+						system("@cls||clear");
+						Jeux *tJeux;
+						int tMax = 100, nbJeux = 0;
+						tJeux = chargeTJeux(tJeux, &nbJeux, &tMax);
+						if(tJeux == NULL)
+							return;
+						afficheTJeux(tJeux, nbJeux);
+						printf("\nAppuyez sur entrer pour continuer...\n");
+						scanf("%c%*c", &get);
+						break;
+					case 2:
+						system("@cls||clear");
+						printf("C'est fonction n'est pas encore disponible.\n");
+						printf("\nAppuyez sur entrer pour continuer...\n");
+						scanf("%c%*c", &get);
+						break;
+					case 3:
+						system("@cls||clear");
+						printf("C'est fonction n'est pas encore disponible.\n");
+						printf("\nAppuyez sur entrer pour continuer...\n");
+						scanf("%c%*c", &get);
+						break;
+					case 4:
+						system("@cls||clear");
+						printf("C'est fonction n'est pas encore disponible.\n");
+						printf("\nAppuyez sur entrer pour continuer...\n");
+						scanf("%c%*c", &get);
+						break;
+					case 5:
+						break;
+				}
 				break;
 			case 2:
 				system("@cls||clear");
