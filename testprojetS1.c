@@ -101,5 +101,6 @@ int main(void)
 	//global();
 	//testchargeJeux();
 	//testchargeTJeux();
+	test();
 	return 0;
 }

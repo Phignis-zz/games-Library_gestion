@@ -148,5 +148,23 @@ void echange(Jeux tJeux[], int i, int j);
 
 void retourJeux(void);
 
+/*
+	programme:	ajouterJeux
+	auteur:		POLLET Matéo
+	date:		29/12/20
+	finalité:	Ajoute un jeu à tJeux et à la mémoire
+*/
+
+Jeux *ajouterJeux(Jeux tJeux[], int *nbJeux, int *tMax);
+
+/*
+	programme:	supprimerJeux
+	auteur:		POLLET Matéo
+	date:		29/12/20
+	finalité:	Supprime un jeu du tableau tJeux et de la mémoire
+*/
+
+Jeux *supprimerJeux(Jeux tJeux[], int *nbJeux, int *tMax);
+
 void global();
 

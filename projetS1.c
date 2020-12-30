@@ -334,7 +334,6 @@ Jeux *chargeTJeux(Jeux tJeux[], int *nbJeux, int *tMax)
 			tNouvJeux			tableau temporaire servant au realloc du tableau principal, pour augmenter sa taille
 			nbJeux				nombre d'élément dans le tableau tJeux
 	*/
-
 	Jeux *tNouvJeux, j;
 	FILE *jeu_fichier;
 	jeu_fichier = fopen("jeu.don", "r");
@@ -391,7 +390,6 @@ void afficheTJeux(Jeux tJeux[], int nbJeux)
 	*/
 
 	//Tri du tableau par ordre alphabétique
-
 	int pge, i, cmp;
 	int n = nbJeux;
 	while (n > 1)
@@ -502,6 +500,150 @@ void echange(Jeux tJeux[], int i, int j)
 	tJeux[j].quantite = auxQT;
 }
 
+Jeux *ajouterJeux(Jeux tJeux[], int *nbJeux, int *tMax)
+{
+	/*
+		Nom:		ajouterJeux
+		Finalité:	 Ajoute un jeu à tJeux et à la mémoire
+
+		Description générale:
+			Ajoute un jeu à tJeux et à la mémoire
+			
+		Variables:
+
+
+	*/
+	Jeux *tNouvJeux, j;
+	int rep, i, cmp;
+	printf("Nom du jeu :\n ");
+	fgets(j.nom,20,stdin);
+	j.nom[strlen(j.nom)-1] = '\0';
+	printf("Nom lu : %s\n", j.nom);
+	for(i = 0; i <= *nbJeux; i++)
+	{
+		cmp = strcmp(tJeux[i].nom, j.nom);
+		if (cmp==0)
+		{
+			printf("Ce jeu existe déjà.\n");
+			return NULL;
+		}
+	}
+	printf("Nom lu : %s\n", j.nom);
+	printf("Type :\n ");
+	fgets(j.type,20,stdin);
+	j.type[strlen(j.type)-1] = '\0';
+	for(i = 0; i <= *nbJeux; i++)
+	{
+		cmp = strcmp(tJeux[i].type, j.type);
+		if (cmp == 5)
+		{
+			printf("Cette catégorie n'existe pas.\n");
+			return NULL;
+		}
+	}
+	printf("Type lu : %s\n", j.type);
+	printf("ID du jeu :\n");
+	scanf(" %d%*c",&j.idJeux);
+	for(i = 0; i <= *nbJeux; i++)
+	{
+		if (tJeux[i].idJeux == j.idJeux)
+		{
+			printf("Cet ID existe déjà.\n");
+			return NULL;
+		}
+	}
+	printf("Quantité :\n");
+	scanf(" %d%*c",&j.quantite);
+	if (tJeux == NULL)
+	{
+		printf("Problème malloc\n");
+		return NULL;
+	}
+	if (*nbJeux == *tMax)
+	{
+		*tMax = *tMax + 5;
+		tNouvJeux = ((Jeux*) realloc (tJeux, *tMax *sizeof(Jeux)));
+		if (tNouvJeux == NULL)
+		{
+			printf("Problème lors du realloc\n");
+			return NULL;
+		}
+		tJeux = tNouvJeux;
+	}
+	tJeux[*nbJeux] = j;
+	*nbJeux = *nbJeux + 1;
+	FILE *jeu_fichier;
+	jeu_fichier = fopen("jeu.don","w");
+
+	for(i = 0; i <= *nbJeux-1; i++)
+	{
+		fprintf(jeu_fichier, "%d\t%s\t%s\t%d\n", tJeux[i].idJeux, tJeux[i].nom, tJeux[i].type, tJeux[i].quantite);
+	}
+	fclose(jeu_fichier);
+
+	return tJeux;
+
+}
+
+Jeux *supprimerJeux(Jeux tJeux[], int *nbJeux, int *tMax)
+{
+	/*
+		Nom:		supprimerJeux
+		Finalité:	 Supprime un jeu du tableau tJeux et de la mémoire
+
+		Description générale:
+			Supprime un jeu du tableau tJeux et de la mémoire
+
+		Variables:
+
+
+	*/
+	Jeux *tNouvJeux, j;
+	int rep, i, cmp;
+	printf("ID du jeu à supprimer :\n ");
+	scanf(" %d%*c",&j.idJeux);
+	for(i = 0; i <= *nbJeux; i++)
+	{
+		if (tJeux[i].idJeux == j.idJeux)
+		{
+			printf("Trouve.\n");
+			rep = 1;
+			break;
+		}
+		rep = -1;
+	}
+	if (rep == -1)
+	{
+		printf("Ce jeu n'existe pas\n");
+		return NULL;
+	}
+	rep = i;
+	if (tJeux == NULL)
+	{
+		printf("Problème malloc\n");
+		return NULL;
+	}
+	FILE *jeu_fichier;
+	jeu_fichier = fopen("jeu.don","w");
+	for(i = 0; i <= *nbJeux-1; i++)
+	{
+		if (i != rep)
+			fprintf(jeu_fichier, "%d\t%s\t%s\t%d\n", tJeux[i].idJeux, tJeux[i].nom, tJeux[i].type, tJeux[i].quantite);
+	}
+	fclose(jeu_fichier);
+	printf("Position : %d\nNombre de jeux : %d", rep, *nbJeux);
+	if (rep >= *nbJeux+1)
+		printf("Suppression impossible.");
+	else
+	{
+		free(&tJeux[rep]);
+		*nbJeux = *nbJeux - 1;
+    	for (i = rep; i < *nbJeux; i++)
+         	tJeux[i] = tJeux[i+1];
+	}
+	return tJeux;
+}
+
 void retourJeux(void)
 {
 	/*
@@ -551,33 +693,63 @@ void menu(void)
 	/* Note temporaire : Pour les noms des variables j'étais à court d'inspiration, je fixerais plus tard, ou alors si vous avez des idées vous pouvez fixe aussi */
 	/* Note temporaire : Je vais trouver un autre moyen de rendre le menu un peu plus "pro" */
 	int rep, bug;
-	char get;
-	printf("1. Jeux disponibles\n");
-	printf("2. Emprunts en cours\n");
-	printf("3. Réservation d'un jeu\n");
-	printf("4. Nouvel emprunt/réservation\n");
-	printf("5. Retour d'un jeu\n");
-	printf("6. Annuler une réservation\n");
-	scanf("%d", &rep);
-	if (rep==1)
-	//char get = '\n';
+	char get = '\n';
+	Jeux *tJeux;
+	int tMax = 100, nbJeux = 0;
+	tJeux = chargeTJeux(tJeux, &nbJeux, &tMax);
+	if(tJeux == NULL)
+		return;
 	while( get == '\n' )
 	{
 		system("@cls||clear"); //Clean de la console (fonctionne sur Windows/Linux/Mac)
-		printf("1. Jeux disponibles\n");
-		printf("2. Emprunts en cours\n");
-		printf("3. Réservation d'un jeu\n");
-		printf("4. Nouvel emprunt/réservation\n");
-		printf("5. Retour d'un jeu\n");
-		printf("6. Annuler une réservation\n");
-		scanf("%d", &rep);
+		printf("Gestion d'une Ludothèque\n\n");
+		printf("1. Jeux\n");
+		printf("2. Adhérents\n");
+		printf("3. Emprunts\n");
+		printf("4. Réservation\n");
+		scanf("%d%*c", &rep);
 		switch(rep)
 		{
 			case 1:
 				system("@cls||clear");
-				// Fonction affichage jeux
-				printf("\nAppuyez sur entrer pour continuer...\n");
-				scanf("%c%*c", &get);
+				printf("1. Afficher jeux disponibles\n2. Ajouter un jeu\n");
+				printf("3. Retour d'un jeu\n4. Supprimer un jeu\n");
+				printf("\n\n5. Retour au menu\n\n");
+				scanf("%d%*c", &rep);
+				switch(rep)
+				{
+					case 1:
+						system("@cls||clear");
+						afficheTJeux(tJeux, nbJeux);
+						printf("\nAppuyez sur entrer pour continuer...\n");
+						scanf("%c%*c", &get);
+						break;
+					case 2:
+						system("@cls||clear");
+						if(tJeux == NULL)
+							return;
+						tJeux = ajouterJeux(tJeux, &nbJeux, &tMax);
+						printf("%d", &tJeux[1].idJeux);
+						printf("\nAppuyez sur entrer pour continuer...\n");
+						scanf("%c%*c", &get);
+						break;
+					case 3:
+						system("@cls||clear");
+						printf("C'est fonction n'est pas encore disponible.\n");
+						printf("\nAppuyez sur entrer pour continuer...\n");
+						scanf("%c%*c", &get);
+						break;
+					case 4:
+						system("@cls||clear");
+						if(tJeux == NULL)
+							return;
+						tJeux = supprimerJeux(tJeux, &nbJeux, &tMax);
+						printf("\nAppuyez sur entrer pour continuer...\n");
+						scanf("%c%*c", &get);
+						break;
+					case 5:
+						break;
+				}
 				break;
 			case 2:
 				system("@cls||clear");
