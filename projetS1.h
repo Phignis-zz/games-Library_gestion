@@ -39,6 +39,8 @@ void global();
 
 Date current_date(void);
 
+Date saisie_date(void);
+
 /*
 	programme:	fget
 	auteur:		FOUCRAS Baptiste
@@ -64,7 +66,7 @@ Adherent chargeAdherent(FILE *flot);
 /*
 	programme:	chargTAdherent
 	auteur:		FOUCRAS Baptiste
-	date:		21/12/20
+	date:		30/12/20
 	finalité:	charger le fichier adherent.don dans le tableau de pointeurs tAdherent, ligne par ligne.
 */
 Adherent** chargTAdherent( Adherent* tAdherent[], int *taille_logique, int *taille_physique);
@@ -80,10 +82,26 @@ void afficheTAdherent(Adherent* tAdherent[], int taille_logique);
 /*
 	programme:	ajoutAdherent
 	auteur:		FOUCRAS Baptiste
-	date:		??/12/20
+	date:		30/12/20
 	finalité:	Insérer un adhérent dans le tableau trié tAdherent et dans le fichier adherent.don
 */
 Adherent** ajoutAdherent(Adherent* tAdherent[], int *taille_logique, int *taille_physique);
+
+/*
+	programme:	EnregistrerTAdherent
+	auteur:		FOUCRAS Baptiste
+	date:		30/12/20
+	finalité:	
+*/
+void EnregistrerTAdherent(Adherent** tAdherent, int taille_logique);
+
+/*
+	programme:	modifAdherent
+	auteur:		FOUCRAS Baptiste
+	date:		30/12/20
+	finalité:	
+*/
+Adherent** modifAdherent(Adherent** tAdherent, int taille_logique);
 
 /*
 	programme:	chargeJeux

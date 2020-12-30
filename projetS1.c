@@ -26,6 +26,67 @@ Date current_date(void)
 	return jour_actuel;
 }
 
+Date saisie_date(void)
+{
+	Date date, date_actuelle;
+	date_actuelle = current_date();
+	char choix = 'n';
+	
+	while(choix == 'n' || choix == 'N')
+	{
+		printf("Saisissez le jour voulu:\t");
+		scanf("%d%*c", &date.jour);
+		while(date.jour < 1 || date.jour > 31)
+		{
+			printf("Le jour se trouve entre 1 et 31. Re-saisissez le jour voulu:\t");
+			scanf("%d%*c", &date.jour);
+		}
+
+		printf("Saisissez le mois voulu:\t");
+		scanf("%d%*c", &date.mois);
+		while(date.mois < 1 || date.mois > 12)
+		{
+			printf("Le mois se trouve entre 1 et 12. Re-saisissez le mois voulu:\t");
+			scanf("%d%*c", &date.mois);
+		}
+
+		printf("Saisissez l'année voulue:\t");
+		scanf("%d%*c", &date.annee);
+		while(date.annee < 0)
+		{
+			printf("L'année ne peut être négative! Saisissez l'année voulu:\t");
+			scanf("%d%*c", &date.annee);
+		}
+
+		if(date.annee < 100)
+		{
+			date.annee += 2000;
+		}
+		if(date_actuelle.annee - date.annee >= 1)
+		{
+			printf("Êtes-vous sûr de votre saisie? La date saisie est %d ans plus tôt que la date actuelle. (o/n)\n", date_actuelle.annee - date.annee);
+			scanf("%c%*c", &choix);
+			while(choix != 'o' && choix != 'O' && choix != 'n' && choix != 'N')
+			{
+				printf("Choix non reconnu. Êtes-vous sûr de votre saisie? La date saisie est %d ans plus tôt que la date actuelle. (o/n)\n", date_actuelle.annee - date.annee);
+				scanf("%c%*c", &choix);
+			}
+		}
+		else if(date_actuelle.annee - date.annee <= -1)
+		{
+			printf("Êtes-vous sûr de votre saisie? La date saisie est %d ans plus tard que la date actuelle. (o/n)\n", -(date_actuelle.annee - date.annee));
+			scanf("%c%*c", &choix);
+			while(choix != 'o' && choix != 'O' && choix != 'n' && choix != 'N')
+			{
+				printf("Choix non reconnu. Êtes-vous sûr de votre saisie? La date saisie est %d ans plus tôt que la date actuelle. (o/n)\n", -(date_actuelle.annee - date.annee));
+				scanf("%c%*c", &choix);
+			}
+		}
+		else choix = 'o';
+	}
+	return date;
+}
+
 void fget(char *str , int max_saisie, FILE *flot, char char_arret)
 {
 	/*
@@ -221,7 +282,7 @@ Adherent** ajoutAdherent(Adherent* tAdherent[], int *taille_logique, int *taille
 	FILE *fichier_adherent;
 	Adherent a, **tNouvAdherent;
 	int pos_insert = 0, trouve = 0;
-	char validation = 'o';
+	char validation = 'o', choix;
 
 	// Choix de la position de l'adhérent
 	printf("Saisissez d'abord un identifiant pour votre nouvel adhérent:\t");
@@ -262,7 +323,14 @@ Adherent** ajoutAdherent(Adherent* tAdherent[], int *taille_logique, int *taille
 		printf("Voulez vous ressaisir les informations? (n/N pour valider la saisie, q pour annuler)\n");
 		scanf("%c%*c", &validation);
 	}
-	a.date_inscrip = current_date();
+
+	printf("Voulez-vous l'heure automatique? (o/n)");
+	scanf("%c%*c", &choix);
+	if(choix == 'o' || choix == 'O')
+		a.date_inscrip = current_date();
+	else a.date_inscrip = saisie_date();
+
+
 	if(*taille_logique == *taille_physique)
 	{
 		printf("Le tableau est trop petit, ajout d'un espace mémoire\n");
@@ -293,6 +361,42 @@ Adherent** ajoutAdherent(Adherent* tAdherent[], int *taille_logique, int *taille
 	return tAdherent;
 }
 
+void EnregistrerTAdherent(Adherent** tAdherent, int taille_logique)
+{
+	FILE *fichier_adherent;
+	int i;
+	fichier_adherent = fopen("adherent.don", "w");
+	if(fichier_adherent == NULL)
+	{
+		printf("Problème lors de l'ouverture du fichier en mode écriture");
+		return;
+	}
+	for(i = 0; i < taille_logique; i++)
+	{
+		fprintf(fichier_adherent, "%d\t%s\t", tAdherent[i]->idAdherent, tAdherent[i]->civilite);
+		fprintf(fichier_adherent, "%s\t%s\t", tAdherent[i]->nom, tAdherent[i]->prenom);
+		fprintf(fichier_adherent, "%02d/%02d/%02d\n", tAdherent[i]->date_inscrip.jour, tAdherent[i]->date_inscrip.mois, tAdherent[i]->date_inscrip.annee);
+	}
+	fprintf(fichier_adherent, "\n");
+	fclose(fichier_adherent);
+	printf("L'enregistrement s'est bien déroulé sans soucis.\n");
+}
+
+Adherent** modifAdherent(Adherent** tAdherent, int taille_logique)
+{
+	int pos_modif = 0, trouve = 0, idAdhe;
+	printf("Saisissez d'abord un identifiant pour votre nouvel adhérent:\t");
+	scanf("%d%*c", &idAdhe); // le choix est libre de faire une saisie de l'identifiant nous mêmes, car nous ne savons si les id sont données dans l'ordre ou non
+
+	pos_modif = recherchDich_Adhe(tAdherent, taille_logique, &trouve, idAdhe);
+	while(trouve == 0)
+	{
+		printf("L'identifiant saisi n'existe pas. Veuillez en sélectionner un nouveau:\t");
+		scanf("%d%*c", &idAdhe);
+		pos_modif = recherchDich_Adhe(tAdherent, taille_logique, &trouve, idAdhe);
+	}
+
+}
 
 Jeux chargeJeux(FILE *flot)
 {

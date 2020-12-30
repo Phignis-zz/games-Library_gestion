@@ -46,7 +46,7 @@ void testchargeTAdherent(void)
 	tAdherent = (Adherent**) malloc (taille_physique * sizeof(Adherent*));
 	tAdherent = chargTAdherent( tAdherent, &taille_logique, &taille_physique);
 	afficheTAdherent(tAdherent, taille_logique);
-	printf("Voulez-vous ajouter un adhérent? (y/n)\n");
+	printf("Voulez-vous ajouter un adhérent? (o/n)\n");
 	scanf("%c%*c", &choix);
 	if(choix == 'o')
 	{
@@ -56,6 +56,8 @@ void testchargeTAdherent(void)
 		afficheTAdherent(tAdherent, taille_logique);
 	}
 	printf("%d\t%d\n", taille_logique, taille_physique);
+	printf("Enregistrement\n");
+	EnregistrerTAdherent(tAdherent, taille_logique);
 
 }
 
@@ -89,6 +91,12 @@ void testchargeTJeux(void)
 	afficheTJeux(tJeux, nbJeux);
 }
 
+void test_saisie_date(void)
+{
+	Date date;
+	date = saisie_date();
+	printf("%02d/%02d/%04d", date.jour, date.mois, date.annee);
+}
 
 int main(void)
 {
@@ -97,10 +105,11 @@ int main(void)
 	//testchargeAdherent();
 	//testchargeTAdherent();
 	//global();
-	testchargeTAdherent();
+	//testchargeTAdherent();
 	//global();
 	//testchargeJeux();
 	//testchargeTJeux();
-	test();
+	//test();
+	test_saisie_date();
 	return 0;
 }
