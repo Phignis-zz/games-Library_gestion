@@ -115,6 +115,7 @@ void fget(char *str , int max_saisie, FILE *flot, char char_arret)
 	for(i = 0; i < max_saisie - 1; i++) // le choix est fait ici de mettre a -1, pour que à l'appel de la fonction, on appelle directement avec le nombre de place de str
 	{
 		str[i] = (char)fgetc(flot);
+		str[i + 1] = '\0';
 		if(str[i] == char_arret)
 		{
 			break;
@@ -127,13 +128,23 @@ void fget(char *str , int max_saisie, FILE *flot, char char_arret)
 	Fonction de traitement du fichier adherent.don
 */
 
-Adherent** decaleADroite_Adherent(Adherent** tAdherent, int *taille_logique, int pos_insert)
+Adherent** decaleADroite_Adherent(Adherent** tAdherent, int taille_logique, int pos_insert)
 {
 	int i;
-	for(i = *taille_logique; i > pos_insert; i--)
+	for(i = taille_logique; i > pos_insert; i--)
 	{
 		tAdherent[i] = tAdherent[i - 1];
-	};
+	}
+	return tAdherent;
+}
+
+Adherent** decaleAGauche_Adherent(Adherent** tAdherent, int taille_logique, int pos_insert)
+{
+	int i;
+	for(i = pos_insert; i < taille_logique; i++)
+	{
+		tAdherent[i] = tAdherent[i + 1];
+	}
 	return tAdherent;
 }
 
@@ -324,7 +335,7 @@ Adherent** ajoutAdherent(Adherent* tAdherent[], int *taille_logique, int *taille
 		scanf("%c%*c", &validation);
 	}
 
-	printf("Voulez-vous l'heure automatique? (o/n)");
+	printf("Voulez-vous une date d'inscription automatique? (o/n)");
 	scanf("%c%*c", &choix);
 	if(choix == 'o' || choix == 'O')
 		a.date_inscrip = current_date();
@@ -347,7 +358,7 @@ Adherent** ajoutAdherent(Adherent* tAdherent[], int *taille_logique, int *taille
 			(*taille_physique) ++; // on ne prends en compte le changement de taille physique que si le realloc à marché, pour garder une taille physique réelle
 		}
 	}
-	tAdherent = decaleADroite_Adherent(tAdherent, taille_logique, pos_insert);
+	tAdherent = decaleADroite_Adherent(tAdherent, *taille_logique, pos_insert);
 
 	tAdherent[pos_insert] = (Adherent*) calloc (1, sizeof(Adherent));
 	if(tAdherent[pos_insert] == NULL)
@@ -385,7 +396,8 @@ void EnregistrerTAdherent(Adherent** tAdherent, int taille_logique)
 Adherent** modifAdherent(Adherent** tAdherent, int taille_logique)
 {
 	int pos_modif = 0, trouve = 0, idAdhe;
-	printf("Saisissez d'abord un identifiant pour votre nouvel adhérent:\t");
+	char choix, choix_date;
+	printf("Saisissez d'abord un identifiant pour l'adhérent modifié:\t");
 	scanf("%d%*c", &idAdhe); // le choix est libre de faire une saisie de l'identifiant nous mêmes, car nous ne savons si les id sont données dans l'ordre ou non
 
 	pos_modif = recherchDich_Adhe(tAdherent, taille_logique, &trouve, idAdhe);
@@ -395,7 +407,98 @@ Adherent** modifAdherent(Adherent** tAdherent, int taille_logique)
 		scanf("%d%*c", &idAdhe);
 		pos_modif = recherchDich_Adhe(tAdherent, taille_logique, &trouve, idAdhe);
 	}
+	printf("Voici les informations actuelles de l'adherent sélectionné:\n");
+	printf("%03d\t%s\t", tAdherent[pos_modif]->idAdherent, tAdherent[pos_modif]->civilite);
+	printf("%s\t%s\t", tAdherent[pos_modif]->nom, tAdherent[pos_modif]->prenom);
+	printf("%02d/%02d/%02d\n", tAdherent[pos_modif]->date_inscrip.jour, tAdherent[pos_modif]->date_inscrip.mois, tAdherent[pos_modif]->date_inscrip.annee);
+	printf("Voulez-vous modifier les informations? (o/n)\t");
+	scanf("%c%*c", &choix);
+	while(choix != 'o' && choix != 'O' && choix != 'n' && choix != 'N')
+	{
+		printf("Choix non reconnu. Voulez-vous modifier les informations? (o/n)\t");
+		scanf("%c%*c", &choix);
+	}
+	if(choix == 'o' || choix == 'O')
+	{
+		choix = 'n';
+		while(choix == 'n' || choix == 'N')
+		{
+			printf("Quelle est la civilité (Mr / Mme) de l'adhérent modifié:\n");
+			scanf("%s%*c", tAdherent[pos_modif]->civilite);
+			while(strcmp(tAdherent[pos_modif]->civilite, "Mr") != 0)
+			{
+				if(strcmp(tAdherent[pos_modif]->civilite, "Mme") == 0)
+					break;
+				printf("Civilité non valide, quelle est la civilité (Mr / Mme) de l'ahdherent modifié:\n");
+				scanf("%s%*c", tAdherent[pos_modif]->civilite);
+			}
+			printf("Quel est le nom de l'adherent modifié?\n");
+			fgets(tAdherent[pos_modif]->nom, 20, stdin);
+			tAdherent[pos_modif]->nom[strlen(tAdherent[pos_modif]->nom) - 1] = '\0';
+			printf("Quel est le prénom de l'adherent modifié?\n");
+			fgets(tAdherent[pos_modif]->prenom, 20, stdin);
+			tAdherent[pos_modif]->prenom[strlen(tAdherent[pos_modif]->prenom) - 1] = '\0';
+			printf("Voici les informations de l'adhérent %d:\n", tAdherent[pos_modif]->idAdherent);
+			printf("%s\t%s\t%s\n", tAdherent[pos_modif]->civilite, tAdherent[pos_modif]->nom, tAdherent[pos_modif]->prenom);
+			printf("Validez-vous les modifications apportées jusque présent? (o/n)\t");
+			scanf("%c%*c", &choix);
+			while(choix != 'o' && choix != 'O' && choix != 'n' &&choix != 'N')
+			{
+				printf("Choix non reconnu. Voulez-vous modifier les informations? (o/n)\t");
+				scanf("%c%*c", &choix);
+			}
+		}
 
+		printf("Voulez-vous une date d'inscription automatique? (o/n)");
+		scanf("%c%*c", &choix_date);
+		if(choix_date == 'o' || choix_date == 'O')
+			tAdherent[pos_modif]->date_inscrip = current_date();
+		else tAdherent[pos_modif]->date_inscrip = saisie_date();
+		printf("Voici les informations actuelles de l'adherent sélectionné:\n");
+		printf("%03d\t%s\t", tAdherent[pos_modif]->idAdherent, tAdherent[pos_modif]->civilite);
+		printf("%s\t%s\t", tAdherent[pos_modif]->nom, tAdherent[pos_modif]->prenom);
+		printf("%02d/%02d/%02d\n", tAdherent[pos_modif]->date_inscrip.jour, tAdherent[pos_modif]->date_inscrip.mois, tAdherent[pos_modif]->date_inscrip.annee);
+	}
+	else printf("Modification annulée.");
+	return tAdherent;
+}
+
+Adherent** supressAdherent(Adherent** tAdherent, int *taille_logique)
+{
+	int idAdhe, pos_supress, trouve;
+	char choix_modif = 'n';
+	while(choix_modif == 'n' || choix_modif == 'N')
+	{
+		printf("Quel numéro d'adherent voulez vous supprimer?");
+		scanf("%d%*c", &idAdhe);
+
+		pos_supress = recherchDich_Adhe(tAdherent, *taille_logique, &trouve, idAdhe);
+		while(trouve == 0)
+		{
+			printf("Numéro non reconnu. Quel numéro d'adherent voulez vous supprimer?");
+			scanf("%d%*c", &idAdhe);
+			pos_supress = recherchDich_Adhe(tAdherent, *taille_logique, &trouve, idAdhe);
+		}
+		printf("Les informations de l'adherent à supprimer sont les suivantes:\n");
+		printf("%03d\t%s\t", tAdherent[pos_supress]->idAdherent, tAdherent[pos_supress]->civilite);
+		printf("%s\t%s\t", tAdherent[pos_supress]->nom, tAdherent[pos_supress]->prenom);
+		printf("%02d/%02d/%02d\n", tAdherent[pos_supress]->date_inscrip.jour, tAdherent[pos_supress]->date_inscrip.mois, tAdherent[pos_supress]->date_inscrip.annee);
+		printf("Est-ce que l'adhérent sélectionné est bien celui que vous souhaitez supprimer? (o/n, q pour quitter)");
+		scanf("%c%*c", &choix_modif);
+		while(choix_modif != 'o' && choix_modif != 'O' && choix_modif != 'n' && choix_modif != 'N' && choix_modif != 'q' && choix_modif != 'Q')
+		{
+			printf("Choix non reconnu. Voulez-vous modifier les informations? (o/n)\t");
+			scanf("%c%*c", &choix_modif);
+		}
+		if(choix_modif == 'q' || choix_modif == 'Q')
+		{
+			printf("Suppression annulée");
+			return tAdherent;
+		}
+	}
+	tAdherent = decaleAGauche_Adherent(tAdherent, *taille_logique, pos_supress);
+	(*taille_logique) --;
+	return tAdherent;
 }
 
 Jeux chargeJeux(FILE *flot)
@@ -421,7 +524,7 @@ Jeux chargeJeux(FILE *flot)
 	return j;
 }
 
-Jeux *chargeTJeux(Jeux tJeux[], int *nbJeux, int *tMax)
+Jeux* chargeTJeux(Jeux tJeux[], int *nbJeux, int *tMax)
 {
 	/*
 		Nom:		chargeTJeux

@@ -56,7 +56,9 @@ void fget(char str[] , int max_saisie, FILE *flot, char char_arret);
 	finalité:	Charger une ligne du fichier pointé par *flot dans une structure Adherent.
 */
 
-Adherent** decaleADroite_Adherent(Adherent** tAdherent, int *taille_logique, int pos_insert);
+Adherent** decaleADroite_Adherent(Adherent** tAdherent, int taille_logique, int pos_insert);
+
+Adherent** decaleAGauche_Adherent(Adherent** tAdherent, int taille_logique, int pos_insert);
 
 int recherchDich_Adhe(Adherent **tAdherent, int taille_logique, int *trouve, int idAdherent);
 
@@ -98,10 +100,12 @@ void EnregistrerTAdherent(Adherent** tAdherent, int taille_logique);
 /*
 	programme:	modifAdherent
 	auteur:		FOUCRAS Baptiste
-	date:		30/12/20
+	date:		01/01/21
 	finalité:	
 */
 Adherent** modifAdherent(Adherent** tAdherent, int taille_logique);
+
+Adherent** supressAdherent(Adherent** tAdherent, int *taille_logique);
 
 /*
 	programme:	chargeJeux

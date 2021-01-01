@@ -38,7 +38,7 @@ void testchargeAdherent(void)
 		nouv_adhe.date_inscrip.annee);
 }
 
-void testchargeTAdherent(void)
+void testAdherent(void)
 {
 	Adherent **tAdherent;
 	int taille_physique = 9, taille_logique = 0;
@@ -54,11 +54,31 @@ void testchargeTAdherent(void)
 		tAdherent = ajoutAdherent(tAdherent, &taille_logique, &taille_physique);
 		printf("%d\t%d\n", taille_logique, taille_physique);
 		afficheTAdherent(tAdherent, taille_logique);
+		printf("Enregistrement\n");
+		EnregistrerTAdherent(tAdherent, taille_logique);
 	}
-	printf("%d\t%d\n", taille_logique, taille_physique);
-	printf("Enregistrement\n");
-	EnregistrerTAdherent(tAdherent, taille_logique);
-
+	printf("Voulez-vous modifier un adhérent? (o/n)\n");
+	scanf("%c%*c", &choix);
+	if(choix == 'o')
+	{
+		printf("%d\t%d\n", taille_logique, taille_physique);
+		tAdherent = modifAdherent(tAdherent, taille_logique);
+		printf("%d\t%d\n", taille_logique, taille_physique);
+		afficheTAdherent(tAdherent, taille_logique);
+		printf("Enregistrement\n");
+		EnregistrerTAdherent(tAdherent, taille_logique);
+	}
+	printf("Voulez-vous supprimer un adhérent? (o/n)\n");
+	scanf("%c%*c", &choix);
+	if(choix == 'o')
+	{
+		printf("%d\t%d\n", taille_logique, taille_physique);
+		tAdherent = supressAdherent(tAdherent, &taille_logique);
+		printf("%d\t%d\n", taille_logique, taille_physique);
+		afficheTAdherent(tAdherent, taille_logique);
+		printf("Enregistrement\n");
+		EnregistrerTAdherent(tAdherent, taille_logique);
+	}
 }
 
 void test(void)
@@ -105,11 +125,11 @@ int main(void)
 	//testchargeAdherent();
 	//testchargeTAdherent();
 	//global();
-	//testchargeTAdherent();
+	testAdherent();
 	//global();
 	//testchargeJeux();
 	//testchargeTJeux();
 	//test();
-	test_saisie_date();
+	//test_saisie_date();
 	return 0;
 }
