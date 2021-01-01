@@ -50,19 +50,35 @@ Date saisie_date(void);
 void fget(char str[] , int max_saisie, FILE *flot, char char_arret);
 
 /*
+	programme:	decaleADroite_Adherent
+	auteur:		FOUCRAS Baptiste
+	date:		28/12/20
+	finalité:	
+*/
+Adherent** decaleADroite_Adherent(Adherent** tAdherent, int taille_logique, int pos_insert);
+
+/*
+	programme:	decaleAGauche_Adherent
+	auteur:		FOUCRAS Baptiste
+	date:		02/01/02
+	finalité:	
+*/
+Adherent** decaleAGauche_Adherent(Adherent** tAdherent, int taille_logique, int pos_insert);
+
+/*
+	programme:	recherchDich_Adhe
+	auteur:		FOUCRAS Baptiste
+	date:		28/12/20
+	finalité:	
+*/
+int recherchDich_Adhe(Adherent **tAdherent, int taille_logique, int *trouve, int idAdherent);
+
+/*
 	programme:	chargeAdherent
 	auteur:		FOUCRAS Baptiste
 	date:		20/12/20
 	finalité:	Charger une ligne du fichier pointé par *flot dans une structure Adherent.
 */
-
-Adherent** decaleADroite_Adherent(Adherent** tAdherent, int taille_logique, int pos_insert);
-
-Adherent** decaleAGauche_Adherent(Adherent** tAdherent, int taille_logique, int pos_insert);
-
-int recherchDich_Adhe(Adherent **tAdherent, int taille_logique, int *trouve, int idAdherent);
-
-
 Adherent chargeAdherent(FILE *flot);
 
 /*
@@ -105,6 +121,12 @@ void EnregistrerTAdherent(Adherent** tAdherent, int taille_logique);
 */
 Adherent** modifAdherent(Adherent** tAdherent, int taille_logique);
 
+/*
+	programme:	supressAdherent
+	auteur:		FOUCRAS Baptiste
+	date:		01/01/21
+	finalité:	
+*/
 Adherent** supressAdherent(Adherent** tAdherent, int *taille_logique);
 
 /*
