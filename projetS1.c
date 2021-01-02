@@ -995,3 +995,170 @@ void menu(void)
 
 	}	
 }
+
+
+
+
+Booleen vide(Emprunt *e) {
+    if(e==NULL)
+    	return vrai;
+	return faux;
+}
+
+void afficherListeEmprunts(Emprunt *e) {
+	printf("\nAffichage de la liste des emprunts en cours :\n");
+	printf("\nId de l'emprunt :\t Id de l'adhérent :\t id du jeu :\t Date d'emprunt :\n");
+	while (!vide(e)){
+		printf("\t%d\t\t\t%d\t\t\t%d\t\t%d/%d/%d\n",e->idEmprunt,e->idAdherent,e->idJeu,e->dateEmprunt.jour,e->dateEmprunt.mois,e->dateEmprunt.annee);
+		e=e->suiv;
+	}
+	printf("\n");
+}
+
+Emprunt* chargeListeEmprunts(void) {
+	FILE *flot;
+	flot=fopen("Emprunts.don","r");
+	Emprunt *e;
+	int emprunt,adherent,jeu;
+	Date date;
+	printf("Chargement du fichier des emprunts en mémoire...\n");
+	if (flot==NULL) {
+		printf("Une erreur est survenur lors de l'ouverture du fichier des emprunts ! (fichier introuvable)\n");
+		exit(-1);
+	}
+	e=listenouv();
+	date=lireFichier(flot,&emprunt,&adherent,&jeu);
+	e=inserer(e,emprunt,adherent,jeu,date);
+	while(!feof(flot)) {
+		date=lireFichier(flot,&emprunt,&adherent,&jeu);
+		e=inserer(e,emprunt,adherent,jeu,date);		
+	}
+	printf("Chargement du fichier des emprunts en mémoire réussis !\n");
+	fclose(flot);
+	return e;
+}
+
+Date lireFichier(FILE *flot, int *emprunt, int *adherent, int *jeu) {
+	Date d;
+	fscanf(flot,"%d%d%d%d/%d/%d",emprunt,adherent,jeu,&d.jour,&d.mois,&d.annee);
+	return d;
+}
+
+Emprunt* listenouv(void) {
+    Emprunt *e;
+    e=NULL;
+    return e;
+}
+
+Emprunt* insertionEnTete(Emprunt *s, int emprunt, int adherent, int jeu, Date date) {
+	Emprunt *e;
+	e=(Emprunt *)malloc(sizeof(Emprunt));
+	if (e==NULL) {
+		printf("Une erreur est survenue lors de la création de la liste ! (malloc)\n");
+		exit(-1);
+	}
+	e->idEmprunt=emprunt;
+	e->idAdherent=adherent;
+	e->idJeu=jeu;
+	e->dateEmprunt=date;
+	e->suiv=s;
+	return e;
+}
+
+Emprunt* inserer(Emprunt *e, int emprunt, int adherent, int jeu, Date date) {
+	if (e==NULL)
+		return insertionEnTete(e,emprunt,adherent,jeu,date);
+	if (emprunt<e->idEmprunt)
+		return insertionEnTete(e,emprunt,adherent,jeu,date);
+	if (emprunt==e->idEmprunt)
+		return e;
+	e->suiv=inserer(e->suiv,emprunt,adherent,jeu,date);
+	return e;
+}
+
+
+
+
+
+
+
+
+
+
+
+Booleen videR(Reservation *r) {
+    if(r==NULL)
+    	return vrai;
+	return faux;
+}
+
+void afficherListeResa(Reservation *r) {
+	printf("\nAffichage de la liste des réservation en cours :\n");
+	printf("\nId de la réservation :\t Id de l'adhérent :\t id du jeu :\t Date de réservation :\n");
+	while (!videR(r)){
+		printf("\t%d\t\t\t%d\t\t\t%d\t\t%d/%d/%d\n",r->idRes,r->idAdherent,r->idJeu,r->dateR.jour,r->dateR.mois,r->dateR.annee);
+		r=r->suiv;
+	}
+	printf("\n");
+}
+
+Reservation* chargeListeResa(void) {
+	FILE *flot;
+	flot=fopen("Reservations.don","r");
+	Reservation *e;
+	int resa,adherent,jeu;
+	Date date;
+	printf("Chargement du fichier des réservations en mémoire...\n");
+	if (flot==NULL) {
+		printf("Une erreur est survenur lors de l'ouverture du fichier des réservations ! (fichier introuvable)\n");
+		exit(-1);
+	}
+	e=listenouvR();
+	date=lireFichierR(flot,&resa,&adherent,&jeu);
+	e=insererR(e,resa,adherent,jeu,date);
+	while(!feof(flot)) {
+		date=lireFichierR(flot,&resa,&adherent,&jeu);
+		e=insererR(e,resa,adherent,jeu,date);		
+	}
+	printf("Chargement du fichier des réservations en mémoire réussis !\n");
+	fclose(flot);
+	return e;
+}
+
+Date lireFichierR(FILE *flot, int *resa, int *adherent, int *jeu) {
+	Date d;
+	fscanf(flot,"%d%d%d%d/%d/%d",resa,adherent,jeu,&d.jour,&d.mois,&d.annee);
+	return d;
+}
+
+Reservation* listenouvR(void) {
+    Reservation *r;
+    r=NULL;
+    return r;
+}
+
+Reservation* insertionEnTeteR(Reservation *s, int resa, int adherent, int jeu, Date date) {
+	Reservation *r;
+	r=(Reservation *)malloc(sizeof(Reservation));
+	if (r==NULL) {
+		printf("Une erreur est survenue lors de la création de la liste ! (malloc)\n");
+		exit(-1);
+	}
+	r->idRes=resa;
+	r->idAdherent=adherent;
+	r->idJeu=jeu;
+	r->dateR=date;
+	r->suiv=s;
+	return r;
+}
+
+Reservation* insererR(Reservation *r, int resa, int adherent, int jeu, Date date) {
+	if (r==NULL)
+		return insertionEnTeteR(r,resa,adherent,jeu,date);
+	if (resa<r->idRes)
+		return insertionEnTeteR(r,resa,adherent,jeu,date);
+	if (resa==r->idRes)
+		return r;
+	r->suiv=insererR(r->suiv,resa,adherent,jeu,date);
+	return r;
+}
