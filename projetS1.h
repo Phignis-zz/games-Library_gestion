@@ -51,6 +51,10 @@ typedef struct reservation{
 	Définition des prototypes de fonctions
 */
 
+
+typedef enum {faux,vrai} Booleen;
+
+
 void global();
 
 Date current_date(void);
