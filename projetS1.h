@@ -31,9 +31,29 @@ typedef struct
 	int quantite;
 }Jeux;
 
+typedef struct emprunt{
+	int idEmprunt;
+	int idAdherent;
+	int idJeu;
+	Date dateEmprunt;
+	struct emprunt *suiv;
+} Emprunt; 
+
+typedef struct reservation{
+	int idRes;
+	int idAdherent;
+	int idJeu;
+	Date dateR;
+	struct reservation *suiv;
+} Reservation;
+
 /*
 	Définition des prototypes de fonctions
 */
+
+
+typedef enum {faux,vrai} Booleen;
+
 
 void global();
 
@@ -212,3 +232,27 @@ Jeux *supprimerJeux(Jeux tJeux[], int *nbJeux, int *tMax);
 
 void global();
 
+
+
+
+
+
+Emprunt* listenouv(void);
+Emprunt* insertionEnTete(Emprunt *s, int emprunt, int adherent, int jeu, Date date);
+Emprunt* inserer(Emprunt *e, int emprunt, int adherent, int jeu, Date date);
+void globale(void);
+Date lireFichier(FILE *flot, int *emprunt, int *adherent, int *jeu);
+Emprunt* chargeListeEmprunts(void);
+void afficherListeEmprunts(Emprunt *e);
+Booleen vide(Emprunt *e);
+
+
+
+
+Reservation* listenouvR(void);
+Reservation* insertionEnTeteR(Reservation *s, int resa, int adherent, int jeu, Date date);
+Reservation* insererR(Reservation *r, int resa, int adherent, int jeu, Date date);
+Date lireFichierR(FILE *flot, int *resa, int *adherent, int *jeu);
+Reservation* chargeListeResa(void);
+void afficherListeResa(Reservation *r);
+Booleen videR(Reservation *r);
