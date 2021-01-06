@@ -37,7 +37,7 @@ typedef struct emprunt{
 	int idJeu;
 	Date dateEmprunt;
 	struct emprunt *suiv;
-} Emprunt; 
+}Emprunt; 
 
 typedef struct reservation{
 	int idRes;
@@ -45,7 +45,7 @@ typedef struct reservation{
 	int idJeu;
 	Date dateR;
 	struct reservation *suiv;
-} Reservation;
+}Reservation;
 
 /*
 	Définition des prototypes de fonctions

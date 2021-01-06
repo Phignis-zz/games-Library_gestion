@@ -501,6 +501,8 @@ Adherent** supressAdherent(Adherent** tAdherent, int *taille_logique)
 	return tAdherent;
 }
 
+
+
 Jeux chargeJeux(FILE *flot)
 {
 	/*
@@ -1023,7 +1025,7 @@ Emprunt* chargeListeEmprunts(void) {
 	Date date;
 	printf("Chargement du fichier des emprunts en mémoire...\n");
 	if (flot==NULL) {
-		printf("Une erreur est survenur lors de l'ouverture du fichier des emprunts ! (fichier introuvable)\n");
+		printf("Une erreur est survenue lors de l'ouverture du fichier des emprunts ! (fichier introuvable)\n");
 		exit(-1);
 	}
 	e=listenouv();
@@ -1066,11 +1068,11 @@ Emprunt* insertionEnTete(Emprunt *s, int emprunt, int adherent, int jeu, Date da
 }
 
 Emprunt* inserer(Emprunt *e, int emprunt, int adherent, int jeu, Date date) {
-	if (e==NULL)
+	if (e == NULL)
 		return insertionEnTete(e,emprunt,adherent,jeu,date);
-	if (emprunt<e->idEmprunt)
+	if (emprunt < e->idEmprunt)
 		return insertionEnTete(e,emprunt,adherent,jeu,date);
-	if (emprunt==e->idEmprunt)
+	if (emprunt == e->idEmprunt)
 		return e;
 	e->suiv=inserer(e->suiv,emprunt,adherent,jeu,date);
 	return e;
