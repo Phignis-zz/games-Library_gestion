@@ -469,13 +469,13 @@ Adherent** supressAdherent(Adherent** tAdherent, int *taille_logique)
 	char choix_modif = 'n';
 	while(choix_modif == 'n' || choix_modif == 'N')
 	{
-		printf("Quel numéro d'adherent voulez vous supprimer?");
+		printf("Quel numéro d'adherent voulez vous supprimer?\t");
 		scanf("%d%*c", &idAdhe);
 
 		pos_supress = recherchDich_Adhe(tAdherent, *taille_logique, &trouve, idAdhe);
 		while(trouve == 0)
 		{
-			printf("Numéro non reconnu. Quel numéro d'adherent voulez vous supprimer?");
+			printf("Numéro non reconnu. Quel numéro d'adherent voulez vous supprimer?\t");
 			scanf("%d%*c", &idAdhe);
 			pos_supress = recherchDich_Adhe(tAdherent, *taille_logique, &trouve, idAdhe);
 		}
@@ -483,7 +483,7 @@ Adherent** supressAdherent(Adherent** tAdherent, int *taille_logique)
 		printf("%03d\t%s\t", tAdherent[pos_supress]->idAdherent, tAdherent[pos_supress]->civilite);
 		printf("%s\t%s\t", tAdherent[pos_supress]->nom, tAdherent[pos_supress]->prenom);
 		printf("%02d/%02d/%02d\n", tAdherent[pos_supress]->date_inscrip.jour, tAdherent[pos_supress]->date_inscrip.mois, tAdherent[pos_supress]->date_inscrip.annee);
-		printf("Est-ce que l'adhérent sélectionné est bien celui que vous souhaitez supprimer? (o/n, q pour quitter)");
+		printf("Est-ce que l'adhérent sélectionné est bien celui que vous souhaitez supprimer? (o/n, q pour quitter)\n");
 		scanf("%c%*c", &choix_modif);
 		while(choix_modif != 'o' && choix_modif != 'O' && choix_modif != 'n' && choix_modif != 'N' && choix_modif != 'q' && choix_modif != 'Q')
 		{
@@ -492,7 +492,7 @@ Adherent** supressAdherent(Adherent** tAdherent, int *taille_logique)
 		}
 		if(choix_modif == 'q' || choix_modif == 'Q')
 		{
-			printf("Suppression annulée");
+			printf("Suppression annulée\n");
 			return tAdherent;
 		}
 	}
