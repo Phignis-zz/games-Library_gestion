@@ -1,5 +1,25 @@
 #include "projetS1.h"
 
+void testFlorian(void) {
+	Emprunt *e;
+	Jeux * j;
+	Jeux tJ[100];
+	int nbJeux,tMax,taille_logique;
+	int taille_physique_A=100, taille_logique_A=0;
+	Adherent* tAdherent[100];
+	Adherent** tA;
+	Reservation *r;
+	j=chargeTJeux(tJ,&nbJeux,&tMax);
+	afficheTJeux(j,nbJeux);
+	taille_logique=nbJeux;
+	tA=chargTAdherent(tAdherent,&taille_logique_A,&taille_physique_A);
+	afficheTAdherent(tAdherent,taille_logique_A);
+	e=chargeListeEmprunts();
+	afficherListeEmprunts(e,j,taille_logique,taille_logique_A,tAdherent);
+	r=chargeListeResa();
+	afficherListeResa(r,tAdherent,taille_logique_A,j,taille_logique);
+}
+
 void test_current_date(void)
 {
 	Date jour_actuel;

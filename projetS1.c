@@ -1100,9 +1100,6 @@ void saveRes(Reservation *a) {
 
 }
 
-
-
-
 Booleen vide(Emprunt *e) {
     if(e==NULL)
     	return vrai;
@@ -1112,51 +1109,49 @@ Booleen vide(Emprunt *e) {
 void afficherListeEmprunts(Emprunt *e, Jeux tJeux[],int taille_logique, int taille_logique_A, Adherent* tAdherent[]) {
 	int adherent,jeu;
 	int i;
+	int trouve;
 	printf("\nAffichage de la liste des emprunts en cours :\n");
 	printf("\nDate d'emprunt :\tId de l'emprunt\t\tNom et prénom de l'adhérent :\t\tNom du jeu :\n");
 	while (!vide(e)){
-		printf("%d/%d/%d\t\t\t%d\t\t\t",e->dateEmprunt.jour,e->dateEmprunt.mois,e->dateEmprunt.annee,e->idEmprunt);
-		adherent=trouveNumAdherent(e->idAdherent,tAdherent,taille_logique_A);
+		printf("%d/%d/%d\t\t\t%d\t\t",e->dateEmprunt.jour,e->dateEmprunt.mois,e->dateEmprunt.annee,e->idEmprunt);
+		adherent=trouveNumAdherent(tAdherent,taille_logique_A,e->idAdherent);
 		if (adherent==-1)
-			printf("Inconnu\n");
+			printf("Inconnu\t\t\t");
 		else
-			printf("%s\t%s\t", tAdherent[adherent]->nom,tAdherent[adherent]->prenom);
+			printf("%s %s\t\t", tAdherent[adherent]->nom,tAdherent[adherent]->prenom);
 		jeu=trouveNumJeu(e->idJeu,tJeux,taille_logique);
 		if (jeu==-1)
-			printf("Inconnu\n");
+			printf("Inconnu");
 		else
 			printf("\t%s\n",tJeux[jeu].nom);
+		printf("\n");
 		e=e->suiv;
 	}
 	printf("\n");
 }
 
-int trouveNumJeu(int id, Jeux tJeu[], int taille_logique)
+int trouveNumAdherent(Adherent **tAdherent, int taille_logique_A, int idAdherent)
 {
-	int inf=0, sup=taille_logique-1, milieu;
-	while (inf <= sup) {
-		milieu = (inf + sup)/2;
-		if (id == tJeu[milieu].idJeux)
-			return milieu;
-		if (id < tJeu[milieu].idJeux)
-			inf = milieu+1;
-		else
-			sup = milieu+1;
+	int i;
+	for(i = 0; i <= taille_logique_A; ++i)
+	{
+		if (tAdherent[i]->idAdherent == idAdherent)
+		{
+			return i;
+		}
 	}
 	return -1;
 }
 
-int trouveNumAdherent(int id, Adherent* tAdherent[], int taille_logique_A)
+int trouveNumJeu(int id, Jeux tJeu[], int taille_logique)
 {
-	int inf=0, sup=taille_logique_A-1, milieu;
-	while (inf <= sup) {
-		milieu = (inf + sup)/2;
-		if (id == tAdherent[milieu]->idAdherent)
-			return milieu;
-		if (id < tAdherent[milieu]->idAdherent)
-			inf = milieu+1;
-		else
-			sup = milieu+1;
+	int i;
+	for(i = 0; i <= taille_logique; i++)
+	{
+		if (tJeu[i].idJeux == id)
+		{
+			return i;
+		}
 	}
 	return -1;
 }
@@ -1229,24 +1224,29 @@ Booleen videR(Reservation *r) {
 	return faux;
 }
 
-void afficherListeResa(Reservation *r, Adherent* tAdherent[], int taille_logique_A) {
-	int id, adherent;
-	printf("\nAffichageVeuillez entrer l'identifiant du jeu pour lequel vous souhaitez regarder la liste des réservations :\n");
+void afficherListeResa(Reservation *r, Adherent* tAdherent[], int taille_logique_A, Jeux tJeux[], int taille_logique) {
+	int id, adherent, jeu;
+	printf("\nVeuillez entrer l'identifiant du jeu pour lequel vous souhaitez regarder la liste des réservations :\n");
 	scanf("%d",&id);
-	printf("\nAffichage de la liste des réservation en cours pour ce jeu :\n");
-	printf("\nDate de réservation : \tId de la réservation :\t Nom et prénom de l'adhérent :\n");
-	while (!videR(r)){
-		if (r->idJeu==id) {
-			printf("\t%d/%d/%d\t\t\t%d\t\t\t\n",r->dateR.jour,r->dateR.mois,r->dateR.annee,r->idRes);
-			adherent=trouveNumAdherent(r->idAdherent,tAdherent,taille_logique_A);
-			if (adherent==-1)
-				printf("Inconnu\n");
-			else
-				printf("%s\t%s\t", tAdherent[adherent]->nom,tAdherent[adherent]->prenom);
+	jeu=trouveNumJeu(id,tJeux,taille_logique);
+	if (jeu!=-1) {
+		printf("Nom du jeu : %s\n", tJeux[jeu].nom);
+		printf("\nDate de réservation : \tId de la réservation :\t Nom et prénom de l'adhérent :\n");
+		while (!videR(r)){
+			if (r->idJeu==id) {
+				printf("%d/%d/%d\t\t\t%d\t\t\t",r->dateR.jour,r->dateR.mois,r->dateR.annee,r->idRes);
+				adherent=trouveNumAdherent(tAdherent,taille_logique_A,r->idAdherent);
+				if (adherent==-1)
+					printf("Inconnu\t\t\t");
+				else
+					printf("%s %s\t\t\n", tAdherent[adherent]->nom,tAdherent[adherent]->prenom);
+			}
+			r=r->suiv;
 		}
-		r=r->suiv;
+		printf("\n");
 	}
-	printf("\n");
+	else
+		printf("Jeu inconnu\n");		
 }
 
 Reservation* chargeListeResa(void) {
