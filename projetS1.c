@@ -534,12 +534,12 @@ Jeux* chargeTJeux(Jeux tJeux[], int *nbJeux, int *tMax)
 			Renvoit le tableau tJeux alloué dynamiquement en mémoire.
 
 		Variables:
-			tJeux				tableau des Jeux disponibles.
-			tMax				taille maximale physique du tableau tJeux
-			jeu_fichier			pointeur ouvrant le fichier jeu.don
-			j					variable intermédiaire pour charger les données du fichier don , et les transmettre ensuite vers le tableau
-			tNouvJeux			tableau temporaire servant au realloc du tableau principal, pour augmenter sa taille
-			nbJeux				nombre d'élément dans le tableau tJeux
+			tJeux				Tableau des Jeux disponibles.
+			tMax				Taille maximale physique du tableau tJeux
+			jeu_fichier			Pointeur ouvrant le fichier jeu.don
+			j					Variable intermédiaire pour charger les données du fichier don , et les transmettre ensuite vers le tableau
+			tNouvJeux			Tableau temporaire servant au realloc du tableau principal, pour augmenter sa taille
+			nbJeux				Nombre d'élément dans le tableau tJeux
 	*/
 	Jeux *tNouvJeux, j;
 	FILE *jeu_fichier;
@@ -550,16 +550,16 @@ Jeux* chargeTJeux(Jeux tJeux[], int *nbJeux, int *tMax)
 		return NULL;
 	}
 	*tMax = 5;
-	tJeux = (Jeux *) malloc(*tMax * sizeof(Jeux));
+	tJeux = (Jeux *) malloc(*tMax * sizeof(Jeux)); //Malloc d'un tableau pour 5 éléments.
 	if (tJeux == NULL)
 	{
 		printf("Problème malloc\n");
 		return NULL;
 	}
 	j = chargeJeux(jeu_fichier);
-	while (!feof(jeu_fichier))
+	while (!feof(jeu_fichier)) // Lecture du fichier.
 	{
-		if (*nbJeux == *tMax)
+		if (*nbJeux == *tMax) // Ajout de 5 de taille physique si tableau trop petit.
 		{
 			*tMax = *tMax + 5;
 			tNouvJeux = ((Jeux*) realloc (tJeux, *tMax *sizeof(Jeux)));
@@ -597,8 +597,19 @@ void afficheTJeux(Jeux tJeux[], int nbJeux)
 	*/
 
 	//Tri du tableau par ordre alphabétique
-	int pge, i, cmp;
+	int pge, i, y, z,cmp, tMax = 1, lg;
 	int n = nbJeux;
+	char typeTmp[15] = "TYPE";
+	/*
+	while (n > 1)
+	{
+		pge = plusGrand(tJeux, n, 2);
+		echange(tJeux, pge, n-1);
+		n = n-1;
+	}
+	
+	n = nbJeux;
+	*/
 	while (n > 1)
 	{
 		pge = plusGrand(tJeux, n);
@@ -606,52 +617,76 @@ void afficheTJeux(Jeux tJeux[], int nbJeux)
 		n = n-1;
 	}
 
-	//Logique
-	printf("\nJeux de logique :\n\n");
-	for(i = 0; i <= nbJeux-1; i++)
-	{
-		cmp = strcmp(tJeux[i].type, "Logique");
-		if (cmp==0)
-			printf("%03d\t%s\t%d restant(s)\n", tJeux[i].idJeux, tJeux[i].nom, tJeux[i].quantite);
-	}
+    //Logique
+    printf("Jeux de logique :\n\n");
+    for(i = 0; i <= nbJeux-1; i++)
+    {
+        cmp = strcmp(tJeux[i].type, "Logique");
+        if (cmp==0)
+		{
+			lg = strlen(tJeux[i].nom);
+            if (lg <= 7) printf("%03d\t%s\t\t%d restant(s)\n", tJeux[i].idJeux, tJeux[i].nom, tJeux[i].quantite);
+			else printf("%03d\t%s\t%d restant(s)\n", tJeux[i].idJeux, tJeux[i].nom, tJeux[i].quantite);
+		}
+    }
 
-	//Plateau
-	printf("\nJeux de plateau :\n\n");
-	for(i = 0; i <= nbJeux-1; i++)
-	{
-		cmp = strcmp(tJeux[i].type, "Plateau");
-		if (cmp==0)
-			printf("%03d\t%s\t%d restant(s)\n", tJeux[i].idJeux, tJeux[i].nom, tJeux[i].quantite);
-	}
+    //Plateau
+	printf("--------------------\n");
+    printf("Jeux de plateau :\n\n");
+    for(i = 0; i <= nbJeux-1; i++)
+    {
+        cmp = strcmp(tJeux[i].type, "Plateau");
+        if (cmp==0)
+		{
+			lg = strlen(tJeux[i].nom);
+            if (lg <= 7) printf("%03d\t%s\t\t%d restant(s)\n", tJeux[i].idJeux, tJeux[i].nom, tJeux[i].quantite);
+			else printf("%03d\t%s\t%d restant(s)\n", tJeux[i].idJeux, tJeux[i].nom, tJeux[i].quantite);
+		}
+    }
 
-	//Cartes
-	printf("\nJeux de cartes :\n\n");
-	for(i = 0; i <= nbJeux-1; i++)
-	{
-		cmp = strcmp(tJeux[i].type, "Cartes");
-		if (cmp==0)
-			printf("%03d\t%s\t%d restant(s)\n", tJeux[i].idJeux, tJeux[i].nom, tJeux[i].quantite);
-	}
+    //Cartes
+	printf("--------------------\n");
+    printf("Jeux de cartes :\n\n");
+    for(i = 0; i <= nbJeux-1; i++)
+    {
+        cmp = strcmp(tJeux[i].type, "Cartes");
+        if (cmp==0)
+		{
+			lg = strlen(tJeux[i].nom);
+            if (lg <= 7) printf("%03d\t%s\t\t%d restant(s)\n", tJeux[i].idJeux, tJeux[i].nom, tJeux[i].quantite);
+			else printf("%03d\t%s\t%d restant(s)\n", tJeux[i].idJeux, tJeux[i].nom, tJeux[i].quantite);
+		}
+    }
 
-	//Construction
-	printf("\nJeux de construction :\n\n");
-	for(i = 0; i <= nbJeux-1; i++)
-	{
-		cmp = strcmp(tJeux[i].type, "Construction");
-		if (cmp==0)
-			printf("%03d\t%s\t%d restant(s)\n", tJeux[i].idJeux, tJeux[i].nom, tJeux[i].quantite);
-	}
+    //Construction
+	printf("--------------------\n");
+    printf("Jeux de construction :\n\n");
+    for(i = 0; i <= nbJeux-1; i++)
+    {
+        cmp = strcmp(tJeux[i].type, "Construction");
+        if (cmp==0)
+		{
+			lg = strlen(tJeux[i].nom);
+            if (lg <= 7) printf("%03d\t%s\t\t%d restant(s)\n", tJeux[i].idJeux, tJeux[i].nom, tJeux[i].quantite);
+			else printf("%03d\t%s\t%d restant(s)\n", tJeux[i].idJeux, tJeux[i].nom, tJeux[i].quantite);
+		}
+    }
 
-	//Tuiles
-	printf("\nJeux de tuiles :\n\n");
-	for(i = 0; i <= nbJeux-1; i++)
-	{
-		cmp = strcmp(tJeux[i].type, "Tuiles");
-		if (cmp==0)
-			printf("%03d\t%s\t%d restant(s)\n", tJeux[i].idJeux, tJeux[i].nom, tJeux[i].quantite);
-	}
-	
+    //Tuiles
+	printf("--------------------\n");
+    printf("Jeux de tuiles :\n\n");
+    for(i = 0; i <= nbJeux-1; i++)
+    {
+        cmp = strcmp(tJeux[i].type, "Tuiles");
+        if (cmp==0)
+		{
+			lg = strlen(tJeux[i].nom);
+            if (lg <= 7) printf("%03d\t%s\t\t%d restant(s)\n", tJeux[i].idJeux, tJeux[i].nom, tJeux[i].quantite);
+			else printf("%03d\t%s\t%d restant(s)\n", tJeux[i].idJeux, tJeux[i].nom, tJeux[i].quantite);
+		}
+    }  
 }
+
 
 int plusGrand(Jeux tJeux[], int n)
 {
@@ -677,6 +712,7 @@ int plusGrand(Jeux tJeux[], int n)
 	}
 	return pge;
 }
+
 
 void echange(Jeux tJeux[], int i, int j)
 {
@@ -717,63 +753,64 @@ Jeux *ajouterJeux(Jeux tJeux[], int *nbJeux, int *tMax)
 			Ajoute un jeu à tJeux et à la mémoire
 			
 		Variables:
-
-
+			tJeux: Tableau de jeux.
+			nbJeux : Nombre de jeux.
+			tMax : Taille physique du tableau.
+			tNouvJeux : Tableau temporaire pour realloc.
+			j : Tableau temporaire pour savoir si le nom et l'ID n'exsite pas déjà dans le tableau.
+			i : Variable pour parcourir le tableau.
+			cmp : Variable de comparaison entre deux chaînes.
+			rep : Variable temporaire pour le switch.
 	*/
 	Jeux *tNouvJeux, j;
 	int rep, i, cmp;
-	printf("Nom du jeu :\n ");
+	printf("Nom du jeu :\n");
 	fgets(j.nom,20,stdin);
 	j.nom[strlen(j.nom)-1] = '\0';
-	printf("Nom lu : %s\n", j.nom);
-	for(i = 0; i <= *nbJeux; i++)
+	for(i = 0; i <= *nbJeux; i++) // Recherche pour savoir si le nom du jeu est déjà pris.
 	{
 		cmp = strcmp(tJeux[i].nom, j.nom);
 		if (cmp==0)
 		{
 			printf("Ce jeu existe déjà.\n");
-			return NULL;
+			return tJeux;
 		}
 	}
-	printf("Nom lu : %s\n", j.nom);
-	printf("Type :\n ");
-	fgets(j.type,20,stdin);
-	j.type[strlen(j.type)-1] = '\0';
-	for(i = 0; i <= *nbJeux; i++)
+	printf("Type :\n\n1. Cartes\t3. Logique\t5. Tuiles\n2. Construction\t4. Plateau\n");
+	scanf("%d", &rep);
+	switch(rep)
 	{
-		cmp = strcmp(tJeux[i].type, j.type);
-		if (cmp == 5)
-		{
-			printf("Cette catégorie n'existe pas.\n");
-			return NULL;
-		}
+		case 1: strcpy(j.type, "Cartes"); break;
+		case 2: strcpy(j.type, "Construction"); break;
+		case 3: strcpy(j.type, "Logique"); break;
+		case 4: strcpy(j.type, "Plateau"); break;
+		case 5: strcpy(j.type, "Tuiles"); break;
 	}
-	printf("Type lu : %s\n", j.type);
 	printf("ID du jeu :\n");
 	scanf(" %d%*c",&j.idJeux);
-	for(i = 0; i <= *nbJeux; i++)
+	for(i = 0; i <= *nbJeux; i++) // Recherche pour savoir si l'ID du jeu est déjà pris.
 	{
 		if (tJeux[i].idJeux == j.idJeux)
 		{
 			printf("Cet ID existe déjà.\n");
-			return NULL;
+			return tJeux;
 		}
 	}
 	printf("Quantité :\n");
 	scanf(" %d%*c",&j.quantite);
-	if (tJeux == NULL)
+	if (tJeux == NULL) //Sécurité pour malloc
 	{
 		printf("Problème malloc\n");
 		return NULL;
 	}
-	if (*nbJeux == *tMax)
+	if (*nbJeux == *tMax) // Allocation du jeu.
 	{
 		*tMax = *tMax + 5;
 		tNouvJeux = ((Jeux*) realloc (tJeux, *tMax *sizeof(Jeux)));
 		if (tNouvJeux == NULL)
 		{
 			printf("Problème lors du realloc\n");
-			return NULL;
+			return tJeux;
 		}
 		tJeux = tNouvJeux;
 	}
@@ -782,12 +819,11 @@ Jeux *ajouterJeux(Jeux tJeux[], int *nbJeux, int *tMax)
 	FILE *jeu_fichier;
 	jeu_fichier = fopen("jeu.don","w");
 
-	for(i = 0; i <= *nbJeux-1; i++)
+	for(i = 0; i <= *nbJeux-1; i++) // Sauvegarde dans le fichier.
 	{
 		fprintf(jeu_fichier, "%d\t%s\t%s\t%d\n", tJeux[i].idJeux, tJeux[i].nom, tJeux[i].type, tJeux[i].quantite);
 	}
 	fclose(jeu_fichier);
-
 	return tJeux;
 
 }
@@ -802,18 +838,23 @@ Jeux *supprimerJeux(Jeux tJeux[], int *nbJeux, int *tMax)
 			Supprime un jeu du tableau tJeux et de la mémoire
 
 		Variables:
-
-
+			j : Tableau temporaire
+			rep : Savoir si l'élément a été trouvé + permet de supprimer au bon endroit.
+			i : Variable pour parcourir le tableau.
+			cmp : Variable de comparaison entre deux chaînes.
+			jeu_fichier : Jeu fichier.
+			tJeux: Tableau de jeux.
+			nbJeux : Nombre de jeux.
+			tMax : Taille physique du tableau.
 	*/
-	Jeux *tNouvJeux, j;
+	Jeux j;
 	int rep, i, cmp;
 	printf("ID du jeu à supprimer :\n ");
 	scanf(" %d%*c",&j.idJeux);
-	for(i = 0; i <= *nbJeux; i++)
+	for(i = 0; i <= *nbJeux; i++) //Parcour du tableau jusqu'à trouver l'élément voulu.
 	{
 		if (tJeux[i].idJeux == j.idJeux)
 		{
-			printf("Trouve.\n");
 			rep = 1;
 			break;
 		}
@@ -821,10 +862,10 @@ Jeux *supprimerJeux(Jeux tJeux[], int *nbJeux, int *tMax)
 	}
 	if (rep == -1)
 	{
-		printf("Ce jeu n'existe pas\n");
-		return NULL;
+		printf("Ce jeu n'existe pas.\n");
+		return tJeux;
 	}
-	rep = i;
+	rep = i; //La variable "rep" prend la valeur de l'emplacement de l'élément voulu pour pouvoir supprimer au bon endroit par la suite.
 	if (tJeux == NULL)
 	{
 		printf("Problème malloc\n");
@@ -832,26 +873,26 @@ Jeux *supprimerJeux(Jeux tJeux[], int *nbJeux, int *tMax)
 	}
 	FILE *jeu_fichier;
 	jeu_fichier = fopen("jeu.don","w");
-	for(i = 0; i <= *nbJeux-1; i++)
+	for(i = 0; i <= *nbJeux-1; i++) //Suppression dans le fichier.
 	{
 		if (i != rep)
 			fprintf(jeu_fichier, "%d\t%s\t%s\t%d\n", tJeux[i].idJeux, tJeux[i].nom, tJeux[i].type, tJeux[i].quantite);
 	}
 	fclose(jeu_fichier);
-	printf("Position : %d\nNombre de jeux : %d", rep, *nbJeux);
-	if (rep >= *nbJeux+1)
+
+	if (rep >= *nbJeux+1) //Une petite sécurité, au cas où.
 		printf("Suppression impossible.");
 	else
 	{
 		free(&tJeux[rep]);
 		*nbJeux = *nbJeux - 1;
-    	for (i = rep; i < *nbJeux; i++)
+    	for (i = rep; i < *nbJeux; i++) //Décalage à droite pour supprimer du tableau.
          	tJeux[i] = tJeux[i+1];
 	}
 	return tJeux;
 }
 
-void retourJeux(void)
+void retourJeux(Reservation *r, Emprunt *e, Jeux tJeux[])
 {
 	/*
 		Nom:		retourJeux
@@ -864,19 +905,33 @@ void retourJeux(void)
 
 
 	*/
+	int idAdherent, z;
 	printf("Saisir l'ID de l'adhérent : ");
-	//Saisie de l'ID de l'adhérent
-	//Check quel jeu est emprunté par l'adhérent dans la liste emprunts.
-	//Si aucun jeu n'est emprunté par l'adhérent -> Stop.
-	//Si un jeu est emprunté par l'adhérent :
-	//Suppresion de l'emprunt.
-	//+1 dans la quantité du jeu en question dans tJeux.
-	//Check si l'adhérent à d'autre réservation dans la liste réservations.
-	//Si l'adhérent n'a aucune autre réservation -> Stop. 
-	//Si l'adhérent a une autre réservation :
-	//Prendre la réservation de l'adhérent la plus haute dans la liste réservation
-	//Transformer la réservation en emprunt
-	//-1 dans la quantité du jeu en question dans tJeux.
+
+	/*
+	scanf("%d%*c", &idAdherent);
+	z = recherche(Liste EMPRUNT, char code[]);
+	if (x == 0)
+	{
+		printf("Aucun jeu n'est emprunté par cet adhérent.\n");
+		return;
+	}
+	else
+		printf("L'adhérent emprunte actuellement le jeu %s", ???);
+	e = supprimer(e, emprunt,adherent,jeu,date);
+	tJeux.quantite[??] = tJeux.quantite[??] + 1;
+	z = rechercher(r, adherent);
+	if (z == 0)
+	{
+		printf("L'adhérent n'a pas de réservation.");
+		return;
+	}
+	else 
+		printf("Une réservation a été trouver. \nLe jeu %s passe maintenant en emprunt.\n", tJeux.nom[??]);
+	r = supprimer(r, reservation,adherent,jeu,date);
+	e= inserer(e, emprunt,adherent,jeu,date);
+	tJeux.quantite[??] = tJeux.quantite[??] - 1;
+	*/
 }
 
 
@@ -913,7 +968,8 @@ void menu(void)
 		printf("1. Jeux\n");
 		printf("2. Adhérents\n");
 		printf("3. Emprunts\n");
-		printf("4. Réservation\n");
+		printf("4. Réservations\n");
+		printf("\n9. Quitter le programme\n");
 		scanf("%d%*c", &rep);
 		switch(rep)
 		{
@@ -929,22 +985,21 @@ void menu(void)
 						system("@cls||clear");
 						afficheTJeux(tJeux, nbJeux);
 						printf("\nAppuyez sur entrer pour continuer...\n");
-						scanf("%c%*c", &get);
+						getch();
 						break;
 					case 2:
 						system("@cls||clear");
 						if(tJeux == NULL)
 							return;
 						tJeux = ajouterJeux(tJeux, &nbJeux, &tMax);
-						printf("%d", &tJeux[1].idJeux);
 						printf("\nAppuyez sur entrer pour continuer...\n");
-						scanf("%c%*c", &get);
+						getch();
 						break;
 					case 3:
 						system("@cls||clear");
 						printf("C'est fonction n'est pas encore disponible.\n");
 						printf("\nAppuyez sur entrer pour continuer...\n");
-						scanf("%c%*c", &get);
+						getch();
 						break;
 					case 4:
 						system("@cls||clear");
@@ -952,7 +1007,7 @@ void menu(void)
 							return;
 						tJeux = supprimerJeux(tJeux, &nbJeux, &tMax);
 						printf("\nAppuyez sur entrer pour continuer...\n");
-						scanf("%c%*c", &get);
+						getch();
 						break;
 					case 5:
 						break;
@@ -962,32 +1017,34 @@ void menu(void)
 				system("@cls||clear");
 				// Fonction affichage emprunt
 				printf("\nAppuyez sur entrer pour continuer...\n");
-				scanf("%c%*c", &get);
+				getch();
 				break;
 			case 3:
 				system("@cls||clear");
 				// Fonction affichage emprunt
 				printf("\nAppuyez sur entrer pour continuer...\n");
-				scanf("%c%*c", &get);
+				getch();
 				break;
 			case 4:
 				system("@cls||clear");
 				// Fonction affichage emprunt
 				printf("\nAppuyez sur entrer pour continuer...\n");
-				scanf("%c%*c", &get);
+				getch();
 				break;
 			case 5:
 				system("@cls||clear");
 				// Fonction affichage emprunt
 				printf("\nAppuyez sur entrer pour continuer...\n");
-				scanf("%c%*c", &get);
+				getch();
 				break;
 			case 6:
 				system("@cls||clear");
 				// Fonction affichage emprunt
 				printf("\nAppuyez sur entrer pour continuer...\n");
-				scanf("%c%*c", &get);
+				getch();
 				break;
+			case 9:
+				return;
 			default:
 				printf("\nErreur\n");
 				break;

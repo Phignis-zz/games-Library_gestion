@@ -83,6 +83,12 @@ void testAdherent(void)
 
 void test(void)
 {
+	/*
+	Jeux *tJeux;
+	int tMax = 100, nbJeux = 0, i;
+	tJeux = chargeTJeux(tJeux, &nbJeux, &tMax);
+	afficheTJeux(tJeux, nbJeux);
+	*/
 	menu();
 }
 
@@ -125,11 +131,11 @@ int main(void)
 	//testchargeAdherent();
 	//testchargeTAdherent();
 	//global();
-	testAdherent();
+	//testAdherent();
 	//global();
 	//testchargeJeux();
 	//testchargeTJeux();
-	//test();
+	test();
 	//test_saisie_date();
 	return 0;
 }

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include<conio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
@@ -210,7 +211,7 @@ void echange(Jeux tJeux[], int i, int j);
 	finalité:	Le retour déclenche l’examen des réservations pour peut être transformer une réservation en emprunt et faire parvenir le jeu à l’adhérent l’ayant réservé.
 */
 
-void retourJeux(void);
+void retourJeux(Reservation *r, Emprunt *e, Jeux tJeux[]);
 
 /*
 	programme:	ajouterJeux
@@ -231,6 +232,7 @@ Jeux *ajouterJeux(Jeux tJeux[], int *nbJeux, int *tMax);
 Jeux *supprimerJeux(Jeux tJeux[], int *nbJeux, int *tMax);
 
 void global();
+
 
 
 
