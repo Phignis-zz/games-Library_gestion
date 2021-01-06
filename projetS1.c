@@ -1055,6 +1055,53 @@ void menu(void)
 
 
 
+Reservation* suppressionEnTete(Reservation *a) {
+  Reservation *b;
+  if (a==NULL) {
+    printf("op interdite\n");
+    exit(1);
+  }
+  b=a;
+  a=a->suiv; 
+  free(b);
+  return a;
+}
+
+Reservation* supprimer(Reservation *a,int x) {
+  if(a==NULL)
+    return a;
+  if(x < a -> idRes)
+    return a;
+  if(x==a->idRes)
+    return suppressionEnTete(a);
+  a->suiv=supprimer(a->suiv,x);
+  return a;
+}
+
+Reservation* suppRes(Reservation *a) {
+	int id;
+	printf("Veuillez entrer le numéro de réservation à annuler :\n");
+	scanf("%d", &id);
+	a=supprimer(a,id);
+	saveRes(a);
+	return a;
+}
+
+void saveRes(Reservation *a) {
+	FILE *flot;
+	flot=fopen("Reservation.don","w");
+	if (flot==NULL)
+		printf("Problème d'ouverture du fichier des réservations en écriture, sauvegarde des réservations impossible\n");
+	while (a!=NULL) {
+		fprintf(flot, "%d\t%d\t%d\t%d/%d/%d\n", a->idRes,a->idAdherent,a->idJeu,a->dateR.jour,a->dateR.mois,a->dateR.annee);
+		a=a->suiv;
+	}
+	fclose(flot);
+
+}
+
+
+
 
 Booleen vide(Emprunt *e) {
     if(e==NULL)
@@ -1062,14 +1109,56 @@ Booleen vide(Emprunt *e) {
 	return faux;
 }
 
-void afficherListeEmprunts(Emprunt *e) {
+void afficherListeEmprunts(Emprunt *e, Jeux tJeux[],int taille_logique, int taille_logique_A, Adherent* tAdherent[]) {
+	int adherent,jeu;
+	int i;
 	printf("\nAffichage de la liste des emprunts en cours :\n");
-	printf("\nId de l'emprunt :\t Id de l'adhérent :\t id du jeu :\t Date d'emprunt :\n");
+	printf("\nDate d'emprunt :\tId de l'emprunt\t\tNom et prénom de l'adhérent :\t\tNom du jeu :\n");
 	while (!vide(e)){
-		printf("\t%d\t\t\t%d\t\t\t%d\t\t%d/%d/%d\n",e->idEmprunt,e->idAdherent,e->idJeu,e->dateEmprunt.jour,e->dateEmprunt.mois,e->dateEmprunt.annee);
+		printf("%d/%d/%d\t\t\t%d\t\t\t",e->dateEmprunt.jour,e->dateEmprunt.mois,e->dateEmprunt.annee,e->idEmprunt);
+		adherent=trouveNumAdherent(e->idAdherent,tAdherent,taille_logique_A);
+		if (adherent==-1)
+			printf("Inconnu\n");
+		else
+			printf("%s\t%s\t", tAdherent[adherent]->nom,tAdherent[adherent]->prenom);
+		jeu=trouveNumJeu(e->idJeu,tJeux,taille_logique);
+		if (jeu==-1)
+			printf("Inconnu\n");
+		else
+			printf("\t%s\n",tJeux[jeu].nom);
 		e=e->suiv;
 	}
 	printf("\n");
+}
+
+int trouveNumJeu(int id, Jeux tJeu[], int taille_logique)
+{
+	int inf=0, sup=taille_logique-1, milieu;
+	while (inf <= sup) {
+		milieu = (inf + sup)/2;
+		if (id == tJeu[milieu].idJeux)
+			return milieu;
+		if (id < tJeu[milieu].idJeux)
+			inf = milieu+1;
+		else
+			sup = milieu+1;
+	}
+	return -1;
+}
+
+int trouveNumAdherent(int id, Adherent* tAdherent[], int taille_logique_A)
+{
+	int inf=0, sup=taille_logique_A-1, milieu;
+	while (inf <= sup) {
+		milieu = (inf + sup)/2;
+		if (id == tAdherent[milieu]->idAdherent)
+			return milieu;
+		if (id < tAdherent[milieu]->idAdherent)
+			inf = milieu+1;
+		else
+			sup = milieu+1;
+	}
+	return -1;
 }
 
 Emprunt* chargeListeEmprunts(void) {
@@ -1078,7 +1167,7 @@ Emprunt* chargeListeEmprunts(void) {
 	Emprunt *e;
 	int emprunt,adherent,jeu;
 	Date date;
-	printf("Chargement du fichier des emprunts en mémoire...\n");
+	printf("\nChargement du fichier des emprunts en mémoire...\n");
 	if (flot==NULL) {
 		printf("Une erreur est survenur lors de l'ouverture du fichier des emprunts ! (fichier introuvable)\n");
 		exit(-1);
@@ -1134,26 +1223,27 @@ Emprunt* inserer(Emprunt *e, int emprunt, int adherent, int jeu, Date date) {
 }
 
 
-
-
-
-
-
-
-
-
-
 Booleen videR(Reservation *r) {
     if(r==NULL)
     	return vrai;
 	return faux;
 }
 
-void afficherListeResa(Reservation *r) {
-	printf("\nAffichage de la liste des réservation en cours :\n");
-	printf("\nId de la réservation :\t Id de l'adhérent :\t id du jeu :\t Date de réservation :\n");
+void afficherListeResa(Reservation *r, Adherent* tAdherent[], int taille_logique_A) {
+	int id, adherent;
+	printf("\nAffichageVeuillez entrer l'identifiant du jeu pour lequel vous souhaitez regarder la liste des réservations :\n");
+	scanf("%d",&id);
+	printf("\nAffichage de la liste des réservation en cours pour ce jeu :\n");
+	printf("\nDate de réservation : \tId de la réservation :\t Nom et prénom de l'adhérent :\n");
 	while (!videR(r)){
-		printf("\t%d\t\t\t%d\t\t\t%d\t\t%d/%d/%d\n",r->idRes,r->idAdherent,r->idJeu,r->dateR.jour,r->dateR.mois,r->dateR.annee);
+		if (r->idJeu==id) {
+			printf("\t%d/%d/%d\t\t\t%d\t\t\t\n",r->dateR.jour,r->dateR.mois,r->dateR.annee,r->idRes);
+			adherent=trouveNumAdherent(r->idAdherent,tAdherent,taille_logique_A);
+			if (adherent==-1)
+				printf("Inconnu\n");
+			else
+				printf("%s\t%s\t", tAdherent[adherent]->nom,tAdherent[adherent]->prenom);
+		}
 		r=r->suiv;
 	}
 	printf("\n");
@@ -1161,7 +1251,7 @@ void afficherListeResa(Reservation *r) {
 
 Reservation* chargeListeResa(void) {
 	FILE *flot;
-	flot=fopen("Reservations.don","r");
+	flot=fopen("Reservation.don","r");
 	Reservation *e;
 	int resa,adherent,jeu;
 	Date date;

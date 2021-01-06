@@ -245,9 +245,10 @@ Emprunt* inserer(Emprunt *e, int emprunt, int adherent, int jeu, Date date);
 void globale(void);
 Date lireFichier(FILE *flot, int *emprunt, int *adherent, int *jeu);
 Emprunt* chargeListeEmprunts(void);
-void afficherListeEmprunts(Emprunt *e);
+void afficherListeEmprunts(Emprunt *e, Jeux tJeux[],int taille_logique,int taille_logique_A, Adherent* tAdherent[]);
 Booleen vide(Emprunt *e);
-
+int trouveNumJeu(int id, Jeux tJeu[], int taille_logique);
+Booleen vide(Emprunt *e);
 
 
 
@@ -256,5 +257,12 @@ Reservation* insertionEnTeteR(Reservation *s, int resa, int adherent, int jeu, D
 Reservation* insererR(Reservation *r, int resa, int adherent, int jeu, Date date);
 Date lireFichierR(FILE *flot, int *resa, int *adherent, int *jeu);
 Reservation* chargeListeResa(void);
-void afficherListeResa(Reservation *r);
+void afficherListeResa(Reservation *r, Adherent* tAdherent[], int taille_logique_A);
 Booleen videR(Reservation *r);
+Reservation* insererR(Reservation *r, int resa, int adherent, int jeu, Date date);
+
+
+Reservation* supprimer(Reservation *a,int x);
+Reservation* suppressionEnTete(Reservation *a);
+Reservation* suppRes(Reservation *a);
+void saveRes(Reservation *a);
