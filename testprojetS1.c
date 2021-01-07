@@ -1,5 +1,25 @@
 #include "projetS1.h"
 
+void testFlorian(void) {
+	Emprunt *e;
+	Jeux * j;
+	Jeux tJ[100];
+	int nbJeux,tMax,taille_logique;
+	int taille_physique_A=100, taille_logique_A=0;
+	Adherent* tAdherent[100];
+	Adherent** tA;
+	Reservation *r;
+	j=chargeTJeux(tJ,&nbJeux,&tMax);
+	afficheTJeux(j,nbJeux);
+	taille_logique=nbJeux;
+	tA=chargTAdherent(tAdherent,&taille_logique_A,&taille_physique_A);
+	afficheTAdherent(tAdherent,taille_logique_A);
+	e=chargeListeEmprunts();
+	afficherListeEmprunts(e,j,taille_logique,taille_logique_A,tAdherent);
+	r=chargeListeResa();
+	afficherListeResa(r,tAdherent,taille_logique_A,j,taille_logique);
+}
+
 void test_current_date(void)
 {
 	Date jour_actuel;
@@ -79,10 +99,32 @@ void testAdherent(void)
 		printf("Enregistrement\n");
 		EnregistrerTAdherent(tAdherent, taille_logique);
 	}
+	Jeux *tJeux;
+	int tMax = 100, nbJeux = 0, i;
+	tJeux = chargeTJeux(tJeux, &nbJeux, &tMax);
+	Emprunt *e;
+	e = chargeListeEmprunts();
+	afficherListeEmprunts(e, tJeux, nbJeux, taille_logique, tAdherent);
 }
 
 void test(void)
 {
+	/*
+	Adherent **tAdherent;
+	int taille_physique = 9, taille_logique = 0;
+	char choix;
+	tAdherent = (Adherent**) malloc (taille_physique * sizeof(Adherent*));
+	tAdherent = chargTAdherent( tAdherent, &taille_logique, &taille_physique);
+	afficheTAdherent(tAdherent, taille_logique);
+	Jeux *tJeux;
+	int tMax = 100, nbJeux = 0, i;
+	tJeux = chargeTJeux(tJeux, &nbJeux, &tMax);
+	Emprunt *e;
+	Reservation *r;
+	e = chargeListeEmprunts();
+	r = chargeListeResa();
+	retourJeux(r, e, tJeux, nbJeux);
+	*/
 	menu();
 }
 
@@ -116,6 +158,11 @@ void test_saisie_date(void)
 	Date date;
 	date = saisie_date();
 	printf("%02d/%02d/%04d", date.jour, date.mois, date.annee);
+}
+
+void test_ajout_Reserv_Emp(void)
+{
+	
 }
 
 int main(void)

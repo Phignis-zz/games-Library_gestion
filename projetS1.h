@@ -151,6 +151,12 @@ Adherent** modifAdherent(Adherent** tAdherent, int taille_logique);
 */
 Adherent** supressAdherent(Adherent** tAdherent, int *taille_logique);
 
+Emprunt* ajoutEmprunt(Emprunt* e, Jeux tJeux[], int taille_logique_tJeux, int idAdh, int idJeu, Date date_emprunt);
+
+Date infoReserv(Adherent* tAdherent[], int taille_logique_tAdh, Jeux tJeux[], int taille_logique_tJeux, int *idAdh, int *idJeu, Date date_reserv);
+
+Reservation* ajoutReservation(Adherent* tAdherent[], int taille_logique_tAdh, Jeux tJeux[], int taille_logique_tJeux , Reservation* r, int idAdh, int idJeu, Date date_reservation);
+
 /*
 	programme:	chargeJeux
 	auteur:		POLLET Matéo
@@ -212,7 +218,7 @@ void echange(Jeux tJeux[], int i, int j);
 	finalité:	Le retour déclenche l’examen des réservations pour peut être transformer une réservation en emprunt et faire parvenir le jeu à l’adhérent l’ayant réservé.
 */
 
-void retourJeux(void);
+void retourJeux(Reservation *r, Emprunt *e, Jeux tJeux[], int nbJeux);
 
 /*
 	programme:	ajouterJeux
@@ -232,38 +238,197 @@ Jeux *ajouterJeux(Jeux tJeux[], int *nbJeux, int *tMax);
 
 Jeux *supprimerJeux(Jeux tJeux[], int *nbJeux, int *tMax);
 
+
+Emprunt* suppEmp(Emprunt* a);
+
 void global();
 
+Emprunt* suppressionEnTeteEM(Emprunt *a);
+Emprunt* supprimerEM(Emprunt *a,int x);
+void saveEmp(Emprunt *a);
 
 
 
 
 
 Emprunt* listenouv(void);
-Emprunt* insertionEnTete(Emprunt *s, int emprunt, int adherent, int jeu, Date date);
-Emprunt* inserer(Emprunt *e, int emprunt, int adherent, int jeu, Date date);
-void globale(void);
-Date lireFichier(FILE *flot, int *emprunt, int *adherent, int *jeu);
-Emprunt* chargeListeEmprunts(void);
-void afficherListeEmprunts(Emprunt *e, Jeux tJeux[],int taille_logique,int taille_logique_A, Adherent* tAdherent[]);
-Booleen vide(Emprunt *e);
-int trouveNumJeu(int id, Jeux tJeu[], int taille_logique);
-Booleen vide(Emprunt *e);
+/*
+nom: listenouv
+auteur : GAUGIRARD Florian
+date : 23/12/2020
+finalité : créer une nouvelle liste d'emprunts vide
+*/
 
+
+Emprunt* insertionEnTete(Emprunt *s, int emprunt, int adherent, int jeu, Date date);
+/*
+nom: insertionEnTete
+auteur : GAUGIRARD Florian
+date : 26/12/2020
+finalité : inserer un maillon avant un autre
+*/
+
+
+Emprunt* inserer(Emprunt *e, int emprunt, int adherent, int jeu, Date date);
+/*
+nom: insérer
+auteur : GAUGIRARD Florian
+date : 23/12/2020
+finalité : déterminer la position d'insertion d'un maillon
+*/
+
+
+Date lireFichier(FILE *flot, int *emprunt, int *adherent, int *jeu);
+/*
+nom: lireFIchier
+auteur : GAUGIRARD Florian
+date : 26/12/2020
+finalité : lire une ligne du fichier de sauvagarde des emprunts
+*/
+
+
+Emprunt* chargeListeEmprunts(void);
+/*
+nom: chargeListeEmprunts
+auteur : GAUGIRARD Florian
+date : 26/12/2020
+finalité : charger en mémoire les emprunts dans une liste
+*/
+
+
+void afficherListeEmprunts(Emprunt *e, Jeux tJeux[],int taille_logique,int taille_logique_A, Adherent* tAdherent[]);
+/*
+nom: afficherListeEmprunts
+auteur : GAUGIRARD Florian
+date : 27/12/2020
+finalité : afficher la liste des emprunts en cours
+*/
+
+
+Booleen vide(Emprunt *e);
+/*
+nom: vide
+auteur : GAUGIRARD Florian
+date : 23/12/2020
+finalité : vérifier si une liste est vide ou non
+*/
 
 
 Reservation* listenouvR(void);
+/*
+nom: listenouvR
+auteur : GAUGIRARD Florian
+date : 28/12/2020
+finalité : créer une nouvelle liste de réservation vide
+*/
+
+
 Reservation* insertionEnTeteR(Reservation *s, int resa, int adherent, int jeu, Date date);
+/*
+nom: insertionEnTeteR
+auteur : GAUGIRARD Florian
+date : 28/12/2020
+finalité : inserer un nouveau maillon avant un autre
+*/
+
+
 Reservation* insererR(Reservation *r, int resa, int adherent, int jeu, Date date);
+/*
+nom: insererR
+auteur : GAUGIRARD Florian
+date : 28/12/2020
+finalité : déterminer la position d'insertion d'un maillon dans la liste des réservations
+*/
+
+
 Date lireFichierR(FILE *flot, int *resa, int *adherent, int *jeu);
+/*
+nom: lireFichierR
+auteur : GAUGIRARD Florian
+date : 28/12/2020
+finalité : lire une ligne du fichie de sauvegarde des réservations
+*/
+
+
 Reservation* chargeListeResa(void);
-void afficherListeResa(Reservation *r, Adherent* tAdherent[], int taille_logique_A);
+/*
+nom: listenouv
+auteur : GAUGIRARD Florian
+date : 02/01/2021
+finalité : charger en mémoire la liste des réservations
+*/
+
+
+void afficherListeResa(Reservation *r, Adherent* tAdherent[], int taille_logique_A, Jeux tJeux[], int taille_logique);
+/*
+nom: afficherListeResa
+auteur : GAUGIRARD Florian
+date : 02/01/2021
+finalité : affiche la liste des réservations
+*/
+
+
 Booleen videR(Reservation *r);
-Reservation* insererR(Reservation *r, int resa, int adherent, int jeu, Date date);
+/*
+nom: videR
+auteur : GAUGIRARD Florian
+date : 02/01/2021
+finalité : vérifier si une liste de réservations est vide ou non
+*/
+
+
+void saveRes(Reservation *a);
+/*
+nom: saveRes
+auteur : GAUGIRARD Florian
+date : 03/01/2021
+finalité : sauvegarder la liste des réservaions dans le fichier de sauvegarde
+*/
 
 
 Reservation* supprimer(Reservation *a,int x);
+/*
+nom: supprimer
+auteur : GAUGIRARD Florian
+date : 03/12/2020
+finalité : déterminer la position d'un maillon à supprimer de la liste des réservaitons
+*/
+
+
 Reservation* suppressionEnTete(Reservation *a);
+/*
+nom: suppressionEnTete
+auteur : GAUGIRARD Florian
+date : 03/12/2020
+finalité : supprimer un maillon de la liste des réservations
+*/
+
+
 Reservation* suppRes(Reservation *a);
 void saveRes(Reservation *a);
 int trouveNumAdherent(int id, Adherent* tAdherent[], int taille_logique_A);
+/*
+nom: suppRes
+auteur : GAUGIRARD Florian
+date : 03/12/2020
+finalité : demander à l'utilisateur quelle réservation doit etre annulée et transmettre cette information à la bonne fonction
+*/
+
+
+
+int trouveNumJeu(int id, Jeux tJeu[], int taille_logique);
+/*
+nom: trouveNumJeu
+auteur : GAUGIRARD Florian
+date : 04/12/2020
+finalité : trouver la position d'un jeu dans le tableau des jeux
+*/
+
+
+int trouveNumAdherent(Adherent **tAdherent, int taille_logique_A, int idAdherent);
+/*
+nom: trouveNumAdherent
+auteur : GAUGIRARD Florian
+date : 04/12/2020
+finalité : trouver la position d'un adhérent dans le tableau des adhérents
+*/
