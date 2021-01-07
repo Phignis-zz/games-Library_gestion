@@ -892,7 +892,7 @@ Jeux *supprimerJeux(Jeux tJeux[], int *nbJeux, int *tMax)
 	return tJeux;
 }
 
-void retourJeux(Reservation *r, Emprunt *e, Jeux tJeux[])
+void retourJeux(Reservation *r, Emprunt *e, Jeux tJeux[], int nbJeux)
 {
 	/*
 		Nom:		retourJeux
@@ -905,36 +905,176 @@ void retourJeux(Reservation *r, Emprunt *e, Jeux tJeux[])
 
 
 	*/
-	int idAdherent, z;
+	int idAdh, id, z = 0, cmp, i, rep;
+	Emprunt *e_parcours = e;
+	Reservation *r_parcours = r;
 	printf("Saisir l'ID de l'adhérent : ");
-
-	/*
-	scanf("%d%*c", &idAdherent);
-	z = recherche(Liste EMPRUNT, char code[]);
-	if (x == 0)
+	scanf("%d%*c", &idAdh);
+	printf("Les jeux empruntés par cet adhérent sont :\n");
+	while (e_parcours != NULL)
+	{
+		if(e_parcours->idAdherent == idAdh)
+		{
+			for(i = 0; i <= nbJeux-1; i++)
+			{
+				if (tJeux[i].idJeux == e_parcours->idJeu)
+				{
+					printf("[%03d]\t%s\n", e_parcours->idEmprunt, tJeux[i].nom);
+				}
+			}
+			z++;
+		}
+		e_parcours = e_parcours->suiv;
+	}
+	if (z == 0)
 	{
 		printf("Aucun jeu n'est emprunté par cet adhérent.\n");
 		return;
 	}
-	else
-		printf("L'adhérent emprunte actuellement le jeu %s", ???);
-	e = supprimer(e, emprunt,adherent,jeu,date);
-	tJeux.quantite[??] = tJeux.quantite[??] + 1;
-	z = rechercher(r, adherent);
+	e_parcours = e;
+	printf("Veuillez entrer le numéro de l'emprunt à retourner :\n");
+	scanf("%d", &id);
+	while (e_parcours != NULL)
+	{
+		if(e_parcours->idEmprunt == id)
+		{
+			for(i = 0; i <= nbJeux-1; i++)
+			{
+				if (tJeux[i].idJeux == e_parcours->idJeu)
+				{
+					tJeux[i].quantite = tJeux[i].quantite + 1;
+				}
+			}
+		}
+		e_parcours = e_parcours->suiv;
+	}
+	e=supprimerEM(e,id);
+	saveEmp(e);
+
+	FILE *jeu_fichier;
+	jeu_fichier = fopen("jeu.don","w");
+	for(i = 0; i <= nbJeux-1; i++) //Sauvegarde dans le fichier.
+	{
+		if (i != rep)
+			fprintf(jeu_fichier, "%d\t%s\t%s\t%d\n", tJeux[i].idJeux, tJeux[i].nom, tJeux[i].type, tJeux[i].quantite);
+	}
+	fclose(jeu_fichier);
+
+	printf("Le jeu a été retourné.\n\nRéservations en attente :\n"); z=0;
+	while (r_parcours != NULL)
+	{
+		if(r_parcours->idAdherent == idAdh)
+		{
+			for(i = 0; i <= nbJeux-1; i++)
+			{
+				if (tJeux[i].idJeux == r_parcours->idJeu)
+				{
+					printf("[%03d]\t%s\n", r_parcours->idRes, tJeux[i].nom);
+				}
+			}
+			z++;
+		}
+		r_parcours = r_parcours->suiv;
+	}
+
 	if (z == 0)
 	{
-		printf("L'adhérent n'a pas de réservation.");
+		printf("Aucune réservation en attente.\n");
 		return;
 	}
-	else 
-		printf("Une réservation a été trouver. \nLe jeu %s passe maintenant en emprunt.\n", tJeux.nom[??]);
-	r = supprimer(r, reservation,adherent,jeu,date);
-	e= inserer(e, emprunt,adherent,jeu,date);
-	tJeux.quantite[??] = tJeux.quantite[??] - 1;
+	r_parcours = r;
+	printf("\nVeuillez entrer le numéro du jeu à emprunter : ");
+	scanf("%d", &id);
+	/*
+	while (r_parcours != NULL)
+	{
+		if(r_parcours->idRes == id)
+		{
+			for(i = 0; i <= nbJeux-1; i++)
+			{
+				if (tJeux[i].idJeux == r_parcours->idJeu)
+				{
+					tJeux[i].quantite = tJeux[i].quantite - 1;
+				}
+			}
+		}
+		r_parcours = r_parcours->suiv;
+	}
+	r_parcours = r;
+	while (r_parcours != NULL)
+	{
+		if(r_parcours->idRes == id)
+		{
+			printf("\nallo %d\n",e->idEmprunt + 1);
+			e = inserer(e, e->idEmprunt + 1, r_parcours->idAdherent, r_parcours->idJeu, r_parcours->dateR);
+		}
+		r_parcours = r_parcours->suiv;
+	}
+	r=supprimer(r,id);
+	saveRes(r);
+	saveEmp(e);
+
+	jeu_fichier = fopen("jeu.don","w");
+	for(i = 0; i <= nbJeux-1; i++) //Sauvegarde dans le fichier.
+	{
+		if (i != rep)
+			fprintf(jeu_fichier, "%d\t%s\t%s\t%d\n", tJeux[i].idJeux, tJeux[i].nom, tJeux[i].type, tJeux[i].quantite);
+	}
+	fclose(jeu_fichier);
 	*/
+	printf("\nRéservation réussie\n.");
+}
+
+Emprunt* suppEmp(Emprunt* a)
+{
+	int id;
+	printf("Veuillez entrer le numéro de l'emprunt à retourner :\n");
+	scanf("%d", &id);
+	a=supprimerEM(a,id);
+	saveEmp(a);
+	return a;
+}
+
+Emprunt* supprimerEM(Emprunt *a, int x)
+{
+	if(a==NULL)
+		return a;
+	if(x < a->idEmprunt)
+		return a;
+	if(x==a->idEmprunt)
+	{
+		return suppressionEnTeteEM(a);
+	}
+	a->suiv=supprimerEM(a->suiv,x);
+	return a;
+}
+
+Emprunt* suppressionEnTeteEM(Emprunt *a) 
+{
+	Emprunt *b;
+	if (a==NULL) {
+		printf("op interdite\n");
+		exit(1);
+	}
+	b=a;
+	a=a->suiv; 
+	free(b);
+	return a;
 }
 
 
+void saveEmp(Emprunt *a) 
+{
+	FILE *flot;
+	flot=fopen("Emprunts.don","w");
+	if (flot==NULL)
+		printf("Problème d'ouverture du fichier des réservations en écriture, sauvegarde des réservations impossible\n");
+	while (a!=NULL) {
+		fprintf(flot, "%d\t%d\t%d\t%d/%d/%d\n", a->idEmprunt,a->idAdherent,a->idJeu,a->dateEmprunt.jour,a->dateEmprunt.mois,a->dateEmprunt.annee);
+		a=a->suiv;
+	}
+	fclose(flot);
+}
 
 
 void menu(void)
@@ -956,9 +1096,19 @@ void menu(void)
 	/* Note temporaire : Je vais trouver un autre moyen de rendre le menu un peu plus "pro" */
 	int rep, bug;
 	char get = '\n';
+	Adherent **tAdherent;
+	int taille_physique = 9, taille_logique = 0;
+	char choix;
+	tAdherent = (Adherent**) malloc (taille_physique * sizeof(Adherent*));
+	tAdherent = chargTAdherent( tAdherent, &taille_logique, &taille_physique);
+	afficheTAdherent(tAdherent, taille_logique);
 	Jeux *tJeux;
-	int tMax = 100, nbJeux = 0;
+	int tMax = 100, nbJeux = 0, i;
 	tJeux = chargeTJeux(tJeux, &nbJeux, &tMax);
+	Emprunt *e;
+	Reservation *r;
+	e = chargeListeEmprunts();
+	r = chargeListeResa();
 	if(tJeux == NULL)
 		return;
 	while( get == '\n' )
@@ -997,7 +1147,7 @@ void menu(void)
 						break;
 					case 3:
 						system("@cls||clear");
-						printf("C'est fonction n'est pas encore disponible.\n");
+						retourJeux(r, e, tJeux, nbJeux);
 						printf("\nAppuyez sur entrer pour continuer...\n");
 						getch();
 						break;
@@ -1052,7 +1202,6 @@ void menu(void)
 
 	}	
 }
-
 
 
 Reservation* suppressionEnTete(Reservation *a) {
@@ -1116,7 +1265,7 @@ void afficherListeEmprunts(Emprunt *e, Jeux tJeux[],int taille_logique, int tail
 	printf("\nDate d'emprunt :\tId de l'emprunt\t\tNom et prénom de l'adhérent :\t\tNom du jeu :\n");
 	while (!vide(e)){
 		printf("%d/%d/%d\t\t\t%d\t\t\t",e->dateEmprunt.jour,e->dateEmprunt.mois,e->dateEmprunt.annee,e->idEmprunt);
-		adherent=trouveNumAdherent(e->idAdherent,tAdherent,taille_logique_A);
+		//adherent=trouveNumAdherent(e->idAdherent,tAdherent,taille_logique_A);
 		if (adherent==-1)
 			printf("Inconnu\n");
 		else
@@ -1211,7 +1360,8 @@ Emprunt* insertionEnTete(Emprunt *s, int emprunt, int adherent, int jeu, Date da
 	return e;
 }
 
-Emprunt* inserer(Emprunt *e, int emprunt, int adherent, int jeu, Date date) {
+Emprunt* inserer(Emprunt *e, int emprunt, int adherent, int jeu, Date date) 
+{
 	if (e==NULL)
 		return insertionEnTete(e,emprunt,adherent,jeu,date);
 	if (emprunt<e->idEmprunt)

@@ -211,7 +211,7 @@ void echange(Jeux tJeux[], int i, int j);
 	finalité:	Le retour déclenche l’examen des réservations pour peut être transformer une réservation en emprunt et faire parvenir le jeu à l’adhérent l’ayant réservé.
 */
 
-void retourJeux(Reservation *r, Emprunt *e, Jeux tJeux[]);
+void retourJeux(Reservation *r, Emprunt *e, Jeux tJeux[], int nbJeux);
 
 /*
 	programme:	ajouterJeux
@@ -231,9 +231,14 @@ Jeux *ajouterJeux(Jeux tJeux[], int *nbJeux, int *tMax);
 
 Jeux *supprimerJeux(Jeux tJeux[], int *nbJeux, int *tMax);
 
+
+Emprunt* suppEmp(Emprunt* a);
+
 void global();
 
-
+Emprunt* suppressionEnTeteEM(Emprunt *a);
+Emprunt* supprimerEM(Emprunt *a,int x);
+void saveEmp(Emprunt *a);
 
 
 

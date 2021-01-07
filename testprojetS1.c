@@ -79,15 +79,31 @@ void testAdherent(void)
 		printf("Enregistrement\n");
 		EnregistrerTAdherent(tAdherent, taille_logique);
 	}
+	Jeux *tJeux;
+	int tMax = 100, nbJeux = 0, i;
+	tJeux = chargeTJeux(tJeux, &nbJeux, &tMax);
+	Emprunt *e;
+	e = chargeListeEmprunts();
+	afficherListeEmprunts(e, tJeux, nbJeux, taille_logique, tAdherent);
 }
 
 void test(void)
 {
 	/*
+	Adherent **tAdherent;
+	int taille_physique = 9, taille_logique = 0;
+	char choix;
+	tAdherent = (Adherent**) malloc (taille_physique * sizeof(Adherent*));
+	tAdherent = chargTAdherent( tAdherent, &taille_logique, &taille_physique);
+	afficheTAdherent(tAdherent, taille_logique);
 	Jeux *tJeux;
 	int tMax = 100, nbJeux = 0, i;
 	tJeux = chargeTJeux(tJeux, &nbJeux, &tMax);
-	afficheTJeux(tJeux, nbJeux);
+	Emprunt *e;
+	Reservation *r;
+	e = chargeListeEmprunts();
+	r = chargeListeResa();
+	retourJeux(r, e, tJeux, nbJeux);
 	*/
 	menu();
 }
