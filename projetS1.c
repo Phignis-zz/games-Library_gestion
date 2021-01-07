@@ -557,6 +557,7 @@ Jeux* chargeTJeux(Jeux tJeux[], int *nbJeux, int *tMax)
 		return NULL;
 	}
 	j = chargeJeux(jeu_fichier);
+	int y = 0;
 	while (!feof(jeu_fichier)) // Lecture du fichier.
 	{
 		if (*nbJeux == *tMax) // Ajout de 5 de taille physique si tableau trop petit.
@@ -816,14 +817,7 @@ Jeux *ajouterJeux(Jeux tJeux[], int *nbJeux, int *tMax)
 	}
 	tJeux[*nbJeux] = j;
 	*nbJeux = *nbJeux + 1;
-	FILE *jeu_fichier;
-	jeu_fichier = fopen("jeu.don","w");
-
-	for(i = 0; i <= *nbJeux-1; i++) // Sauvegarde dans le fichier.
-	{
-		fprintf(jeu_fichier, "%d\t%s\t%s\t%d\n", tJeux[i].idJeux, tJeux[i].nom, tJeux[i].type, tJeux[i].quantite);
-	}
-	fclose(jeu_fichier);
+	saveJeux(tJeux, *nbJeux);
 	return tJeux;
 
 }
@@ -902,16 +896,20 @@ void retourJeux(Reservation *r, Emprunt *e, Jeux tJeux[], int nbJeux)
 			Modifie la quantité d'un jeu, enlève un emprunt, et transforme (si possible) une réservation en emprunt.
 
 		Variables:
-
-
+		idEmprunt : Variable pour l'ID d'emprunt.
+		idAdh : Variable pour l'ID d'adhérent.
+		id : Variable pour l'ID.
+		z : Vérification si l'adhérent a un emprunt/une réservation.
+		i : Variable pour boucle for.
+		rep : Variable temporaire.
 	*/
-	int idAdh, id, z = 0, cmp, i, rep;
+	int idEmprunt = 0, idAdh = 0, id = 0, z = 0, i = 0, rep = 0;
 	Emprunt *e_parcours = e;
 	Reservation *r_parcours = r;
 	printf("Saisir l'ID de l'adhérent : ");
 	scanf("%d%*c", &idAdh);
 	printf("Les jeux empruntés par cet adhérent sont :\n");
-	while (e_parcours != NULL)
+	while (e_parcours != NULL) //Parcours de la liste emprunt et du tableau jeux pour afficher idEmprunt et nom du jeu.
 	{
 		if(e_parcours->idAdherent == idAdh)
 		{
@@ -920,9 +918,9 @@ void retourJeux(Reservation *r, Emprunt *e, Jeux tJeux[], int nbJeux)
 				if (tJeux[i].idJeux == e_parcours->idJeu)
 				{
 					printf("[%03d]\t%s\n", e_parcours->idEmprunt, tJeux[i].nom);
+					z++;
 				}
 			}
-			z++;
 		}
 		e_parcours = e_parcours->suiv;
 	}
@@ -934,7 +932,7 @@ void retourJeux(Reservation *r, Emprunt *e, Jeux tJeux[], int nbJeux)
 	e_parcours = e;
 	printf("Veuillez entrer le numéro de l'emprunt à retourner :\n");
 	scanf("%d", &id);
-	while (e_parcours != NULL)
+	while (e_parcours != NULL) //Parcours de la liste emprunt et du tableau jeux pour rajouter +1 à la quantité du jeu.
 	{
 		if(e_parcours->idEmprunt == id)
 		{
@@ -951,28 +949,22 @@ void retourJeux(Reservation *r, Emprunt *e, Jeux tJeux[], int nbJeux)
 	e=supprimerEM(e,id);
 	saveEmp(e);
 
-	FILE *jeu_fichier;
-	jeu_fichier = fopen("jeu.don","w");
-	for(i = 0; i <= nbJeux-1; i++) //Sauvegarde dans le fichier.
-	{
-		if (i != rep)
-			fprintf(jeu_fichier, "%d\t%s\t%s\t%d\n", tJeux[i].idJeux, tJeux[i].nom, tJeux[i].type, tJeux[i].quantite);
-	}
-	fclose(jeu_fichier);
-
+	saveJeux(tJeux, nbJeux);
 	printf("Le jeu a été retourné.\n\nRéservations en attente :\n"); z=0;
-	while (r_parcours != NULL)
+	while (r_parcours != NULL) //Parcours de la liste réservation et du tableau jeux pour afficher idReservation et nom du jeu.
 	{
 		if(r_parcours->idAdherent == idAdh)
 		{
 			for(i = 0; i <= nbJeux-1; i++)
 			{
-				if (tJeux[i].idJeux == r_parcours->idJeu)
+				if (tJeux[i].idJeux == r_parcours->idJeu && tJeux[i].quantite <= 0)
+					printf("[%03d]\t%s\t(Rupture de stock !)\n", r_parcours->idRes, tJeux[i].nom);
+				if (tJeux[i].idJeux == r_parcours->idJeu && tJeux[i].quantite > 0)
 				{
 					printf("[%03d]\t%s\n", r_parcours->idRes, tJeux[i].nom);
+					z++;
 				}
 			}
-			z++;
 		}
 		r_parcours = r_parcours->suiv;
 	}
@@ -985,45 +977,82 @@ void retourJeux(Reservation *r, Emprunt *e, Jeux tJeux[], int nbJeux)
 	r_parcours = r;
 	printf("\nVeuillez entrer le numéro du jeu à emprunter : ");
 	scanf("%d", &id);
-	/*
-	while (r_parcours != NULL)
+	
+	while (r_parcours != NULL) //Parcours de la liste réservation et du tableau jeux pour enlever -1 la quantité du stock ou empêcher la transformation sur pas assez de stock.
 	{
 		if(r_parcours->idRes == id)
 		{
 			for(i = 0; i <= nbJeux-1; i++)
 			{
-				if (tJeux[i].idJeux == r_parcours->idJeu)
-				{
+				if (tJeux[i].idJeux == r_parcours->idJeu && tJeux[i].quantite > 0)
 					tJeux[i].quantite = tJeux[i].quantite - 1;
+				if (tJeux[i].idJeux == r_parcours->idJeu && tJeux[i].quantite <= 0)
+				{
+					printf("Ce jeu n'est plus en stock.\n");
+					return;
 				}
 			}
 		}
 		r_parcours = r_parcours->suiv;
 	}
+	e_parcours = e;
 	r_parcours = r;
-	while (r_parcours != NULL)
+    while(e_parcours->suiv != NULL) //Obtention du dernier IDEmprunt et rajout +1 pour la transformation de la réservation en emprunt.
+    {
+        e_parcours = e_parcours->suiv;
+    }
+	idEmprunt = e_parcours->idEmprunt + 1;
+	while (r_parcours != NULL) //Insertion
 	{
 		if(r_parcours->idRes == id)
 		{
-			printf("\nallo %d\n",e->idEmprunt + 1);
-			e = inserer(e, e->idEmprunt + 1, r_parcours->idAdherent, r_parcours->idJeu, r_parcours->dateR);
+			e = inserer(e, idEmprunt, r_parcours->idAdherent, r_parcours->idJeu, r_parcours->dateR);
 		}
 		r_parcours = r_parcours->suiv;
 	}
 	r=supprimer(r,id);
 	saveRes(r);
 	saveEmp(e);
+	
+	saveJeux(tJeux, nbJeux);
 
+	printf("\nRéservation réussie\n.");
+}
+
+void saveJeux(Jeux tJeux[], int nbJeux)
+{
+	/*
+		Nom:		saveJeux
+		Finalité:	Sauvegarder le tableau jeux dans le fichier jeu.don 
+
+		Description générale:
+			Sauvegarder le tableau jeux dans le fichier jeu.don 
+
+		Variables:
+		jeu_fichier : Jeu fichier.
+		i : Pour boucle for.
+	*/
+	FILE *jeu_fichier;
+	int i = 0;
 	jeu_fichier = fopen("jeu.don","w");
-	for(i = 0; i <= nbJeux-1; i++) //Sauvegarde dans le fichier.
+	for(i = 0; i <= nbJeux-1; i++)
 	{
-		if (i != rep)
 			fprintf(jeu_fichier, "%d\t%s\t%s\t%d\n", tJeux[i].idJeux, tJeux[i].nom, tJeux[i].type, tJeux[i].quantite);
 	}
 	fclose(jeu_fichier);
-	*/
-	printf("\nRéservation réussie\n.");
+	return;
 }
+
+/*
+		Nom:		Fonctions pour emprunts
+		Finalité:	Supprimer, et insérer un emprunt
+
+		Variables:
+		id : Id d'un emprunt.
+		a : Liste emprunt alternative.
+		x : Valeur à ajouter/supprimer.
+		flot : Fichier emprunt.
+*/
 
 Emprunt* suppEmp(Emprunt* a)
 {
@@ -1096,20 +1125,18 @@ void menu(void)
 	/* Note temporaire : Je vais trouver un autre moyen de rendre le menu un peu plus "pro" */
 	int rep, bug;
 	char get = '\n';
+	Jeux *tJeux;
 	Adherent **tAdherent;
 	int taille_physique = 9, taille_logique = 0;
 	char choix;
 	tAdherent = (Adherent**) malloc (taille_physique * sizeof(Adherent*));
 	tAdherent = chargTAdherent( tAdherent, &taille_logique, &taille_physique);
-	Jeux *tJeux;
-	int tMax = 100, nbJeux = 0, i;
+	int tMax = 100, nbJeux = 0, i = 0;
 	tJeux = chargeTJeux(tJeux, &nbJeux, &tMax);
 	Emprunt *e;
 	Reservation *r;
 	e = chargeListeEmprunts();
 	r = chargeListeResa();
-	if(tJeux == NULL)
-		return;
 	while( get == '\n' )
 	{
 		system("@cls||clear"); //Clean de la console (fonctionne sur Windows/Linux/Mac)
@@ -1134,7 +1161,8 @@ void menu(void)
 						system("@cls||clear");
 						afficheTJeux(tJeux, nbJeux);
 						printf("\nAppuyez sur entrer pour continuer...\n");
-						getch();
+						fflush(stdin);
+						getchar();
 						break;
 					case 2:
 						system("@cls||clear");
@@ -1142,13 +1170,15 @@ void menu(void)
 							return;
 						tJeux = ajouterJeux(tJeux, &nbJeux, &tMax);
 						printf("\nAppuyez sur entrer pour continuer...\n");
-						getch();
+						fflush(stdin);
+						getchar();
 						break;
 					case 3:
 						system("@cls||clear");
 						retourJeux(r, e, tJeux, nbJeux);
 						printf("\nAppuyez sur entrer pour continuer...\n");
-						getch();
+						fflush(stdin);
+						getchar();
 						break;
 					case 4:
 						system("@cls||clear");
@@ -1156,7 +1186,8 @@ void menu(void)
 							return;
 						tJeux = supprimerJeux(tJeux, &nbJeux, &tMax);
 						printf("\nAppuyez sur entrer pour continuer...\n");
-						getch();
+						fflush(stdin);
+						getchar();
 						break;
 					case 5:
 						break;
@@ -1166,31 +1197,36 @@ void menu(void)
 				system("@cls||clear");
 				// Fonction affichage emprunt
 				printf("\nAppuyez sur entrer pour continuer...\n");
-				getch();
+				fflush(stdin);
+				getchar();
 				break;
 			case 3:
 				system("@cls||clear");
 				// Fonction affichage emprunt
 				printf("\nAppuyez sur entrer pour continuer...\n");
-				getch();
+				fflush(stdin);
+				getchar();
 				break;
 			case 4:
 				system("@cls||clear");
 				// Fonction affichage emprunt
 				printf("\nAppuyez sur entrer pour continuer...\n");
-				getch();
+				fflush(stdin);
+				getchar();
 				break;
 			case 5:
 				system("@cls||clear");
 				// Fonction affichage emprunt
 				printf("\nAppuyez sur entrer pour continuer...\n");
-				getch();
+				fflush(stdin);
+				getchar();
 				break;
 			case 6:
 				system("@cls||clear");
 				// Fonction affichage emprunt
 				printf("\nAppuyez sur entrer pour continuer...\n");
-				getch();
+				fflush(stdin);
+				getchar();
 				break;
 			case 9:
 				return;

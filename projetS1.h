@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include<conio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
@@ -231,17 +230,29 @@ Jeux *ajouterJeux(Jeux tJeux[], int *nbJeux, int *tMax);
 
 Jeux *supprimerJeux(Jeux tJeux[], int *nbJeux, int *tMax);
 
+/*
+	programme:	saveJeux
+	auteur:		POLLET Matéo
+	date:		07/01/21
+	finalité:	Sauvegarder le tableau jeux dans le fichier jeu.don 
+*/
+
+void saveJeux(Jeux tJeux[], int nbJeux);
+
+/*
+	programme:	Fonctions pour emprunts
+	auteur:		POLLET Matéo
+	date:		07/01/21
+	finalité:	Supprimer, et insérer un emprunt
+*/
 
 Emprunt* suppEmp(Emprunt* a);
-
-void global();
-
 Emprunt* suppressionEnTeteEM(Emprunt *a);
 Emprunt* supprimerEM(Emprunt *a,int x);
 void saveEmp(Emprunt *a);
 
 
-
+void global();
 
 
 Emprunt* listenouv(void);

@@ -109,8 +109,10 @@ void testAdherent(void)
 
 void test(void)
 {
-	/*
 	Adherent **tAdherent;
+	int idEmprunt;
+	Reservation *r_parcours;
+	Emprunt *e_parcours;
 	int taille_physique = 9, taille_logique = 0;
 	char choix;
 	tAdherent = (Adherent**) malloc (taille_physique * sizeof(Adherent*));
@@ -123,7 +125,27 @@ void test(void)
 	Reservation *r;
 	e = chargeListeEmprunts();
 	r = chargeListeResa();
-	retourJeux(r, e, tJeux, nbJeux);
+	/*
+	r_parcours = r;
+    e_parcours = e;
+    while(e_parcours->suiv != NULL)
+    {
+        e_parcours = e_parcours->suiv;
+    }
+	idEmprunt = e_parcours->idEmprunt + 1;
+	while (r_parcours != NULL)
+	{
+		printf("dddddddddddddddddddddddddddddd");
+		if(r_parcours->idRes == 7)
+		{
+			printf("%d", e->idEmprunt);
+			e = inserer(e, idEmprunt, r_parcours->idAdherent, r_parcours->idJeu, r_parcours->dateR);
+		}
+		r_parcours = r_parcours->suiv;
+	}
+	printf("dddddddddddddddddddddddddddddd");
+	saveEmp(e);
+	//retourJeux(r, e, tJeux, nbJeux);
 	*/
 	menu();
 }
