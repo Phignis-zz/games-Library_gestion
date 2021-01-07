@@ -1204,6 +1204,15 @@ void menu(void)
 
 
 Reservation* suppressionEnTete(Reservation *a) {
+/*
+nom : suppressionEnTete
+finalité : supprimer la premiere réservation
+description générale : la focntion prend en argument le premier maillon de la liste des réservations, la supprimer, et renvoie le maillon suivant comme étant le nouveau premier maillon. ENfin, elle renvoie la
+						nouvelle liste à la fonction appelante
+variable : 	*a : liste avant la suppression
+			*b : liste apres la suppression du premier maillon
+*/
+
   Reservation *b;
   if (a==NULL) {
     printf("op interdite\n");
@@ -1216,6 +1225,14 @@ Reservation* suppressionEnTete(Reservation *a) {
 }
 
 Reservation* supprimer(Reservation *a,int x) {
+/*
+nom : supprimer
+finalité : determiner la place d'une réservation dans une liste pour la supprimer
+description générale : la fonction prend en argument la liste des réservations ainsi que l'id de la réservation à supprimer, détermine la fonction a utiliser en fonction de sa position dans la liste et 
+						execute cette dite fonction. Enfin, elle renvoie la nouvelle liste à la fonction appelante.
+variable : 	*a : liste des réservations
+			x : id de la réservation à supprimer
+*/
   if(a==NULL)
     return a;
   if(x < a -> idRes)
@@ -1227,6 +1244,14 @@ Reservation* supprimer(Reservation *a,int x) {
 }
 
 Reservation* suppRes(Reservation *a) {
+/*
+nom : suppRes
+finalité : supprimer la premiere réservationa liste des réservations
+description générale : demande à l'utilisateur quelle réservations il/elle veut annuler, communique toutes ces informations à la bonne fonction,
+						enregistre dans le fichier texte, et enfin renvoie la liste finale à la fonction qui l'a appelé.
+variable : 	*a : liste des réservations
+			id : identifiant de la réservation
+*/
 	int id;
 	printf("Veuillez entrer le numéro de réservation à annuler :\n");
 	scanf("%d", &id);
@@ -1236,6 +1261,13 @@ Reservation* suppRes(Reservation *a) {
 }
 
 void saveRes(Reservation *a) {
+/*
+nom : saveRes
+finalité : enregistrer la liste des réservations dans un fichier
+description générale : la fonction prend en argument la liste des réservations et essaye d'ouvrir le ficher de sauvegarde en mode lecture. S'il y parvient, il enregistre, sinon il previent l'utilisateur
+variable : 	*a : liste des réservations
+			flot : pointeur vers le fichier de sauvegarde
+*/
 	FILE *flot;
 	flot=fopen("Reservation.don","w");
 	if (flot==NULL)
@@ -1249,12 +1281,29 @@ void saveRes(Reservation *a) {
 }
 
 Booleen vide(Emprunt *e) {
+/*
+nom : vide
+finalité : vérifier si une liste est vide
+description générale : la fonction prend en argumentune liste et verifie si elle est vide ou non. si oui, elle renvoie vrai, sinon elle renvoie faux.
+variable : 	*e : liste des réservations
+*/
     if(e==NULL)
     	return vrai;
 	return faux;
 }
 
 void afficherListeEmprunts(Emprunt *e, Jeux tJeux[],int taille_logique, int taille_logique_A, Adherent* tAdherent[]) {
+/*
+nom : afficherListeEmprunts
+finalité : afficher la liste des emprunts en cours (date, nom et prenom de l'adhérent et nom du jeu)
+description générale : La fonction prend en argument la liste des emprunts, le tableau des jeux et des adhrents, ainsi que leur taille logique. 
+						Elle va regarder la liste des emprunts chercher le nom et prenom de l'adhérents ayant fait l'emprunts ainsi que le nom du jeu emprunté et afficher toutes ces informations.
+variable : 	*e : liste des emprunts
+			tJeux[] : tableau des jeux
+			taille_logique : nombre d'élément dans le tableau tJeux
+			taille_logique_A : nombre d'élément dans le tableau tAdherent
+			tAdherent[] : tableau des adhérents 
+*/
 	int adherent,jeu;
 	int i;
 	int trouve;
@@ -1278,8 +1327,16 @@ void afficherListeEmprunts(Emprunt *e, Jeux tJeux[],int taille_logique, int tail
 	printf("\n");
 }
 
-int trouveNumAdherent(Adherent **tAdherent, int taille_logique_A, int idAdherent)
-{
+int trouveNumAdherent(Adherent **tAdherent, int taille_logique_A, int idAdherent) { 
+/*
+nom : trouveNumAdherent
+finalité : trouver la position d'un adherent dans le tableau des adherents
+description générale : la fonction prend en argument le tableau des adhérents, le nombre d'adhérent, ainsi que l'identifiant de l'utilisateur dont on cherche sa position dans le tableau.
+						Elle va chercher dans tout le tableau jusqu'à qu'elle trouve une correspondance et va renvoyer la position dans le tableau. Si l'utilisateur est inconnu, elle renvoie -1.
+variable : 	tAdherent : tableau des adhérents
+			taille_logique_A : nombre d'adhérents
+			idAdherent : identifiant de l'adhérent dont on cherche la place dans le tableau
+*/
 	int i;
 	for(i = 0; i <= taille_logique_A; ++i)
 	{
@@ -1291,8 +1348,16 @@ int trouveNumAdherent(Adherent **tAdherent, int taille_logique_A, int idAdherent
 	return -1;
 }
 
-int trouveNumJeu(int id, Jeux tJeu[], int taille_logique)
-{
+int trouveNumJeu(int id, Jeux tJeu[], int taille_logique) {
+/*
+nom : trovueNumJeu
+finalité : trouver la position d'un jeu dans le tableau des jeu
+description générale : la fonction prend en argument le tableau des jeux, le nombre de jeux, ainsi que l'identifiant du jeu dont on cherche sa position dans le tableau.
+						Elle va chercher dans tout le tableau jusqu'à qu'elle trouve une correspondance et va renvoyer la position dans le tableau. Si le jeu est inconnu, elle renvoie -1.
+variable : 	tJeu : tableau des jeux
+			taille_logique : nombre de jeux
+			id : identifiant du jeu dont on cherche la place dans le tableau
+*/
 	int i;
 	for(i = 0; i <= taille_logique; i++)
 	{
@@ -1305,6 +1370,17 @@ int trouveNumJeu(int id, Jeux tJeu[], int taille_logique)
 }
 
 Emprunt* chargeListeEmprunts(void) {
+/*
+nom : chargeListeEmprunts
+finalité : charger la liste des emprunts
+description générale : la fonction essayer d'ouvrir le fichier des emprunts, le lire ligne par ligne et mettre tout ca en mémoire dans une liste.
+variable : 	flot : pointeur vers le ficheir des emprunts
+			*e : liste des Emprunts
+			emprunt : identifiant de l'emprunt que la fonction est en train de charger
+			adherent : identifiant de l'adhérent ayant fait l'emprunt
+			jeu : identifiant du jeu emprunté
+			date : date de l'emprunt
+*/
 	FILE *flot;
 	flot=fopen("Emprunts.don","r");
 	Emprunt *e;
@@ -1328,18 +1404,51 @@ Emprunt* chargeListeEmprunts(void) {
 }
 
 Date lireFichier(FILE *flot, int *emprunt, int *adherent, int *jeu) {
+/*
+nom : lireFichier
+finalité : lire une ligne du fichier de sauvegarde des emprunts et la renvoie à la fonction appelante
+description générale : la fonction prend en argument le pointeur vers le ficher de sauvegarde, l'adresse de la variable contenant l'identifiant de l'emprunt à charger, l'adresse de la variable contenant
+						l'identifiant de l'emprunteur, l'adresse de la variable contenant l'identifiant du jeu emprunté.
+						Elle lit une ligne dans le fichier de sauvegarde, renvoie l'identifiant de l'emprunt, celui de l'adhérent ainsi que celui du jeu par pointeur et charge la date d'emprunt dans une
+						variable qu'elle va renvoyer.
+variable : 	flot : pointeur vers le fichier de sauvegarde
+			*emprunt : pointeur vers la variable de l'identifiant de l'emprunt en cours de chargement
+			*adherent : pointeur vers la variable de l'identifiant de l'adherent
+			*jeu : pointeur vers la variable de l'identifiant du jeu
+			*d : date d'emprunt
+*/
 	Date d;
 	fscanf(flot,"%d%d%d%d/%d/%d",emprunt,adherent,jeu,&d.jour,&d.mois,&d.annee);
 	return d;
 }
 
 Emprunt* listenouv(void) {
+/*
+nom : listenouv
+finalité : créeer une liste d'emprunt vide
+description générale : la fonction créer une liste d'emprunts vide qu'elle va renvoyer à la fonction appelante.
+variable : 	fe : liste des emprunts
+*/
     Emprunt *e;
     e=NULL;
     return e;
 }
 
 Emprunt* insertionEnTete(Emprunt *s, int emprunt, int adherent, int jeu, Date date) {
+/*
+nom : insertionEnTete
+finalité : insérer un nouveau maillon au début d'une liste
+description générale : la fonction prend en argument le maillon dans la liste des emprunts devant suivre ce nouveau maillon, identifiant de l'emprunt, identifiant de l'adhérent ayant fait l'emprunt,
+						l'identifiant du jeu emprunté, ainsi que le date d'emprunt
+						Elle créer un nouveau maillon dont elle alloue la taille dynamiquement, y stock toute les valeurs nécéssaires, et la rajoute en premier place dans la liste. Enfin, elle return cette
+						nouvelle liste.
+variable : 	s : liste des emprunts avant l'ajout
+			e : nouveau maillon à rajouter au début de la liste
+			emprunt : identifiant de l'emprunt en cours de chargement
+			adherent : identifiant de l'adherent
+			jeu : identifiant du jeu
+			date : date d'emprunt
+*/
 	Emprunt *e;
 	e=(Emprunt *)malloc(sizeof(Emprunt));
 	if (e==NULL) {
@@ -1354,8 +1463,18 @@ Emprunt* insertionEnTete(Emprunt *s, int emprunt, int adherent, int jeu, Date da
 	return e;
 }
 
-Emprunt* inserer(Emprunt *e, int emprunt, int adherent, int jeu, Date date) 
-{
+Emprunt* inserer(Emprunt *e, int emprunt, int adherent, int jeu, Date date) {
+/*
+nom : inserer
+finalité : déterminer la position d'insertion du nouveau maillon dans la liste des emprunts
+description générale : la fonction prend en argument la liste des emprunts, l'identifiant de l'emprunt à rajouter, l'identifiant de l'emprunteur, l'identifiant du jeu emprunté et la date d'emprunt
+						Elle détermine la position d'insertion d'un emprunts et lance la bonne fonction pour l'inserer
+			e : premier maillon de la liste des emprunts
+			emprunt : identifiant de l'emprunt
+			adherent : identifiant de l'adherent
+			jeu : identifiant du jeu
+			date : date d'emprunt
+*/
 	if (e==NULL)
 		return insertionEnTete(e,emprunt,adherent,jeu,date);
 	if (emprunt<e->idEmprunt)
@@ -1368,12 +1487,35 @@ Emprunt* inserer(Emprunt *e, int emprunt, int adherent, int jeu, Date date)
 
 
 Booleen videR(Reservation *r) {
+/*
+nom : videR
+finalité : vérifier si une liste est vide
+description générale : la fonction prend en argument une liste
+						Elle vérifie si une liste est vide. si oui, elle renvoie vrai, sinon elle renvoie faux
+variable : 	r : premier maillon d'une liste de réservations
+*/
     if(r==NULL)
     	return vrai;
 	return faux;
 }
 
 void afficherListeResa(Reservation *r, Adherent* tAdherent[], int taille_logique_A, Jeux tJeux[], int taille_logique) {
+/*
+nom : afficherListeResa
+finalité : afficher la liste des réservation pour un jeu
+déscription générale : la fonction prend en argument la liste des réservations, le tableau des adhérents et celui des jeux, ainsi que leurs taille logique (donc le nombre de jeu et d'adhérent)
+						Elle demande à l'utilisateur l'identifiant d'un jeu et va chercher toutes les réservations pour ce jeu. S'il y en a, elle va afficher le nom du jeu, ainsi que la date d'emprunt et le 
+						nom et le prenom de l'emprunteur
+variable : 	r : liste des réservations
+			tAdherent : tableau des adhérents
+			tJeux : tableau des jeux
+			taille_logique : nombre de jeu dans le tableau
+			taille_logique_A : nombre d'adhérents dans le tableau.
+			id : identifiant du jeu dont on cherche la liste des réservations
+			adherent : position de l'adhérent emprunteur dans le tableau des adhérents
+			jeu : position du jeu emprunté dans le tableau des jeux
+
+*/
 	int id, adherent, jeu;
 	printf("\nVeuillez entrer l'identifiant du jeu pour lequel vous souhaitez regarder la liste des réservations :\n");
 	scanf("%d",&id);
@@ -1399,6 +1541,17 @@ void afficherListeResa(Reservation *r, Adherent* tAdherent[], int taille_logique
 }
 
 Reservation* chargeListeResa(void) {
+/*
+nom : chargeListeResa
+finalité : charger en mémoire la liste des réservations
+description générale : 	la fonction ouvre le fichier de sauvegarde des réservations, créer une liste vide et la remplie avec le contenu du fichier de sauvegarde
+variable : 	flot : pointeur vers le fichier de sauvegarde
+			e : liste des réservations
+			resa : identifiant de la réservation en cours de chargement
+			adherent : identifiant de l'adhérent ayant fait l'emprunt en cours de chargement
+			jeu : identifiant du jeu
+			date : date de réservation
+*/
 	FILE *flot;
 	flot=fopen("Reservation.don","r");
 	Reservation *e;
@@ -1422,18 +1575,50 @@ Reservation* chargeListeResa(void) {
 }
 
 Date lireFichierR(FILE *flot, int *resa, int *adherent, int *jeu) {
+/*
+nom : lireFichierR
+finalité : lire une ligne du fichier de sauvegarde des réservations et la renvoie à la fonction appelante
+description générale : la fonction prend en argument le pointeur vers le ficher de sauvegarde, l'adresse de la variable contenant l'identifiant de la réservatop, à charger, l'adresse de la variable contenant
+						l'identifiant de l'adhérent, l'adresse de la variable contenant l'identifiant du jeu réservé.
+						Elle lit une ligne dans le fichier de sauvegarde, renvoie l'identifiant de la réservation, celui de l'adhérent ainsi que celui du jeu par pointeur et charge la date de réservation dans
+						une variable qu'elle va renvoyer.
+variable : 	flot : pointeur vers le fichier de sauvegarde
+			resa : identifiant de la réservation
+			adherent : identifiant ayant fait la réservation
+			jeu : identifiant du jeu réserver
+			d : date de réservation
+*/
 	Date d;
 	fscanf(flot,"%d%d%d%d/%d/%d",resa,adherent,jeu,&d.jour,&d.mois,&d.annee);
 	return d;
 }
 
 Reservation* listenouvR(void) {
+/*
+nom : listenouvR
+finalité : creer une nouvelle liste vide de réservations
+description générale : la fonction pcréer une liste de réservation vide qu'elle return
+variable : 	r : liste de réservation
+*/
     Reservation *r;
     r=NULL;
     return r;
 }
 
 Reservation* insertionEnTeteR(Reservation *s, int resa, int adherent, int jeu, Date date) {
+/*
+nom : insertionEnTeteR
+finalité : créer un maillon et l'inserer au début d'une liste de réservation
+description générale : la fonction prend en argument le premier pointeur de la liste des reservations, l'identifiant de la réservation à charger, l'identifiant de l'adhérent, l'identifiant du jeu emprunté
+						ainsi que la date de réservation
+						Elle créer un nouveau maillon, le remplis avec les valeurs passées en arguments, le place avant le premier maillon de la liste des réservations et le return.
+variable : 	s : ancien premier maillon de la liste
+			resa : identifiant de la nouvelle réservation
+			adherent : identifiant de l'adherent
+			jeu : identifiant du jeu
+			date : date de réservation
+			r : nouveau maillon
+*/
 	Reservation *r;
 	r=(Reservation *)malloc(sizeof(Reservation));
 	if (r==NULL) {
@@ -1449,6 +1634,18 @@ Reservation* insertionEnTeteR(Reservation *s, int resa, int adherent, int jeu, D
 }
 
 Reservation* insererR(Reservation *r, int resa, int adherent, int jeu, Date date) {
+/*
+nom : insererR
+finalité : déterminer la place du nouveau maillon dans la liste des réservations
+description générale : la fonction prend en argument le premier pointeur de la liste des reservations, l'identifiant de la réservation à charger, l'identifiant de l'adhérent, l'identifiant du jeu emprunté
+						ainsi que la date de réservation
+						Elle détermine la place du nouveau maillon dans la liste et charge la fonction pour l'ajouter. Enfin; elle return et résultat.
+variable : 	r : premier maillon de la liste
+			resa : identifiant de la nouvelle réservation
+			adherent : identifiant de l'adherent
+			jeu : identifiant du jeu
+			date : date de réservation
+*/
 	if (r==NULL)
 		return insertionEnTeteR(r,resa,adherent,jeu,date);
 	if (resa<r->idRes)
@@ -1458,3 +1655,4 @@ Reservation* insererR(Reservation *r, int resa, int adherent, int jeu, Date date
 	r->suiv=insererR(r->suiv,resa,adherent,jeu,date);
 	return r;
 }
+
