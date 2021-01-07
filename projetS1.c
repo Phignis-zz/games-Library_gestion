@@ -164,6 +164,22 @@ int recherchDich_Adhe(Adherent **tAdherent, int taille_logique, int *trouve, int
 	return inf;
 }
 
+int recherchDich_Jeux(Jeux *tJeux, int taille_logique, int *trouve, int idJeu)
+{
+	int inf = 0, middle, sup = taille_logique - 1;
+	*trouve = 0;
+	while(inf <= sup)
+	{
+		middle = (inf + sup) / 2;
+		if(idJeu <= tJeux[middle].idJeux)
+			sup = middle - 1;
+		else inf = middle + 1;
+		if(idJeu == tJeux[middle].idJeux)
+			*trouve = 1;
+	}
+	return inf;
+}
+
 Adherent chargeAdherent(FILE *flot)
 {
 	/*
@@ -501,7 +517,100 @@ Adherent** supressAdherent(Adherent** tAdherent, int *taille_logique)
 	return tAdherent;
 }
 
+Emprunt* ajoutEmprunt(Emprunt* e, Jeux tJeux[], int taille_logique_tJeux, int idAdh, int idJeu, Date date_emprunt)
+{
+	Emprunt *e_parcours = e;
+	int idEmprunt = 0, nb_emp_cours = 0, trouve = 0, index_jeu = 0;;
 
+	// on check si l'emprunteur possède bien moins de 3 emprunts en cours
+	while( e_parcours != NULL)
+	{
+		if(e_parcours->idAdherent == idAdh)
+			nb_emp_cours ++;
+		e_parcours = e_parcours->suiv;
+	}
+	if(nb_emp_cours >= 3)
+	{
+		printf("Vous avez déjà trois ou plus emprunts en cours! Vous ne pouvez plus empruntez!\n");
+		return e;
+	}
+
+	// on vérifie s'il reste le jeu demandé en stock, pour continuer l'emprunt
+	index_jeu =  recherchDich_Jeux(tJeux, taille_logique_tJeux, &trouve, idJeu);
+	if(tJeux[index_jeu].quantite <= 0)
+	{
+		printf("Le jeu saisi n'est plus en stock, vous ne pouvez l'empruntez.");
+		return e;
+	}
+
+	// la saisie est donc valide, on prends un id d'emprunt de plus 1 par rapport au dernier
+	e_parcours = e;
+	while(e_parcours->suiv != NULL)
+	{
+		e_parcours = e_parcours->suiv;
+	}
+	idEmprunt = e_parcours->idEmprunt + 1;
+	e = inserer(e, idEmprunt, idAdh, idJeu, date_emprunt);
+	return e;
+}
+
+Date infoReserv(Adherent* tAdherent[], int taille_logique_tAdh, Jeux tJeux[], int taille_logique_tJeux, int *idAdh, int *idJeu, Date date_reserv)
+{
+	int trouve = 0;
+	char choix;
+
+	// contrôle de saisie de l'id de l'adherent
+	printf("Quel est l'id d'adherent de la nouvelle réservation?\n");
+	scanf("%d%*c", idAdh);
+	// on cherche juste à savoir si l'id est trouvé, peu importe sa position
+	recherchDich_Adhe(tAdherent, taille_logique_tAdh, &trouve, *idAdh);
+	while(trouve == 0)
+	{
+		printf("L'id d'adherent saisie n'est pas référencé. Saisissez un nouvel id d'adherent?\n");
+		scanf("%d%*c", idJeu);
+		recherchDich_Adhe(tAdherent, taille_logique_tAdh, &trouve, *idAdh);
+	}
+
+	// contrôle de saisie de l'id du jeux
+	printf("Quel est l'id du jeu de la nouvelle réservation?\n");
+	scanf("%d%*c", idJeu);
+	// on cherche juste à savoir si l'id est trouvé, peu importe sa position
+	recherchDich_Jeux(tJeux, taille_logique_tJeux, &trouve, *idJeu);
+	while(trouve == 0)
+	{
+		printf("L'id d'adherent saisie n'est pas référencé. Saisissez un nouvel id d'adherent?\n");
+		scanf("%d%*c", idJeu);
+		recherchDich_Jeux(tJeux, taille_logique_tJeux, &trouve, *idJeu);
+	}
+	printf("Voulez-vous une date de réservation automatique? (o/n)");
+	scanf("%c%*c", &choix);
+	while(choix != 'o' || choix != 'O' || choix != 'n' || choix != 'N')
+	{
+		printf("Choix non reconnnu. Voulez-vous une date de réservation automatique? (o/n)");
+		scanf("%c%*c", &choix);
+	}
+	if(choix == 'o' || choix == 'O')
+		return current_date();
+	else return saisie_date();
+}
+
+Reservation* ajoutReservation(Adherent* tAdherent[], int taille_logique_tAdh, Jeux tJeux[], int taille_logique_tJeux , Reservation* r, int idAdh, int idJeu, Date date_reservation)
+{
+	Reservation *r_parcours = r;
+	int idAdh_nouv = 0, idJeux_nouv = 0, idReservation = 0;
+	Date date_reservation_nouv;
+
+	// insertion et contrôle des données de la nouvelle réservation
+	date_reservation_nouv = infoReserv(tAdherent, taille_logique_tAdh, tJeux, taille_logique_tJeux, &idAdh, &idJeu, date_reservation);
+
+	// on prends un id de réservation de plus 1 par rapport au dernier
+	while(r_parcours->suiv != NULL)
+	{
+		r_parcours = r_parcours->suiv;
+	}
+	idReservation = r_parcours->idRes + 1;
+	r = insererR(r, idReservation, idAdh_nouv, idJeux_nouv, date_reservation_nouv);
+}
 
 Jeux chargeJeux(FILE *flot)
 {

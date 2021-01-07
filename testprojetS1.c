@@ -125,7 +125,7 @@ int main(void)
 	//testchargeAdherent();
 	//testchargeTAdherent();
 	//global();
-	testAdherent();
+	//testAdherent();
 	//global();
 	//testchargeJeux();
 	//testchargeTJeux();

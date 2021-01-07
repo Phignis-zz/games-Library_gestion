@@ -93,6 +93,8 @@ Adherent** decaleAGauche_Adherent(Adherent** tAdherent, int taille_logique, int 
 */
 int recherchDich_Adhe(Adherent **tAdherent, int taille_logique, int *trouve, int idAdherent);
 
+int recherchDich_Jeux(Jeux *tJeux, int taille_logique, int *trouve, int idJeu);
+
 /*
 	programme:	chargeAdherent
 	auteur:		FOUCRAS Baptiste
@@ -264,3 +266,4 @@ Reservation* supprimer(Reservation *a,int x);
 Reservation* suppressionEnTete(Reservation *a);
 Reservation* suppRes(Reservation *a);
 void saveRes(Reservation *a);
+int trouveNumAdherent(int id, Adherent* tAdherent[], int taille_logique_A);
