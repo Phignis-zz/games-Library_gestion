@@ -57,8 +57,20 @@ typedef enum {faux,vrai} Booleen;
 
 void global();
 
+/*
+	programme:	current_date
+	auteur:		FOUCRAS Baptiste
+	date:		28/12/20
+	finalité:	Retourner la date de l'ordinateur, grâce à time.h
+*/
 Date current_date(void);
 
+/*
+	programme:	saisie_date
+	auteur:		FOUCRAS Baptiste
+	date:		30/12/20
+	finalité:	Saisir une date avec contrôle complet de la saisie.
+*/
 Date saisie_date(void);
 
 /*
@@ -73,27 +85,33 @@ void fget(char str[] , int max_saisie, FILE *flot, char char_arret);
 	programme:	decaleADroite_Adherent
 	auteur:		FOUCRAS Baptiste
 	date:		28/12/20
-	finalité:	
+	finalité:	Décale à droite à partir de l'index pos_insert tout les éléments du tableau de pointeurs d'adhérent
 */
-Adherent** decaleADroite_Adherent(Adherent** tAdherent, int taille_logique, int pos_insert);
+Adherent** decaleADroite_Adherent(Adherent** tAdherent, int taille_logique, int limite);
 
 /*
 	programme:	decaleAGauche_Adherent
 	auteur:		FOUCRAS Baptiste
 	date:		02/01/02
-	finalité:	
+	finalité:	Décale à gauche à partir de l'index pos_insert tout les éléments du tableau de pointeurs d'adhérent
 */
-Adherent** decaleAGauche_Adherent(Adherent** tAdherent, int taille_logique, int pos_insert);
+Adherent** decaleAGauche_Adherent(Adherent** tAdherent, int taille_logique, int debut);
 
 /*
 	programme:	recherchDich_Adhe
 	auteur:		FOUCRAS Baptiste
 	date:		28/12/20
-	finalité:	
+	finalité:	retourne la position d'insertion de l'id d'adhérent, et informe si il est déjà présent ou non dans le tableau tAdherent
 */
 int recherchDich_Adhe(Adherent **tAdherent, int taille_logique, int *trouve, int idAdherent);
 
-int recherchDich_Jeux(Jeux *tJeux, int taille_logique, int *trouve, int idJeu);
+/*
+	programme:	recherchDich_Jeux
+	ajoutEmprunt:		POLLET Matéo
+	date:		28/12/20
+	finalité:	retourne la position d'insertion de l'id de jeu, et informe si il est déjà présent ou non dans le tableau tJeux
+*/
+int recherche_Jeux(Jeux *tJeux, int taille_logique, int idJeu);
 
 /*
 	programme:	chargeAdherent
@@ -123,7 +141,7 @@ void afficheTAdherent(Adherent* tAdherent[], int taille_logique);
 	programme:	ajoutAdherent
 	auteur:		FOUCRAS Baptiste
 	date:		30/12/20
-	finalité:	Insérer un adhérent dans le tableau trié tAdherent et dans le fichier adherent.don
+	finalité:	Insérer un adhérent dans le tableau trié tAdherent
 */
 Adherent** ajoutAdherent(Adherent* tAdherent[], int *taille_logique, int *taille_physique);
 
@@ -131,7 +149,7 @@ Adherent** ajoutAdherent(Adherent* tAdherent[], int *taille_logique, int *taille
 	programme:	EnregistrerTAdherent
 	auteur:		FOUCRAS Baptiste
 	date:		30/12/20
-	finalité:	
+	finalité:	Enregistre les données du tableau tAdherent dans le fichier adherent.don
 */
 void EnregistrerTAdherent(Adherent** tAdherent, int taille_logique);
 
@@ -139,7 +157,7 @@ void EnregistrerTAdherent(Adherent** tAdherent, int taille_logique);
 	programme:	modifAdherent
 	auteur:		FOUCRAS Baptiste
 	date:		01/01/21
-	finalité:	
+	finalité:	Modifier un adhérent du tableau tAdherent
 */
 Adherent** modifAdherent(Adherent** tAdherent, int taille_logique);
 
@@ -147,16 +165,33 @@ Adherent** modifAdherent(Adherent** tAdherent, int taille_logique);
 	programme:	supressAdherent
 	auteur:		FOUCRAS Baptiste
 	date:		01/01/21
-	finalité:	
+	finalité:	Supprimer un adhérent du tableau tAdherent
 */
 Adherent** supressAdherent(Adherent** tAdherent, int *taille_logique);
 
-Emprunt* ajoutEmprunt(Emprunt* e, Jeux tJeux[], int taille_logique_tJeux, int idAdh, int idJeu, Date date_emprunt);
+/*
+	programme:	ajoutEmprunt
+	auteur:		FOUCRAS Baptiste
+	date:		07/01/21
+	finalité:	Ajouter un emprunt avec contrôle de la possibilité d'emprunter à la liste d'emprunt
+*/
+Emprunt* ajoutEmprunt(Emprunt* e, Jeux tJeux[], int taille_logique_tJeux, int idAdh, int *idJeu, Date date_emprunt);
 
+/*
+	programme:	infoReserv
+	auteur:		FOUCRAS Baptiste
+	date:		07/01/21
+	finalité:	Permet de saisir toutes les informations d'une réservation, avec contrôle de saisie et de présence des ID dans les tableaux respectifs
+*/
 Date infoReserv(Adherent* tAdherent[], int taille_logique_tAdh, Jeux tJeux[], int taille_logique_tJeux, int *idAdh, int *idJeu, Date date_reserv);
 
-Reservation* ajoutReservation(Adherent* tAdherent[], int taille_logique_tAdh, Jeux tJeux[], int taille_logique_tJeux , Reservation* r, int idAdh, int idJeu, Date date_reservation);
-
+/*
+	programme:	ajoutReservation
+	auteur:		FOUCRAS Baptiste
+	date:		07/01/21
+	finalité:	Ajouter une réservation à la liste de réservations
+*/
+Reservation* ajoutReservation(Adherent* tAdherent[], int taille_logique_tAdh, Jeux tJeux[], int taille_logique_tJeux , Reservation* r);
 /*
 	programme:	chargeJeux
 	auteur:		POLLET Matéo
@@ -238,17 +273,29 @@ Jeux *ajouterJeux(Jeux tJeux[], int *nbJeux, int *tMax);
 
 Jeux *supprimerJeux(Jeux tJeux[], int *nbJeux, int *tMax);
 
+/*
+	programme:	saveJeux
+	auteur:		POLLET Matéo
+	date:		07/01/21
+	finalité:	Sauvegarder le tableau jeux dans le fichier jeu.don 
+*/
+
+void saveJeux(Jeux tJeux[], int nbJeux);
+
+/*
+	programme:	Fonctions pour emprunts
+	auteur:		POLLET Matéo
+	date:		07/01/21
+	finalité:	Supprimer, et insérer un emprunt
+*/
 
 Emprunt* suppEmp(Emprunt* a);
-
-void global();
-
 Emprunt* suppressionEnTeteEM(Emprunt *a);
 Emprunt* supprimerEM(Emprunt *a,int x);
 void saveEmp(Emprunt *a);
 
 
-
+void global();
 
 
 Emprunt* listenouv(void);
@@ -312,6 +359,7 @@ auteur : GAUGIRARD Florian
 date : 23/12/2020
 finalité : vérifier si une liste est vide ou non
 */
+
 
 
 Reservation* listenouvR(void);
@@ -406,29 +454,9 @@ finalité : supprimer un maillon de la liste des réservations
 
 Reservation* suppRes(Reservation *a);
 void saveRes(Reservation *a);
-int trouveNumAdherent(int id, Adherent* tAdherent[], int taille_logique_A);
 /*
 nom: suppRes
 auteur : GAUGIRARD Florian
 date : 03/12/2020
 finalité : demander à l'utilisateur quelle réservation doit etre annulée et transmettre cette information à la bonne fonction
-*/
-
-
-
-int trouveNumJeu(int id, Jeux tJeu[], int taille_logique);
-/*
-nom: trouveNumJeu
-auteur : GAUGIRARD Florian
-date : 04/12/2020
-finalité : trouver la position d'un jeu dans le tableau des jeux
-*/
-
-
-int trouveNumAdherent(Adherent **tAdherent, int taille_logique_A, int idAdherent);
-/*
-nom: trouveNumAdherent
-auteur : GAUGIRARD Florian
-date : 04/12/2020
-finalité : trouver la position d'un adhérent dans le tableau des adhérents
 */

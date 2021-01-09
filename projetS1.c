@@ -17,20 +17,50 @@ void global(void)
 
 Date current_date(void)
 {
+	/*
+		Nom:		current_date
+		Finalité: 	Retourner la date de l'ordinateur, grâce à time.h
+		Description générale:
+			déclaration d'une structure Date
+			Déclaration d'une structure time_t (provenant de time.h), type retourné par la fonction time
+			Déclaration d'une struct tm, qui correspond au format calendaire de la date, et qui contiendra l'heure locale grace à la fonction local_time
+			concaténation dans la struct date des variables de tm contenant le jour, le mois et l'année
+			retourne la date obtenue par concaténation
+
+
+		Variables:
+		jour_actuel			variable de type Date, servant de conteneur pour la date actuelle
+		t					variable de type time_t provenant de time.h, et contenant le nombre de secondes depuis le 1er Janvier 1970
+		jour_heure_actuel	variable de type tm, provenant de time.h, et contenant divers entier comme l'année, le jour, l'heure exact, le fuseau horaire...
+	*/
 	Date jour_actuel;
-	time_t t = time(NULL); // définition de la variable t, de type time_t
-  	struct tm jour_heure_actuel = *localtime(&t); // structure stockant divers variables comme les années, les mois, le jour, l'heure précise...
+	time_t t = time(NULL); // définition de la variable t, de type time_t; time renvoie le nombre de seconde depuis le 1er janv 1970
+	// structure stockant divers variables comme les années, les mois, le jour, l'heure précise...
+  	struct tm jour_heure_actuel = *localtime(&t); // local_time prends en entrée un type time_t, et renvoie l'adresse d'une struc tm contenant l'heure locale
   	jour_actuel.jour = jour_heure_actuel.tm_mday;
-  	jour_actuel.mois = jour_heure_actuel.tm_mon + 1;
-  	jour_actuel.annee = jour_heure_actuel.tm_year + 1900;
+  	jour_actuel.mois = jour_heure_actuel.tm_mon + 1; // les mois sont numérotés de 0 à 11, il faut ajouter 1 pour avoir le mois actuel
+  	jour_actuel.annee = jour_heure_actuel.tm_year + 1900; // les années débutent au début du référencement informatique du calendrier, donc 1900
 	return jour_actuel;
 }
 
 Date saisie_date(void)
 {
+	/*
+		Nom:		saisie_date
+		Finalité: 	Saisir une date avec contrôle complet de la saisie
+		Description générale:
+			
+
+
+		Variables:
+		date			variable de type Date, servant de conteneur à la fonction
+		date_actuelle	variable contenant la date exacte d'aujourd'hui
+		choix			variable pour valider une saisie d'informations
+	*/
 	Date date, date_actuelle;
-	date_actuelle = current_date();
 	char choix = 'n';
+
+	date_actuelle = current_date();
 	
 	while(choix == 'n' || choix == 'N')
 	{
@@ -128,20 +158,50 @@ void fget(char *str , int max_saisie, FILE *flot, char char_arret)
 	Fonction de traitement du fichier adherent.don
 */
 
-Adherent** decaleADroite_Adherent(Adherent** tAdherent, int taille_logique, int pos_insert)
+Adherent** decaleADroite_Adherent(Adherent** tAdherent, int taille_logique, int limite)
 {
+	/*
+		Nom:		decaleADroite_Adherent
+		Finalité: 	Décale à droite à partir de l'index limite tout les éléments du tableau de pointeurs d'adhérent
+		Description générale:
+			du dernier pointeur du tableau jusqu'à celui avant celui spécifié par la limite:
+				le pointeur de l'index courant sera égal au pointeur précédent, et pointera sur le même adhérent que celui précédent
+			on retourne tAdherent une fois le traitement de décalage terminé
+
+
+		Variables:
+		tAdherent		tableau trié de pointeurs sur des Adhérents
+		taille_logique	nombre de pointeurs dans le tableau tAdherent
+		limite			index du tableau tAdherent jusqu'où le décalage se fera
+		i				variable d'incrémentation pour le test de la boucle for
+	*/
 	int i;
-	for(i = taille_logique; i > pos_insert; i--)
+	for(i = taille_logique; i > limite; i--)
 	{
 		tAdherent[i] = tAdherent[i - 1];
 	}
 	return tAdherent;
 }
 
-Adherent** decaleAGauche_Adherent(Adherent** tAdherent, int taille_logique, int pos_insert)
+Adherent** decaleAGauche_Adherent(Adherent** tAdherent, int taille_logique, int debut)
 {
+	/*
+		Nom:		decaleAGauche_Adherent
+		Finalité: 	Décale à gauche à partir de l'index pos_insert tout les éléments du tableau de pointeurs d'adhérent
+		Description générale:
+			du pointeur à l'index indiqué par debut jusqu'au dernier pointeur:
+				le pointeur de l'index courant sera égal au pointeur suivant, et pointera donc sur le même adhérent que celui suivant
+			on retourne tAdherent une fois le traitement de décalage terminé
+
+
+		Variables:
+		tAdherent		tableau trié de pointeurs sur des Adhérents
+		taille_logique	nombre de pointeurs dans le tableau tAdherent
+		debut			index du tableau tAdherent jusqu'où le décalage se fera
+		i				variable d'incrémentation pour le test de la boucle for
+	*/
 	int i;
-	for(i = pos_insert; i < taille_logique; i++)
+	for(i = debut; i < taille_logique; i++)
 	{
 		tAdherent[i] = tAdherent[i + 1];
 	}
@@ -150,6 +210,32 @@ Adherent** decaleAGauche_Adherent(Adherent** tAdherent, int taille_logique, int 
 
 int recherchDich_Adhe(Adherent **tAdherent, int taille_logique, int *trouve, int idAdherent)
 {
+	/*
+		Nom:		recherchDich_Adhe
+		Finalité: 	retourne la position d'insertion de l'id d'adhérent, et informe si il est déjà présent ou non dans le tableau tAdherent
+		Description générale:
+			la borne inf prends pour valeur le premier index du tableau, sup prends pour valeur le dernier index du tableau
+			trouve est mis à 0 (pour être sûr de ce qu'il y a dedans)
+			tant que la borne inférieure est inférieure ou égale à la borne supérieure
+				middle prends la valeur du milieu (ou arrondi à défaut) entre les deux autres bornes
+				on teste si jamais l'id recherché est inférieure ou égal à l'id sur lequel le pointeur situé a l'index du milieu
+					si jamais c'est le cas, on baisse la borne supérieure à celle du milieu - 1 (car l'id recherché est peut etre à gauche du la borne milieu)
+				sinon l'id récherché est peut être à droite de la borne milieu, on augmente donc la borne inf  à middle + 1
+				on teste si jamais l'id recherché est égal strictement à l'id sur lequel le pointeur situé à l'index du milieu
+					si c'est le cas on affecte à 1 trouve (indiquant que la valeur est trouvé)
+				sinon on ne fait rien, trouve reste à 0, indiquant que la valeur n'a pas été trouvé
+			on retourne ensuite inf, qui est l'index soit d'insertion de la valeur, soit où la valeur à été trouvé
+
+
+		Variables:
+		tAdherent		tableau trié de pointeurs sur des Adhérents
+		taille_logique	nombre de pointeurs dans le tableau tAdherent
+		trouve			pointeur sur une adresse, indiquant si l'id recherché à été trouvé dans le tableau trié tAdherent (1 si oui, 0 sinon)
+		idAdherent		valeur recherchée dans la tableau tAdherent
+		inf				borne inférieure, augmentant si jamais l'id adherent du milieu est inférieur ou égal à celui recherché
+		middle			borne du mileu, donc l'id adherent du pointeur dans le tableau a l'index middle sera comparé à celui recherché
+		sup				borne supérieure, baissant si jamais l'id adherent du milieu est supérieur à celui recherché
+	*/
 	int inf = 0, middle, sup = taille_logique - 1;
 	*trouve = 0;
 	while(inf <= sup)
@@ -164,20 +250,43 @@ int recherchDich_Adhe(Adherent **tAdherent, int taille_logique, int *trouve, int
 	return inf;
 }
 
-int recherchDich_Jeux(Jeux *tJeux, int taille_logique, int *trouve, int idJeu)
+int recherche_Jeux(Jeux *tJeux, int taille_logique, int idJeu)
 {
-	int inf = 0, middle, sup = taille_logique - 1;
-	*trouve = 0;
-	while(inf <= sup)
+	/*
+		Nom:		recherchDich_Jeux
+		Finalité: 	retourne la position d'insertion de l'id de jeu, et informe si il est déjà présent ou non dans le tableau tJeux
+		Description générale:
+			la borne inf prends pour valeur le premier index du tableau, sup prends pour valeur le dernier index du tableau
+			trouve est mis à 0 (pour être sûr de ce qu'il y a dedans)
+			tant que la borne inférieure est inférieure ou égale à la borne supérieure
+				middle prends la valeur du milieu (ou arrondi à défaut) entre les deux autres bornes
+				on teste si jamais l'id recherché est inférieure ou égal à l'id sur lequel le pointeur situé a l'index du milieu
+					si jamais c'est le cas, on baisse la borne supérieure à celle du milieu - 1 (car l'id recherché est peut etre à gauche du la borne milieu)
+				sinon l'id récherché est peut être à droite de la borne milieu, on augmente donc la borne inf  à middle + 1
+				on teste si jamais l'id recherché est égal strictement à l'id sur lequel le pointeur situé à l'index du milieu
+					si c'est le cas on affecte à 1 trouve (indiquant que la valeur est trouvé)
+				sinon on ne fait rien, trouve reste à 0, indiquant que la valeur n'a pas été trouvé
+			on retourne ensuite inf, qui est l'index soit d'insertion de la valeur, soit où la valeur à été trouvé
+
+
+		Variables:
+		tJeux			tableau trié de pointeurs sur des Adhérents
+		taille_logique	nombre de pointeurs dans le tableau tAdherent
+		trouve			pointeur sur une adresse, indiquant si l'id recherché à été trouvé dans le tableau trié tAdherent (1 si oui, 0 sinon)
+		idJeu			valeur recherchée dans la tableau tJeux
+		inf				borne inférieure, augmentant si jamais l'id adherent du milieu est inférieur ou égal à celui recherché
+		middle			borne du mileu, donc l'id adherent du pointeur dans le tableau a l'index middle sera comparé à celui recherché
+		sup				borne supérieure, baissant si jamais l'id adherent du milieu est supérieur à celui recherché
+	*/
+	int i;
+	for(i = 0; i < taille_logique; i++)
 	{
-		middle = (inf + sup) / 2;
-		if(idJeu <= tJeux[middle].idJeux)
-			sup = middle - 1;
-		else inf = middle + 1;
-		if(idJeu == tJeux[middle].idJeux)
-			*trouve = 1;
+		if(idJeu == tJeux[i].idJeux)
+		{
+			return i;
+		}
 	}
-	return inf;
+	return -1;
 }
 
 Adherent chargeAdherent(FILE *flot)
@@ -212,7 +321,7 @@ Adherent** chargTAdherent( Adherent* tAdherent[], int *taille_logique, int *tail
 					et par adresse tAdherent.
 
 		Description générale:
-			renvoit par adresse la taille logique du tableau
+			
 
 		Variables:
 			tAdherent			tableau de pointeurs d'Adherent
@@ -231,9 +340,14 @@ Adherent** chargTAdherent( Adherent* tAdherent[], int *taille_logique, int *tail
 		printf("Erreur lors de l'ouverture du fichier\n");
 		return NULL;
 	}
+
+	tAdherent = (Adherent**) malloc (*taille_physique * sizeof(Adherent*));
+	// chargement dans ma variable une ligne du fichier
 	nouv_adhe = chargeAdherent(fichier_adherent);
 	while(!feof(fichier_adherent))
 	{
+
+		// On ajoute des espaces si jamais le nombre max d'élements du tableau est atteint
 		if(*taille_logique == *taille_physique)
 		{
 			printf("Le tableau est trop petit, ajout de 5 espaces\n");
@@ -250,14 +364,20 @@ Adherent** chargTAdherent( Adherent* tAdherent[], int *taille_logique, int *tail
 				*taille_physique += 5; // on ne prends en compte le changement de taille physique que si le realloc à marché, pour garder une taille physique réelle
 			}
 		}
+
+		// on alloue la place pour l'adherent
 		tAdherent[*taille_logique] = (Adherent*) calloc (1, sizeof(Adherent));
 		if(tAdherent[*taille_logique] == NULL)
 		{
 			printf("Problème de calloc, la mémoire n'a pas été allouée.\n");
 			return NULL;
 		}
+
+		// on ajoute l'adherent au tableau et on incrémente le nombre d'élements dans le tableau
 		*tAdherent[*taille_logique] = nouv_adhe;
 		(*taille_logique) ++;
+
+		// on recharge un nouvel adherent
 		nouv_adhe = chargeAdherent(fichier_adherent);
 	}
 	fclose(fichier_adherent);
@@ -306,7 +426,6 @@ Adherent** ajoutAdherent(Adherent* tAdherent[], int *taille_logique, int *taille
 			taille_physique		variable d'incrémentation pour le test de la boucle for
 	*/
 
-	FILE *fichier_adherent;
 	Adherent a, **tNouvAdherent;
 	int pos_insert = 0, trouve = 0;
 	char validation = 'o', choix;
@@ -517,10 +636,10 @@ Adherent** supressAdherent(Adherent** tAdherent, int *taille_logique)
 	return tAdherent;
 }
 
-Emprunt* ajoutEmprunt(Emprunt* e, Jeux tJeux[], int taille_logique_tJeux, int idAdh, int idJeu, Date date_emprunt)
+Emprunt* ajoutEmprunt(Emprunt* e, Jeux tJeux[], int taille_logique_tJeux, int idAdh, int *idJeu, Date date_emprunt)
 {
 	Emprunt *e_parcours = e;
-	int idEmprunt = 0, nb_emp_cours = 0, trouve = 0, index_jeu = 0;;
+	int idEmprunt = 0, nb_emp_cours = 0, index_jeu = 0;
 
 	// on check si l'emprunteur possède bien moins de 3 emprunts en cours
 	while( e_parcours != NULL)
@@ -535,11 +654,18 @@ Emprunt* ajoutEmprunt(Emprunt* e, Jeux tJeux[], int taille_logique_tJeux, int id
 		return e;
 	}
 
-	// on vérifie s'il reste le jeu demandé en stock, pour continuer l'emprunt
-	index_jeu =  recherchDich_Jeux(tJeux, taille_logique_tJeux, &trouve, idJeu);
+	// on vérifie s'il reste le jeu demandé existe, et s'il est en stock, pour continuer l'emprunt
+	index_jeu =  recherche_Jeux(tJeux, taille_logique_tJeux, *idJeu);
+	while(index_jeu == -1)
+	{
+		printf("Le jeu demandé n'existe pas. Veuillez en sélectionner un nouveau:\n");
+		scanf("%d%*c", idJeu);
+		index_jeu =  recherche_Jeux(tJeux, taille_logique_tJeux, *idJeu);
+	}
+	
 	if(tJeux[index_jeu].quantite <= 0)
 	{
-		printf("Le jeu saisi n'est plus en stock, vous ne pouvez l'empruntez.");
+		printf("Le jeu saisi n'est plus en stock, vous ne pouvez l'empruntez.\n");
 		return e;
 	}
 
@@ -550,15 +676,16 @@ Emprunt* ajoutEmprunt(Emprunt* e, Jeux tJeux[], int taille_logique_tJeux, int id
 		e_parcours = e_parcours->suiv;
 	}
 	idEmprunt = e_parcours->idEmprunt + 1;
-	e = inserer(e, idEmprunt, idAdh, idJeu, date_emprunt);
+	e = inserer(e, idEmprunt, idAdh, *idJeu, date_emprunt);
 	return e;
 }
 
 Date infoReserv(Adherent* tAdherent[], int taille_logique_tAdh, Jeux tJeux[], int taille_logique_tJeux, int *idAdh, int *idJeu, Date date_reserv)
 {
-	int trouve = 0;
+	int trouve = 0, pos_jeu = 0;
 	char choix;
-
+	*idAdh = 0;
+	*idJeu = 0;
 	// contrôle de saisie de l'id de l'adherent
 	printf("Quel est l'id d'adherent de la nouvelle réservation?\n");
 	scanf("%d%*c", idAdh);
@@ -566,8 +693,8 @@ Date infoReserv(Adherent* tAdherent[], int taille_logique_tAdh, Jeux tJeux[], in
 	recherchDich_Adhe(tAdherent, taille_logique_tAdh, &trouve, *idAdh);
 	while(trouve == 0)
 	{
-		printf("L'id d'adherent saisie n'est pas référencé. Saisissez un nouvel id d'adherent?\n");
-		scanf("%d%*c", idJeu);
+		printf("L'id d'adherent saisie n'est pas référencé. Saisissez un nouvel id d'adherent:\n");
+		scanf("%d%*c", idAdh);
 		recherchDich_Adhe(tAdherent, taille_logique_tAdh, &trouve, *idAdh);
 	}
 
@@ -575,16 +702,16 @@ Date infoReserv(Adherent* tAdherent[], int taille_logique_tAdh, Jeux tJeux[], in
 	printf("Quel est l'id du jeu de la nouvelle réservation?\n");
 	scanf("%d%*c", idJeu);
 	// on cherche juste à savoir si l'id est trouvé, peu importe sa position
-	recherchDich_Jeux(tJeux, taille_logique_tJeux, &trouve, *idJeu);
-	while(trouve == 0)
+	pos_jeu = recherche_Jeux(tJeux, taille_logique_tJeux, *idJeu);
+	while(pos_jeu == -1)
 	{
-		printf("L'id d'adherent saisie n'est pas référencé. Saisissez un nouvel id d'adherent?\n");
+		printf("L'id du jeu saisie n'est pas référencé. Saisissez un nouvel id de jeu?\n");
 		scanf("%d%*c", idJeu);
-		recherchDich_Jeux(tJeux, taille_logique_tJeux, &trouve, *idJeu);
+		pos_jeu = recherche_Jeux(tJeux, taille_logique_tJeux, *idJeu);
 	}
 	printf("Voulez-vous une date de réservation automatique? (o/n)");
 	scanf("%c%*c", &choix);
-	while(choix != 'o' || choix != 'O' || choix != 'n' || choix != 'N')
+	while(choix != 'o' && choix != 'O' && choix != 'n' && choix != 'N')
 	{
 		printf("Choix non reconnnu. Voulez-vous une date de réservation automatique? (o/n)");
 		scanf("%c%*c", &choix);
@@ -594,14 +721,14 @@ Date infoReserv(Adherent* tAdherent[], int taille_logique_tAdh, Jeux tJeux[], in
 	else return saisie_date();
 }
 
-Reservation* ajoutReservation(Adherent* tAdherent[], int taille_logique_tAdh, Jeux tJeux[], int taille_logique_tJeux , Reservation* r, int idAdh, int idJeu, Date date_reservation)
+Reservation* ajoutReservation(Adherent* tAdherent[], int taille_logique_tAdh, Jeux tJeux[], int taille_logique_tJeux , Reservation* r)
 {
 	Reservation *r_parcours = r;
 	int idAdh_nouv = 0, idJeux_nouv = 0, idReservation = 0;
 	Date date_reservation_nouv;
 
 	// insertion et contrôle des données de la nouvelle réservation
-	date_reservation_nouv = infoReserv(tAdherent, taille_logique_tAdh, tJeux, taille_logique_tJeux, &idAdh, &idJeu, date_reservation);
+	date_reservation_nouv = infoReserv(tAdherent, taille_logique_tAdh, tJeux, taille_logique_tJeux, &idAdh_nouv, &idJeux_nouv, date_reservation_nouv);
 
 	// on prends un id de réservation de plus 1 par rapport au dernier
 	while(r_parcours->suiv != NULL)
@@ -668,6 +795,7 @@ Jeux* chargeTJeux(Jeux tJeux[], int *nbJeux, int *tMax)
 		return NULL;
 	}
 	j = chargeJeux(jeu_fichier);
+	int y = 0;
 	while (!feof(jeu_fichier)) // Lecture du fichier.
 	{
 		if (*nbJeux == *tMax) // Ajout de 5 de taille physique si tableau trop petit.
@@ -927,14 +1055,7 @@ Jeux *ajouterJeux(Jeux tJeux[], int *nbJeux, int *tMax)
 	}
 	tJeux[*nbJeux] = j;
 	*nbJeux = *nbJeux + 1;
-	FILE *jeu_fichier;
-	jeu_fichier = fopen("jeu.don","w");
-
-	for(i = 0; i <= *nbJeux-1; i++) // Sauvegarde dans le fichier.
-	{
-		fprintf(jeu_fichier, "%d\t%s\t%s\t%d\n", tJeux[i].idJeux, tJeux[i].nom, tJeux[i].type, tJeux[i].quantite);
-	}
-	fclose(jeu_fichier);
+	saveJeux(tJeux, *nbJeux);
 	return tJeux;
 
 }
@@ -1013,16 +1134,20 @@ void retourJeux(Reservation *r, Emprunt *e, Jeux tJeux[], int nbJeux)
 			Modifie la quantité d'un jeu, enlève un emprunt, et transforme (si possible) une réservation en emprunt.
 
 		Variables:
-
-
+		idEmprunt : Variable pour l'ID d'emprunt.
+		idAdh : Variable pour l'ID d'adhérent.
+		id : Variable pour l'ID.
+		z : Vérification si l'adhérent a un emprunt/une réservation.
+		i : Variable pour boucle for.
+		rep : Variable temporaire.
 	*/
-	int idAdh, id, z = 0, cmp, i, rep;
+	int idEmprunt = 0, idAdh = 0, id = 0, z = 0, i = 0, rep = 0;
 	Emprunt *e_parcours = e;
 	Reservation *r_parcours = r;
 	printf("Saisir l'ID de l'adhérent : ");
 	scanf("%d%*c", &idAdh);
 	printf("Les jeux empruntés par cet adhérent sont :\n");
-	while (e_parcours != NULL)
+	while (e_parcours != NULL) //Parcours de la liste emprunt et du tableau jeux pour afficher idEmprunt et nom du jeu.
 	{
 		if(e_parcours->idAdherent == idAdh)
 		{
@@ -1031,9 +1156,9 @@ void retourJeux(Reservation *r, Emprunt *e, Jeux tJeux[], int nbJeux)
 				if (tJeux[i].idJeux == e_parcours->idJeu)
 				{
 					printf("[%03d]\t%s\n", e_parcours->idEmprunt, tJeux[i].nom);
+					z++;
 				}
 			}
-			z++;
 		}
 		e_parcours = e_parcours->suiv;
 	}
@@ -1045,7 +1170,7 @@ void retourJeux(Reservation *r, Emprunt *e, Jeux tJeux[], int nbJeux)
 	e_parcours = e;
 	printf("Veuillez entrer le numéro de l'emprunt à retourner :\n");
 	scanf("%d", &id);
-	while (e_parcours != NULL)
+	while (e_parcours != NULL) //Parcours de la liste emprunt et du tableau jeux pour rajouter +1 à la quantité du jeu.
 	{
 		if(e_parcours->idEmprunt == id)
 		{
@@ -1062,28 +1187,22 @@ void retourJeux(Reservation *r, Emprunt *e, Jeux tJeux[], int nbJeux)
 	e=supprimerEM(e,id);
 	saveEmp(e);
 
-	FILE *jeu_fichier;
-	jeu_fichier = fopen("jeu.don","w");
-	for(i = 0; i <= nbJeux-1; i++) //Sauvegarde dans le fichier.
-	{
-		if (i != rep)
-			fprintf(jeu_fichier, "%d\t%s\t%s\t%d\n", tJeux[i].idJeux, tJeux[i].nom, tJeux[i].type, tJeux[i].quantite);
-	}
-	fclose(jeu_fichier);
-
+	saveJeux(tJeux, nbJeux);
 	printf("Le jeu a été retourné.\n\nRéservations en attente :\n"); z=0;
-	while (r_parcours != NULL)
+	while (r_parcours != NULL) //Parcours de la liste réservation et du tableau jeux pour afficher idReservation et nom du jeu.
 	{
 		if(r_parcours->idAdherent == idAdh)
 		{
 			for(i = 0; i <= nbJeux-1; i++)
 			{
-				if (tJeux[i].idJeux == r_parcours->idJeu)
+				if (tJeux[i].idJeux == r_parcours->idJeu && tJeux[i].quantite <= 0)
+					printf("[%03d]\t%s\t(Rupture de stock !)\n", r_parcours->idRes, tJeux[i].nom);
+				if (tJeux[i].idJeux == r_parcours->idJeu && tJeux[i].quantite > 0)
 				{
 					printf("[%03d]\t%s\n", r_parcours->idRes, tJeux[i].nom);
+					z++;
 				}
 			}
-			z++;
 		}
 		r_parcours = r_parcours->suiv;
 	}
@@ -1096,45 +1215,82 @@ void retourJeux(Reservation *r, Emprunt *e, Jeux tJeux[], int nbJeux)
 	r_parcours = r;
 	printf("\nVeuillez entrer le numéro du jeu à emprunter : ");
 	scanf("%d", &id);
-	/*
-	while (r_parcours != NULL)
+	
+	while (r_parcours != NULL) //Parcours de la liste réservation et du tableau jeux pour enlever -1 la quantité du stock ou empêcher la transformation sur pas assez de stock.
 	{
 		if(r_parcours->idRes == id)
 		{
 			for(i = 0; i <= nbJeux-1; i++)
 			{
-				if (tJeux[i].idJeux == r_parcours->idJeu)
-				{
+				if (tJeux[i].idJeux == r_parcours->idJeu && tJeux[i].quantite > 0)
 					tJeux[i].quantite = tJeux[i].quantite - 1;
+				if (tJeux[i].idJeux == r_parcours->idJeu && tJeux[i].quantite <= 0)
+				{
+					printf("Ce jeu n'est plus en stock.\n");
+					return;
 				}
 			}
 		}
 		r_parcours = r_parcours->suiv;
 	}
+	e_parcours = e;
 	r_parcours = r;
-	while (r_parcours != NULL)
+    while(e_parcours->suiv != NULL) //Obtention du dernier IDEmprunt et rajout +1 pour la transformation de la réservation en emprunt.
+    {
+        e_parcours = e_parcours->suiv;
+    }
+	idEmprunt = e_parcours->idEmprunt + 1;
+	while (r_parcours != NULL) //Insertion
 	{
 		if(r_parcours->idRes == id)
 		{
-			printf("\nallo %d\n",e->idEmprunt + 1);
-			e = inserer(e, e->idEmprunt + 1, r_parcours->idAdherent, r_parcours->idJeu, r_parcours->dateR);
+			e = inserer(e, idEmprunt, r_parcours->idAdherent, r_parcours->idJeu, r_parcours->dateR);
 		}
 		r_parcours = r_parcours->suiv;
 	}
 	r=supprimer(r,id);
 	saveRes(r);
 	saveEmp(e);
+	
+	saveJeux(tJeux, nbJeux);
 
+	printf("\nRéservation réussie\n.");
+}
+
+void saveJeux(Jeux tJeux[], int nbJeux)
+{
+	/*
+		Nom:		saveJeux
+		Finalité:	Sauvegarder le tableau jeux dans le fichier jeu.don 
+
+		Description générale:
+			Sauvegarder le tableau jeux dans le fichier jeu.don 
+
+		Variables:
+		jeu_fichier : Jeu fichier.
+		i : Pour boucle for.
+	*/
+	FILE *jeu_fichier;
+	int i = 0;
 	jeu_fichier = fopen("jeu.don","w");
-	for(i = 0; i <= nbJeux-1; i++) //Sauvegarde dans le fichier.
+	for(i = 0; i <= nbJeux-1; i++)
 	{
-		if (i != rep)
 			fprintf(jeu_fichier, "%d\t%s\t%s\t%d\n", tJeux[i].idJeux, tJeux[i].nom, tJeux[i].type, tJeux[i].quantite);
 	}
 	fclose(jeu_fichier);
-	*/
-	printf("\nRéservation réussie\n.");
+	return;
 }
+
+/*
+		Nom:		Fonctions pour emprunts
+		Finalité:	Supprimer, et insérer un emprunt
+
+		Variables:
+		id : Id d'un emprunt.
+		a : Liste emprunt alternative.
+		x : Valeur à ajouter/supprimer.
+		flot : Fichier emprunt.
+*/
 
 Emprunt* suppEmp(Emprunt* a)
 {
@@ -1207,20 +1363,17 @@ void menu(void)
 	/* Note temporaire : Je vais trouver un autre moyen de rendre le menu un peu plus "pro" */
 	int rep, bug;
 	char get = '\n';
+	Jeux *tJeux;
 	Adherent **tAdherent;
 	int taille_physique = 9, taille_logique = 0;
 	char choix;
-	tAdherent = (Adherent**) malloc (taille_physique * sizeof(Adherent*));
 	tAdherent = chargTAdherent( tAdherent, &taille_logique, &taille_physique);
-	Jeux *tJeux;
-	int tMax = 100, nbJeux = 0, i;
+	int tMax = 100, nbJeux = 0, i = 0;
 	tJeux = chargeTJeux(tJeux, &nbJeux, &tMax);
 	Emprunt *e;
 	Reservation *r;
 	e = chargeListeEmprunts();
 	r = chargeListeResa();
-	if(tJeux == NULL)
-		return;
 	while( get == '\n' )
 	{
 		system("@cls||clear"); //Clean de la console (fonctionne sur Windows/Linux/Mac)
@@ -1245,6 +1398,7 @@ void menu(void)
 						system("@cls||clear");
 						afficheTJeux(tJeux, nbJeux);
 						printf("\nAppuyez sur entrer pour continuer...\n");
+						fflush(stdin);
 						getchar();
 						break;
 					case 2:
@@ -1253,12 +1407,14 @@ void menu(void)
 							return;
 						tJeux = ajouterJeux(tJeux, &nbJeux, &tMax);
 						printf("\nAppuyez sur entrer pour continuer...\n");
+						fflush(stdin);
 						getchar();
 						break;
 					case 3:
 						system("@cls||clear");
 						retourJeux(r, e, tJeux, nbJeux);
 						printf("\nAppuyez sur entrer pour continuer...\n");
+						fflush(stdin);
 						getchar();
 						break;
 					case 4:
@@ -1267,6 +1423,7 @@ void menu(void)
 							return;
 						tJeux = supprimerJeux(tJeux, &nbJeux, &tMax);
 						printf("\nAppuyez sur entrer pour continuer...\n");
+						fflush(stdin);
 						getchar();
 						break;
 					case 5:
@@ -1277,30 +1434,35 @@ void menu(void)
 				system("@cls||clear");
 				// Fonction affichage emprunt
 				printf("\nAppuyez sur entrer pour continuer...\n");
+				fflush(stdin);
 				getchar();
 				break;
 			case 3:
 				system("@cls||clear");
 				// Fonction affichage emprunt
 				printf("\nAppuyez sur entrer pour continuer...\n");
+				fflush(stdin);
 				getchar();
 				break;
 			case 4:
 				system("@cls||clear");
 				// Fonction affichage emprunt
 				printf("\nAppuyez sur entrer pour continuer...\n");
+				fflush(stdin);
 				getchar();
 				break;
 			case 5:
 				system("@cls||clear");
 				// Fonction affichage emprunt
 				printf("\nAppuyez sur entrer pour continuer...\n");
+				fflush(stdin);
 				getchar();
 				break;
 			case 6:
 				system("@cls||clear");
 				// Fonction affichage emprunt
 				printf("\nAppuyez sur entrer pour continuer...\n");
+				fflush(stdin);
 				getchar();
 				break;
 			case 9:
@@ -1416,19 +1578,19 @@ variable : 	*e : liste des emprunts
 			tAdherent[] : tableau des adhérents 
 */
 	int adherent,jeu;
-	int i;
-	int trouve;
+	int i, trouve = 0;
 	printf("\nAffichage de la liste des emprunts en cours :\n");
 	printf("\nDate d'emprunt :\tId de l'emprunt\t\tNom et prénom de l'adhérent :\t\tNom du jeu :\n");
 	while (!vide(e)){
 		printf("%d/%d/%d\t\t\t%d\t\t",e->dateEmprunt.jour,e->dateEmprunt.mois,e->dateEmprunt.annee,e->idEmprunt);
-		adherent=trouveNumAdherent(tAdherent,taille_logique_A,e->idAdherent);
-		if (adherent==-1)
+		adherent = recherchDich_Adhe(tAdherent, taille_logique_A, &trouve, e->idAdherent);
+		if (trouve == 0)
 			printf("Inconnu\t\t\t");
 		else
 			printf("%s %s\t\t", tAdherent[adherent]->nom,tAdherent[adherent]->prenom);
-		jeu=trouveNumJeu(e->idJeu,tJeux,taille_logique);
-		if (jeu==-1)
+
+		jeu = recherche_Jeux(tJeux, taille_logique, e->idJeu);
+		if (jeu == -1)
 			printf("Inconnu");
 		else
 			printf("\t%s\n",tJeux[jeu].nom);
@@ -1438,47 +1600,6 @@ variable : 	*e : liste des emprunts
 	printf("\n");
 }
 
-int trouveNumAdherent(Adherent **tAdherent, int taille_logique_A, int idAdherent) { 
-/*
-nom : trouveNumAdherent
-finalité : trouver la position d'un adherent dans le tableau des adherents
-description générale : la fonction prend en argument le tableau des adhérents, le nombre d'adhérent, ainsi que l'identifiant de l'utilisateur dont on cherche sa position dans le tableau.
-						Elle va chercher dans tout le tableau jusqu'à qu'elle trouve une correspondance et va renvoyer la position dans le tableau. Si l'utilisateur est inconnu, elle renvoie -1.
-variable : 	tAdherent : tableau des adhérents
-			taille_logique_A : nombre d'adhérents
-			idAdherent : identifiant de l'adhérent dont on cherche la place dans le tableau
-*/
-	int i;
-	for(i = 0; i <= taille_logique_A; ++i)
-	{
-		if (tAdherent[i]->idAdherent == idAdherent)
-		{
-			return i;
-		}
-	}
-	return -1;
-}
-
-int trouveNumJeu(int id, Jeux tJeu[], int taille_logique) {
-/*
-nom : trovueNumJeu
-finalité : trouver la position d'un jeu dans le tableau des jeu
-description générale : la fonction prend en argument le tableau des jeux, le nombre de jeux, ainsi que l'identifiant du jeu dont on cherche sa position dans le tableau.
-						Elle va chercher dans tout le tableau jusqu'à qu'elle trouve une correspondance et va renvoyer la position dans le tableau. Si le jeu est inconnu, elle renvoie -1.
-variable : 	tJeu : tableau des jeux
-			taille_logique : nombre de jeux
-			id : identifiant du jeu dont on cherche la place dans le tableau
-*/
-	int i;
-	for(i = 0; i <= taille_logique; i++)
-	{
-		if (tJeu[i].idJeux == id)
-		{
-			return i;
-		}
-	}
-	return -1;
-}
 
 Emprunt* chargeListeEmprunts(void) {
 /*
@@ -1613,7 +1734,7 @@ variable : 	r : premier maillon d'une liste de réservations
 void afficherListeResa(Reservation *r, Adherent* tAdherent[], int taille_logique_A, Jeux tJeux[], int taille_logique) {
 /*
 nom : afficherListeResa
-finalité : afficher la liste des réservation pour un jeu
+finalité : afficher la liste des réservations pour un jeu
 déscription générale : la fonction prend en argument la liste des réservations, le tableau des adhérents et celui des jeux, ainsi que leurs taille logique (donc le nombre de jeu et d'adhérent)
 						Elle demande à l'utilisateur l'identifiant d'un jeu et va chercher toutes les réservations pour ce jeu. S'il y en a, elle va afficher le nom du jeu, ainsi que la date d'emprunt et le 
 						nom et le prenom de l'emprunteur
@@ -1627,18 +1748,19 @@ variable : 	r : liste des réservations
 			jeu : position du jeu emprunté dans le tableau des jeux
 
 */
-	int id, adherent, jeu;
+	int id = 0, adherent = 0, jeu = 0, trouve = 0;
 	printf("\nVeuillez entrer l'identifiant du jeu pour lequel vous souhaitez regarder la liste des réservations :\n");
-	scanf("%d",&id);
-	jeu=trouveNumJeu(id,tJeux,taille_logique);
-	if (jeu!=-1) {
+	scanf("%d%*c",&id);
+	printf("%d\n", id);
+	jeu = recherche_Jeux(tJeux, taille_logique, id);
+	if (jeu != -1) {
 		printf("Nom du jeu : %s\n", tJeux[jeu].nom);
 		printf("\nDate de réservation : \tId de la réservation :\t Nom et prénom de l'adhérent :\n");
 		while (!videR(r)){
 			if (r->idJeu==id) {
 				printf("%d/%d/%d\t\t\t%d\t\t\t",r->dateR.jour,r->dateR.mois,r->dateR.annee,r->idRes);
-				adherent=trouveNumAdherent(tAdherent,taille_logique_A,r->idAdherent);
-				if (adherent==-1)
+				adherent = recherchDich_Adhe(tAdherent, taille_logique_A, &trouve, r->idAdherent);
+				if (trouve == 0)
 					printf("Inconnu\t\t\t");
 				else
 					printf("%s %s\t\t\n", tAdherent[adherent]->nom,tAdherent[adherent]->prenom);
@@ -1676,7 +1798,7 @@ variable : 	flot : pointeur vers le fichier de sauvegarde
 	e=listenouvR();
 	date=lireFichierR(flot,&resa,&adherent,&jeu);
 	e=insererR(e,resa,adherent,jeu,date);
-	while(!feof(flot)) {
+	while(!feof(flot)){
 		date=lireFichierR(flot,&resa,&adherent,&jeu);
 		e=insererR(e,resa,adherent,jeu,date);		
 	}
