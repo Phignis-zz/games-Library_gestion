@@ -201,15 +201,17 @@ void test_ajout_Reserv_Emp(void)
 	afficheTJeux(tJeux, taille_logique_tJeux);
 
 	e = chargeListeEmprunts();
+	afficheListeCompleteEmp(e);
 
 	r = chargeListeResa();
+	afficheListeCompleteRes(r);
 
 
-	// r = ajoutReservation(tAdherent, taille_logique_tAdh, tJeux, taille_logique_tJeux, r);
-	// saveRes(r);
+	ajoutReservation(tAdherent, taille_logique_tAdh, tJeux, taille_logique_tJeux, r);
+	saveRes(r);
 
-	e = ajoutEmprunt(e, tJeux, taille_logique_tJeux, idAdh, &idJeu, date_emprunt);
-	saveEmp(e);
+	// ajoutEmprunt(e, tJeux, taille_logique_tJeux, idAdh, &idJeu, date_emprunt);
+	// saveEmp(e);
 
 }
 

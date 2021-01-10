@@ -109,7 +109,7 @@ int recherchDich_Adhe(Adherent **tAdherent, int taille_logique, int *trouve, int
 	programme:	recherchDich_Jeux
 	ajoutEmprunt:		POLLET Matéo
 	date:		28/12/20
-	finalité:	retourne la position d'insertion de l'id de jeu, et informe si il est déjà présent ou non dans le tableau tJeux
+	finalité:	retourne la position d'insertion de l'id de jeu si ce jeu est présent, ou -1 s'il n'est pas présent dans le tableau tJeux
 */
 int recherche_Jeux(Jeux *tJeux, int taille_logique, int idJeu);
 
@@ -175,7 +175,7 @@ Adherent** supressAdherent(Adherent** tAdherent, int *taille_logique);
 	date:		07/01/21
 	finalité:	Ajouter un emprunt avec contrôle de la possibilité d'emprunter à la liste d'emprunt
 */
-Emprunt* ajoutEmprunt(Emprunt* e, Jeux tJeux[], int taille_logique_tJeux, int idAdh, int *idJeu, Date date_emprunt);
+void ajoutEmprunt(Emprunt* e, Jeux tJeux[], int taille_logique_tJeux, int idAdh, int *idJeu, Date date_emprunt);
 
 /*
 	programme:	infoReserv
@@ -191,7 +191,7 @@ Date infoReserv(Adherent* tAdherent[], int taille_logique_tAdh, Jeux tJeux[], in
 	date:		07/01/21
 	finalité:	Ajouter une réservation à la liste de réservations
 */
-Reservation* ajoutReservation(Adherent* tAdherent[], int taille_logique_tAdh, Jeux tJeux[], int taille_logique_tJeux , Reservation* r);
+void ajoutReservation(Adherent* tAdherent[], int taille_logique_tAdh, Jeux tJeux[], int taille_logique_tJeux , Reservation* r);
 /*
 	programme:	chargeJeux
 	auteur:		POLLET Matéo
@@ -453,10 +453,12 @@ finalité : supprimer un maillon de la liste des réservations
 
 
 Reservation* suppRes(Reservation *a);
-void saveRes(Reservation *a);
 /*
 nom: suppRes
 auteur : GAUGIRARD Florian
 date : 03/12/2020
 finalité : demander à l'utilisateur quelle réservation doit etre annulée et transmettre cette information à la bonne fonction
 */
+
+void afficheListeCompleteEmp(Emprunt *e);
+void afficheListeCompleteRes(Reservation *r);

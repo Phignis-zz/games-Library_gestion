@@ -254,29 +254,20 @@ int recherche_Jeux(Jeux *tJeux, int taille_logique, int idJeu)
 {
 	/*
 		Nom:		recherchDich_Jeux
-		Finalité: 	retourne la position d'insertion de l'id de jeu, et informe si il est déjà présent ou non dans le tableau tJeux
+		Finalité: 	retourne la position d'insertion de l'id de jeu si ce jeu est présent, ou -1 s'il n'est pas présent dans le tableau tJeux
 		Description générale:
-			la borne inf prends pour valeur le premier index du tableau, sup prends pour valeur le dernier index du tableau
-			trouve est mis à 0 (pour être sûr de ce qu'il y a dedans)
-			tant que la borne inférieure est inférieure ou égale à la borne supérieure
-				middle prends la valeur du milieu (ou arrondi à défaut) entre les deux autres bornes
-				on teste si jamais l'id recherché est inférieure ou égal à l'id sur lequel le pointeur situé a l'index du milieu
-					si jamais c'est le cas, on baisse la borne supérieure à celle du milieu - 1 (car l'id recherché est peut etre à gauche du la borne milieu)
-				sinon l'id récherché est peut être à droite de la borne milieu, on augmente donc la borne inf  à middle + 1
-				on teste si jamais l'id recherché est égal strictement à l'id sur lequel le pointeur situé à l'index du milieu
-					si c'est le cas on affecte à 1 trouve (indiquant que la valeur est trouvé)
-				sinon on ne fait rien, trouve reste à 0, indiquant que la valeur n'a pas été trouvé
-			on retourne ensuite inf, qui est l'index soit d'insertion de la valeur, soit où la valeur à été trouvé
+			de i ayant pour valeur 0, premier index; à i égal à la taille logique - 1 de tJeux, donc le dernier index du tableau:
+				on teste si jamais l'id de jeu recherché est égal à l'id du jeu à la place indiqué par l'index courant i
+					si c'est le cas on retourne i, correspondant à la position trouvée de l'id recherché
+				sinon on ne fais rien
+			à la fin de la boucle, on a parcouru tout le tableau, ce qui signifie que la valeur n'est pas dans le tableau, on retourne donc -1
 
 
 		Variables:
 		tJeux			tableau trié de pointeurs sur des Adhérents
 		taille_logique	nombre de pointeurs dans le tableau tAdherent
-		trouve			pointeur sur une adresse, indiquant si l'id recherché à été trouvé dans le tableau trié tAdherent (1 si oui, 0 sinon)
 		idJeu			valeur recherchée dans la tableau tJeux
-		inf				borne inférieure, augmentant si jamais l'id adherent du milieu est inférieur ou égal à celui recherché
-		middle			borne du mileu, donc l'id adherent du pointeur dans le tableau a l'index middle sera comparé à celui recherché
-		sup				borne supérieure, baissant si jamais l'id adherent du milieu est supérieur à celui recherché
+		i				variable d'incrémentation de la boucle for
 	*/
 	int i;
 	for(i = 0; i < taille_logique; i++)
@@ -321,7 +312,23 @@ Adherent** chargTAdherent( Adherent* tAdherent[], int *taille_logique, int *tail
 					et par adresse tAdherent.
 
 		Description générale:
-			
+			on commence par ouvrir en mode lecture le fichier adherent.don, et vérifier s'il est bien ouvert, si ce n'est pas le cas, on renvoit un pointeur
+			NULL.
+			Si jamais le fichier s'ouvre bien alors:
+			on alloue le tableau de pointeur sur Adherent, dynamiquement, en allouant le nombre de places indiqué par la taille physique de celui-ci
+			on teste si jamais le malloc a fonctionné, si ce n'est pas le cas on retourne le pointeur NULL
+			on charge ensuite une ligne du fichier adherent.don, via la fonction chargeAdherent
+			tant que ce n'est pas la fin du fichier:
+				on teste si jamais la taille logique équivaut a la taille physique, donc si le tableau est plein complètement
+					si c'est le cas on réalloue le tableau avec 5 places de plus, et on teste si la réallocation s'est effectuée,
+					et on retourne NULL si ce n'est pas le cas
+				sinon on incrémente de 5 la taille physique (seulement ici pour garder une taille physique réelle si ça rate)
+
+				on alloue ensuite une place pour l'adherent chargé dans nouv_adherent, donc la ligne du fichier chargé.
+				on ajoute ensuite dans le tableau à l'index taille_logique, donc après le dernier élément, le nouvel adhe, et on incrément la taille logique
+				on recharge une nouvelle ligne du fichier pour la nouvelle itération de la boucle
+			on ferme le fichier et on retoune tAdherent, rempli de toutes les informations contenues dans adherent.don
+				
 
 		Variables:
 			tAdherent			tableau de pointeurs d'Adherent
@@ -342,6 +349,13 @@ Adherent** chargTAdherent( Adherent* tAdherent[], int *taille_logique, int *tail
 	}
 
 	tAdherent = (Adherent**) malloc (*taille_physique * sizeof(Adherent*));
+	if(tAdherent == NULL)
+	{
+		printf("L'allocation dynamique du tableau tAdherent (malloc) n'a pas fonctionné");
+		return NULL;
+	}
+
+
 	// chargement dans ma variable une ligne du fichier
 	nouv_adhe = chargeAdherent(fichier_adherent);
 	while(!feof(fichier_adherent))
@@ -365,7 +379,7 @@ Adherent** chargTAdherent( Adherent* tAdherent[], int *taille_logique, int *tail
 			}
 		}
 
-		// on alloue la place pour l'adherent
+		// on alloue la place pour l'adherent avec calloc pour éviter qu'il n'y ai n'importe quoi dedans
 		tAdherent[*taille_logique] = (Adherent*) calloc (1, sizeof(Adherent));
 		if(tAdherent[*taille_logique] == NULL)
 		{
@@ -418,12 +432,35 @@ Adherent** ajoutAdherent(Adherent* tAdherent[], int *taille_logique, int *taille
 		Finalité:	Insérer un adhérent dans le tableau trié tAdherent et dans le fichier adherent.don
 
 		Description générale:
-			renvoit par adresse la taille logique du tableau
+			on commence par demander à l'utilisateur l'id d'adherent voulu
+			on recherche sa position d'insertion dans le tableau tAdherent
+			tant que trouve vaut 1, donc tant que la valeur est trouvée, on redemande une saisie, l'id est forcément nouveau car on ajoute un adhérent.
+			tant que l'utilisateur ne valide pas la saisie des diverses informations (donc tant que la validation est à o pour oui):
+				si jamais le charactere valodation est q, pour quit ou quittern on retourne tAdherent, et on annule donc l'insertion d'un nouvel adherent
+				sinon on saisie la civilité, et tant que celle ci n'équivaut à 'Mr':
+					on teste si jamais cette civilité est 'Mme', dans ce cas on arrête la ressaisie de la civilité,
+					sinon on demande de resaisir la civilité, qui sera à nouveau testé
+				on saisit ensuite le nom et le prénom de l'adhérent, avec fgets qui capte sur stdin, donc le shell
+				on affiche les informations saisies jusqu'à maintenant et modifiable, et on demande si la saise est valide
+					si le choix est n ou N, alors la boucle while(choix == 'n'...) se brisera à la prochaine itération, équivalent donc à la validation
+					sinon la saisie recommencera
+			on offre la possibilitée d'une date automatique, obtenue depuis les informations de l'ordinateur, si le choix est 'o',
+			sinon la saisie est manuelle
+
+			si jamais le nombre max de pointeur est atteinds, on alloue 5 nouvelles places au tableau, et retourne NULL si cette réallocation échoue.
+
+			on décale à droite tout les adhérents à partir de la position d'insertion du nouvel adhérent trouvé au début, pour faire une place au nouvel adherent
+			on alloue ensuite la nouvelle place pour le nouvel adherent, dont l'adresse est stockée dans le pointeur d'adherent, on retourne NULL si ça ne marche pas
+			on insère ensuite le nouvel adhérent dans le tableau, puis on incrémente la taille logique et on retourne le tableau tAdherent.
+
 
 		Variables:
 			tAdherent			tableau de pointeurs d'Adherent
 			taille_logique		nombre d'éléments du tableau tAdherent
 			taille_physique		variable d'incrémentation pour le test de la boucle for
+			a					variable servant de conteneur aux informations saisies par l'utilisateur
+			validation			charactère servant pour vérifier si les infos saisies sont valides pour l'utilisateur et servant dans une boucle
+			choix				permet à l'utilisateur de choisir pour la méthode d'obtention de la date
 	*/
 
 	Adherent a, **tNouvAdherent;
@@ -466,8 +503,13 @@ Adherent** ajoutAdherent(Adherent* tAdherent[], int *taille_logique, int *taille
 		a.prenom[strlen(a.prenom) - 1] = '\0';
 		printf("Voici les informations de l'adherent %d:\n", a.idAdherent);
 		printf("%s\t%s\t%s\n", a.civilite, a.nom, a.prenom);
-		printf("Voulez vous ressaisir les informations? (n/N pour valider la saisie, q pour annuler)\n");
+		printf("Voulez vous ressaisir les informations? (n/N pour valider la saisie, o/O pour resaisir et q pour annuler)\n");
 		scanf("%c%*c", &validation);
+		while(choix != 'n' && choix != 'N' && choix != 'o' && choix != 'O' && choix != 'q' && choix != 'Q')
+		{
+			printf("Choix non reconnu. Voulez vous ressaisir les informations? (n/N pour valider la saisie, o/O pour resaisir et q pour annuler)\n");
+			scanf("%c%*c", &validation);
+		}
 	}
 
 	printf("Voulez-vous une date d'inscription automatique? (o/n)");
@@ -479,9 +521,9 @@ Adherent** ajoutAdherent(Adherent* tAdherent[], int *taille_logique, int *taille
 
 	if(*taille_logique == *taille_physique)
 	{
-		printf("Le tableau est trop petit, ajout d'un espace mémoire\n");
+		printf("Le tableau est trop petit, ajout de 5 espace mémoire\n");
 		printf("%d\n", tAdherent[*taille_logique - 1]->idAdherent);
-		tNouvAdherent = (Adherent**) realloc (tAdherent, (*taille_physique + 1) * sizeof(Adherent*));
+		tNouvAdherent = (Adherent**) realloc (tAdherent, (*taille_physique + 5) * sizeof(Adherent*));
 		if(tNouvAdherent == NULL)
 		{
 			printf("Problème lors du realloc, la mémoire n'a pû être allouée.\n");
@@ -490,7 +532,7 @@ Adherent** ajoutAdherent(Adherent* tAdherent[], int *taille_logique, int *taille
 		else
 		{
 			tAdherent = tNouvAdherent;
-			(*taille_physique) ++; // on ne prends en compte le changement de taille physique que si le realloc à marché, pour garder une taille physique réelle
+			*taille_physique += 5; // on ne prends en compte le changement de taille physique que si le realloc à marché, pour garder une taille physique réelle
 		}
 	}
 	tAdherent = decaleADroite_Adherent(tAdherent, *taille_logique, pos_insert);
@@ -509,6 +551,25 @@ Adherent** ajoutAdherent(Adherent* tAdherent[], int *taille_logique, int *taille
 
 void EnregistrerTAdherent(Adherent** tAdherent, int taille_logique)
 {
+		/*
+		Nom:		EnregistrerTAdherent
+		Finalité:	Enregistre les données du tableau tAdherent dans le fichier adherent.don
+
+		Description générale:
+			on commence par ouvrir le fichier adherent.don en mode lecture, et on return rien si jamais ça ne marche pas (pour finir prématurément la fonction)
+			pour i = 0, donc la première entrée du tableau, jusqu'à i = taille_logique -1, donc le dernier élément du tableau:
+				on écrit sur le fichier l'id d'adherent, la civilité, le nom, le prénom, le nom, et la date d'inscription sur une ligne du fichier,
+				séparé par des tabluations et des / pour les composants de la date
+			on ajoute à la fin un retour à la ligne, pour s'assurer que lors du prochain chargement, la dernière ligne soit bien prise en compte
+			on ferme le fichier, et on informe l'utilisateur que l'enregistrement c'est bien déroulé sans soucis
+
+
+		Variables:
+			tAdherent			tableau de pointeurs d'Adherent
+			taille_logique		nombre d'éléments du tableau tAdherent
+			fichier_adherent	pointeur sur le fichier adherent.don, pour l'ouvrir
+			i					variable d'incrémentation de la boucle for
+	*/
 	FILE *fichier_adherent;
 	int i;
 	fichier_adherent = fopen("adherent.don", "w");
@@ -530,6 +591,36 @@ void EnregistrerTAdherent(Adherent** tAdherent, int taille_logique)
 
 Adherent** modifAdherent(Adherent** tAdherent, int taille_logique)
 {
+	/*
+		Nom:		modifAdherent
+		Finalité:	Modifier un adhérent du tableau tAdherent
+
+		Description générale:
+			On commence par demander à l'utilisateur de saisir l'id d'adherent à modifier et on le recherche dans le tableau tAdherent
+			tant que trouve vaut 0, donc que l'adherent n'est pas trouvé, on demande une resaisie et on le recherche à nouveau dnas tAdherent.
+			On affiche les informations de l'adhérent sélectionné, et on demande si on souhaite bien le modifier;
+			si le choix est n, la fonction s'arrête direct et on affiche l'annulation de la modification
+			sinon on affecte au choix la valeur 'n', et tant que le choix vaut 'n':
+				on teste si le choix vaut 'q', dans ce cas on annule la saisie en en informant l'utilisateur et en retournant le tableau non modifié
+				On demande la saisie de la civilité, avec boucle tant que elle ne vaut pas 'Mr' ou 'Mme'
+				l'utilisateur saisie ensuite le nom et le prénom
+				on affiche les informations saisies, et on demande si tout est valide, avec saisie du charatère choix.
+				si celui ci est changé pour la valeur 'o', alors tout est validé, et on passe à la saisie de la date.
+
+			pour la saisie de la date, l'utilisateur à le choix entre une date automatique ou manuelle, selon le choix voulu
+			on finit en affichant les informations saisies, et on retourne le tableau modifié
+
+
+
+		Variables:
+			tAdherent			tableau de pointeurs d'Adherent
+			taille_logique		nombre d'éléments du tableau tAdherent
+			pos_modif			pointeur sur le fichier adherent.don, pour l'ouvrir
+			trouve				variable d'incrémentation de la boucle for
+			idAdhe				entier servant de trouver l'adherent que l'on veut modifier dans le tableau
+			choix				permet de savoir si l'on veut modifier les informations de l'adhérent sélectionné, et de savoir si les informations saisies sont valides
+			choix_date			permet à l'utilisateur de choisir pour la méthode d'obtention de la date
+	*/
 	int pos_modif = 0, trouve = 0, idAdhe;
 	char choix, choix_date;
 	printf("Saisissez d'abord un identifiant pour l'adhérent modifié:\t");
@@ -558,6 +649,11 @@ Adherent** modifAdherent(Adherent** tAdherent, int taille_logique)
 		choix = 'n';
 		while(choix == 'n' || choix == 'N')
 		{
+			if(choix == 'q' || choix == 'Q')
+			{
+				printf("Modification annulée.");
+				return tAdherent;
+			}
 			printf("Quelle est la civilité (Mr / Mme) de l'adhérent modifié:\n");
 			scanf("%s%*c", tAdherent[pos_modif]->civilite);
 			while(strcmp(tAdherent[pos_modif]->civilite, "Mr") != 0)
@@ -573,13 +669,14 @@ Adherent** modifAdherent(Adherent** tAdherent, int taille_logique)
 			printf("Quel est le prénom de l'adherent modifié?\n");
 			fgets(tAdherent[pos_modif]->prenom, 20, stdin);
 			tAdherent[pos_modif]->prenom[strlen(tAdherent[pos_modif]->prenom) - 1] = '\0';
+
 			printf("Voici les informations de l'adhérent %d:\n", tAdherent[pos_modif]->idAdherent);
 			printf("%s\t%s\t%s\n", tAdherent[pos_modif]->civilite, tAdherent[pos_modif]->nom, tAdherent[pos_modif]->prenom);
-			printf("Validez-vous les modifications apportées jusque présent? (o/n)\t");
+			printf("Validez-vous les modifications apportées jusque présent? (o/n ou q pour quitter)\t");
 			scanf("%c%*c", &choix);
-			while(choix != 'o' && choix != 'O' && choix != 'n' &&choix != 'N')
+			while(choix != 'o' && choix != 'O' && choix != 'n' &&choix != 'N' && choix != 'q' && choix != 'Q')
 			{
-				printf("Choix non reconnu. Voulez-vous modifier les informations? (o/n)\t");
+				printf("Choix non reconnu. Validez-vous modifier les informations? (o/n ou q pour quitter)\t");
 				scanf("%c%*c", &choix);
 			}
 		}
@@ -589,6 +686,8 @@ Adherent** modifAdherent(Adherent** tAdherent, int taille_logique)
 		if(choix_date == 'o' || choix_date == 'O')
 			tAdherent[pos_modif]->date_inscrip = current_date();
 		else tAdherent[pos_modif]->date_inscrip = saisie_date();
+
+
 		printf("Voici les informations actuelles de l'adherent sélectionné:\n");
 		printf("%03d\t%s\t", tAdherent[pos_modif]->idAdherent, tAdherent[pos_modif]->civilite);
 		printf("%s\t%s\t", tAdherent[pos_modif]->nom, tAdherent[pos_modif]->prenom);
@@ -600,9 +699,33 @@ Adherent** modifAdherent(Adherent** tAdherent, int taille_logique)
 
 Adherent** supressAdherent(Adherent** tAdherent, int *taille_logique)
 {
+	/*
+		Nom:		supressAdherent
+		Finalité:	Supprimer un adhérent du tableau tAdherent
+
+		Description générale:
+			choix_supress est initialisée à 'n', pour rentrer une première fois dans la boucle pour choisir l'adherent à supprimer
+			tant que le choix_suppress vaut 'n', donc tant que l'on veut supprimer un adhérent
+				l'utilisateur doit saisir un id d'adhérent, puis cet idée est recherché dans tAdherent
+				tant que trouve vaut 0, donc que l'id n'est pas trouvé, l'utilisateur resaisie un id, à nouveau recherché dans tAdherent
+				on affiche les informations une fois trouvé correspondant à l'id de l'Adherent
+				on demande à l'utilisateur si l'adherent affiché est bien celui à supprimer, avec un choix, si il vaut 'n', on retournera dans la boucle
+				on teste si choix vaut 'q', auquel cas on informe l'utilisation de l'annulation de la suppression et on retourne tAdherent
+			on libère la mémoire pour l'adhérent à supprimer
+			on décale à gauche jusqu'à la position à supprimer, supprimant ainsi le pointeur, et on décrémente la taille logique, et on retourne tAdherent
+
+
+		Variables:
+			tAdherent			tableau de pointeurs d'Adherent
+			taille_logique		nombre d'éléments du tableau tAdherent
+			idAdhe				entier servant de trouver l'adherent que l'on veut modifier dans le tableau
+			pos_supress			pointeur sur le fichier adherent.don, pour l'ouvrir
+			trouve				variable d'incrémentation de la boucle for
+			choix_supress		permet de savoir si l'on veut supprimer les informations de l'adhérent sélectionné, ou annuler la suppression
+	*/
 	int idAdhe, pos_supress, trouve;
-	char choix_modif = 'n';
-	while(choix_modif == 'n' || choix_modif == 'N')
+	char choix_supress = 'n';
+	while(choix_supress == 'n' || choix_supress == 'N')
 	{
 		printf("Quel numéro d'adherent voulez vous supprimer?\t");
 		scanf("%d%*c", &idAdhe);
@@ -614,34 +737,67 @@ Adherent** supressAdherent(Adherent** tAdherent, int *taille_logique)
 			scanf("%d%*c", &idAdhe);
 			pos_supress = recherchDich_Adhe(tAdherent, *taille_logique, &trouve, idAdhe);
 		}
+
 		printf("Les informations de l'adherent à supprimer sont les suivantes:\n");
 		printf("%03d\t%s\t", tAdherent[pos_supress]->idAdherent, tAdherent[pos_supress]->civilite);
 		printf("%s\t%s\t", tAdherent[pos_supress]->nom, tAdherent[pos_supress]->prenom);
 		printf("%02d/%02d/%02d\n", tAdherent[pos_supress]->date_inscrip.jour, tAdherent[pos_supress]->date_inscrip.mois, tAdherent[pos_supress]->date_inscrip.annee);
 		printf("Est-ce que l'adhérent sélectionné est bien celui que vous souhaitez supprimer? (o/n, q pour quitter)\n");
-		scanf("%c%*c", &choix_modif);
-		while(choix_modif != 'o' && choix_modif != 'O' && choix_modif != 'n' && choix_modif != 'N' && choix_modif != 'q' && choix_modif != 'Q')
+		scanf("%c%*c", &choix_supress);
+
+		while(choix_supress != 'o' && choix_supress != 'O' && choix_supress != 'n' && choix_supress != 'N' && choix_supress != 'q' && choix_supress != 'Q')
 		{
-			printf("Choix non reconnu. Voulez-vous modifier les informations? (o/n)\t");
-			scanf("%c%*c", &choix_modif);
+			printf("Choix non reconnu. Voulez-vous supprimer ces informations? (o/n)\t");
+			scanf("%c%*c", &choix_supress);
 		}
-		if(choix_modif == 'q' || choix_modif == 'Q')
+		if(choix_supress == 'q' || choix_supress == 'Q')
 		{
 			printf("Suppression annulée\n");
 			return tAdherent;
 		}
 	}
+	// On libère la place de l'adhérent à supprimer
+	free(tAdherent[pos_supress]);
 	tAdherent = decaleAGauche_Adherent(tAdherent, *taille_logique, pos_supress);
 	(*taille_logique) --;
 	return tAdherent;
 }
 
-Emprunt* ajoutEmprunt(Emprunt* e, Jeux tJeux[], int taille_logique_tJeux, int idAdh, int *idJeu, Date date_emprunt)
+void ajoutEmprunt(Emprunt* e, Jeux tJeux[], int taille_logique_tJeux, int idAdh, int *idJeu, Date date_emprunt)
 {
+	/*
+		Nom:		ajoutEmprunt
+		Finalité:	Ajouter un emprunt avec contrôle de la possibilité d'emprunter à la liste d'emprunt
+
+		Description générale:
+			tant que le maillon courant existe (tant qu'il n'est pas NULL donc)
+				si jamais l'id d'adhérent du maillon courant équivaut à l'id d'adhérent, alors on incrément le nombre d'emprunt
+				le pointeur sur le chainon maillon devient pointeur sur le maillon suivant
+			si jamais le nombre d'emprunts total est égal ou supérieur à 3, il est impossible d'emprunter, on return directement
+			on obtient dans index_jeu la position et la présence ou non du jeux demandé (-1 si il existe pas, et une valeur positive sinon)
+			tant que index_jeu vaut -1, le jeu n'existe pas, et on fait resaisir un nouvel id de jeu, donc un nouveau jeu
+			si jamais le jeu sélectionné possède plus de stock, alors on en informe l'utilisateur, et on return
+			on va à nouveau parcourir la liste pour obtenir l'id d'emprunt, on remet donc le pointeur e_parcours sur le premier maillon
+			on parcourt toute la liste jusqu'au dernier maillon et on incrémente son id d'emprunt pour obtenir l'id du nouvel emprunt
+			on insère finalement le nouvel emprunt
+
+
+		Variables:
+			e						pointeur sur le premier élément de la liste chainée des emprunts
+			tJeux					tableau de structure Jeux
+			taille_logique_tJeux	nombre d'éléments dans tJeux
+			idAdh					id d'adhérent qui sera auteur du nouvel emprunt
+			idJeu					id du jeu qui sera emprunté
+			date_emprunt			date de l'emprunt
+			e_parcours				pointeur sur le premier élément qui servira aux parcours de la liste d'emprunt
+			idEmprunt				id de l'emprunt à enregistrer
+			nb_emp_cours			nombre d'emprunt de l'adhérent lié à l'id d'adhérent
+			index_jeu				position où se trouve le jeu dans le tableau tJeux demandé dans l'emprunt
+	*/
 	Emprunt *e_parcours = e;
 	int idEmprunt = 0, nb_emp_cours = 0, index_jeu = 0;
 
-	// on check si l'emprunteur possède bien moins de 3 emprunts en cours
+	// on check si l'emprunteur possède bien moins de 3 emprunts en cours, l est supposé comme existant dans la base de donnée en amont de la fonction
 	while( e_parcours != NULL)
 	{
 		if(e_parcours->idAdherent == idAdh)
@@ -651,22 +807,22 @@ Emprunt* ajoutEmprunt(Emprunt* e, Jeux tJeux[], int taille_logique_tJeux, int id
 	if(nb_emp_cours >= 3)
 	{
 		printf("Vous avez déjà trois ou plus emprunts en cours! Vous ne pouvez plus empruntez!\n");
-		return e;
+		return;
 	}
 
-	// on vérifie s'il reste le jeu demandé existe, et s'il est en stock, pour continuer l'emprunt
-	index_jeu =  recherche_Jeux(tJeux, taille_logique_tJeux, *idJeu);
+	// on vérifie si le jeu demandé existe, et s'il est en stock, pour continuer l'emprunt
+	index_jeu = recherche_Jeux(tJeux, taille_logique_tJeux, *idJeu);
 	while(index_jeu == -1)
 	{
 		printf("Le jeu demandé n'existe pas. Veuillez en sélectionner un nouveau:\n");
 		scanf("%d%*c", idJeu);
-		index_jeu =  recherche_Jeux(tJeux, taille_logique_tJeux, *idJeu);
+		index_jeu = recherche_Jeux(tJeux, taille_logique_tJeux, *idJeu);
 	}
-	
+
 	if(tJeux[index_jeu].quantite <= 0)
 	{
 		printf("Le jeu saisi n'est plus en stock, vous ne pouvez l'empruntez.\n");
-		return e;
+		return;
 	}
 
 	// la saisie est donc valide, on prends un id d'emprunt de plus 1 par rapport au dernier
@@ -677,11 +833,39 @@ Emprunt* ajoutEmprunt(Emprunt* e, Jeux tJeux[], int taille_logique_tJeux, int id
 	}
 	idEmprunt = e_parcours->idEmprunt + 1;
 	e = inserer(e, idEmprunt, idAdh, *idJeu, date_emprunt);
-	return e;
 }
 
 Date infoReserv(Adherent* tAdherent[], int taille_logique_tAdh, Jeux tJeux[], int taille_logique_tJeux, int *idAdh, int *idJeu, Date date_reserv)
 {
+	/*
+		Nom:		infoReserv
+		finalité:	Permet de saisir toutes les informations d'une réservation, avec contrôle de saisie et de présence des ID dans les tableaux respectifs
+
+		Description générale:
+			on initialise à 0 les id, pour éviter qu'il n'y ait n'importe quoi dedans
+			l'utilisateur saisie un id d'ahdérent, qui sera recherché dans le tableau tAdherent
+			tant qu'il n'est pas trouvé, donc que trouve vaut 0:
+				l'utilisateur resaisie un id, qui sera à nouveau cherché
+			l'utilisateur saisie ensuite l'id du jeu voulu, qui sera recherché dans tJeux
+			tant que cet id n'est pas trouvé, donc que trouve = 0:
+				l'utilisateur ressaisie un id, qui sera de nouveau cherché
+			l'utilisateur a le choix entre une date automatique et une manuelle
+			si le choix est oui, on retoune une date automatique
+			si le choix est non, on retourne une date saisie manuellement
+				
+
+
+		Variables:
+			tAdherent				tableau de pointeur sur des structures Adherent
+			taille_logique_tAdh		nombre de pointeurs dans tAdherent
+			tJeux					tableau de structures Jeux
+			taille_logique_tJeux	nombre de structures dans tJeux
+			idAdh					id de l'adhérent qui va passer commande, renvoyé par adresse
+			idJeu					id du jeu réservé, renvoyé par adresse
+			date_reserv				date de la réservation, renvoyé par return
+			trouve					variable indiquant si une valeur recherchée est présente dans un tableau ou non, 1 si oui, 0 si non
+			pos_jeu					index du tableau où se trouve le jeu donné
+	*/
 	int trouve = 0, pos_jeu = 0;
 	char choix;
 	*idAdh = 0;
@@ -705,7 +889,7 @@ Date infoReserv(Adherent* tAdherent[], int taille_logique_tAdh, Jeux tJeux[], in
 	pos_jeu = recherche_Jeux(tJeux, taille_logique_tJeux, *idJeu);
 	while(pos_jeu == -1)
 	{
-		printf("L'id du jeu saisie n'est pas référencé. Saisissez un nouvel id de jeu?\n");
+		printf("L'id du jeu saisie n'est pas référencé. Saisissez un nouvel id de jeu:\n");
 		scanf("%d%*c", idJeu);
 		pos_jeu = recherche_Jeux(tJeux, taille_logique_tJeux, *idJeu);
 	}
@@ -721,8 +905,32 @@ Date infoReserv(Adherent* tAdherent[], int taille_logique_tAdh, Jeux tJeux[], in
 	else return saisie_date();
 }
 
-Reservation* ajoutReservation(Adherent* tAdherent[], int taille_logique_tAdh, Jeux tJeux[], int taille_logique_tJeux , Reservation* r)
+void ajoutReservation(Adherent* tAdherent[], int taille_logique_tAdh, Jeux tJeux[], int taille_logique_tJeux , Reservation* r)
 {
+	/*
+		Nom:		ajoutReservation
+		Finalité:	Ajouter une réservation à la liste de réservations
+
+		Description générale:
+			On commence par obtenir toutes les informations de la réservations sauf l'id de la réservation, avec la fonction infoReserv
+			ensuite, tant que le maillon suivant à celui actuel existe, alors le pointeur r_parcours pointe sur le maillon suivant
+			à la fin, le pointeur r_parcours sera sur le dernier maillon de la liste, et on prends son id de réservation que l'on incrémente, pour obtenir
+			l'id de la réservation actuelle.
+			on insère finalement dans la liste chainé notre nouvelle réservation.
+
+
+		Variables:
+			tAdherent				tableau de pointeurs d'Adherent
+			taille_logique_tAdh		nombre d'éléments du tableau tAdherent
+			tJeux					tableau de structure Jeux
+			taille_logique_tJeux	nombre d'élements du tableau tJeux
+			r						pointeur sur le premier maillon de la liste chainée des réservations
+			r_parcours				pointeur qui servira à parcourir une première fois toute la liste
+			idAdh_nouv				variable qui contiendra l'id de l'adhérent qui réservera
+			idJeux_nouv				variable qui contiendra l'id du jeu emprunté
+			idReservation			variable contenant l'id de la réservation
+			date_reservation_nouv	date de la réservation
+	*/
 	Reservation *r_parcours = r;
 	int idAdh_nouv = 0, idJeux_nouv = 0, idReservation = 0;
 	Date date_reservation_nouv;
@@ -1321,7 +1529,7 @@ Emprunt* suppressionEnTeteEM(Emprunt *a)
 	Emprunt *b;
 	if (a==NULL) {
 		printf("op interdite\n");
-		exit(1);
+		return NULL;
 	}
 	b=a;
 	a=a->suiv; 
@@ -1333,11 +1541,14 @@ Emprunt* suppressionEnTeteEM(Emprunt *a)
 void saveEmp(Emprunt *a) 
 {
 	FILE *flot;
-	flot=fopen("Emprunts.don","w");
+	flot = fopen("Emprunts.bin","wb");
 	if (flot==NULL)
 		printf("Problème d'ouverture du fichier des réservations en écriture, sauvegarde des réservations impossible\n");
-	while (a!=NULL) {
-		fprintf(flot, "%d\t%d\t%d\t%d/%d/%d\n", a->idEmprunt,a->idAdherent,a->idJeu,a->dateEmprunt.jour,a->dateEmprunt.mois,a->dateEmprunt.annee);
+	while (a != NULL)
+	{
+		// on écrit tout le maillon - le pointeur sur le maillon suivant
+		fwrite(a, sizeof(Emprunt) - sizeof(Emprunt *), 1, flot);
+		// fprintf(flot, "%d\t%d\t%d\t%d/%d/%d\n", a->idEmprunt,a->idAdherent,a->idJeu,a->dateEmprunt.jour,a->dateEmprunt.mois,a->dateEmprunt.annee);
 		a=a->suiv;
 	}
 	fclose(flot);
@@ -1489,7 +1700,7 @@ variable : 	*a : liste avant la suppression
   Reservation *b;
   if (a==NULL) {
     printf("op interdite\n");
-    exit(1);
+    return NULL;
   }
   b=a;
   a=a->suiv; 
@@ -1542,11 +1753,13 @@ variable : 	*a : liste des réservations
 			flot : pointeur vers le fichier de sauvegarde
 */
 	FILE *flot;
-	flot=fopen("Reservation.don","w");
+	flot=fopen("Reservation.bin","wb");
 	if (flot==NULL)
 		printf("Problème d'ouverture du fichier des réservations en écriture, sauvegarde des réservations impossible\n");
-	while (a!=NULL) {
-		fprintf(flot, "%d\t%d\t%d\t%d/%d/%d\n", a->idRes,a->idAdherent,a->idJeu,a->dateR.jour,a->dateR.mois,a->dateR.annee);
+	while (a!=NULL)
+	{
+		fwrite(a, sizeof(Reservation) - sizeof(Reservation*), 1, flot);
+		// fprintf(flot, "%d\t%d\t%d\t%d/%d/%d\n", a->idRes,a->idAdherent,a->idJeu,a->dateR.jour,a->dateR.mois,a->dateR.annee);
 		a=a->suiv;
 	}
 	fclose(flot);
@@ -1601,41 +1814,46 @@ variable : 	*e : liste des emprunts
 }
 
 
-Emprunt* chargeListeEmprunts(void) {
-/*
-nom : chargeListeEmprunts
-finalité : charger la liste des emprunts
-description générale : la fonction essayer d'ouvrir le fichier des emprunts, le lire ligne par ligne et mettre tout ca en mémoire dans une liste.
-variable : 	flot : pointeur vers le ficheir des emprunts
-			*e : liste des Emprunts
-			emprunt : identifiant de l'emprunt que la fonction est en train de charger
-			adherent : identifiant de l'adhérent ayant fait l'emprunt
-			jeu : identifiant du jeu emprunté
-			date : date de l'emprunt
-*/
+Emprunt* chargeListeEmprunts(void)
+{
+	/*
+	nom : chargeListeEmprunts
+	finalité : charger la liste des emprunts
+	description générale : la fonction essayer d'ouvrir le fichier des emprunts, le lire ligne par ligne et mettre tout ca en mémoire dans une liste.
+	variable : 	flot : pointeur vers le ficheir des emprunts
+				*e : liste des Emprunts
+				emprunt : identifiant de l'emprunt que la fonction est en train de charger
+				adherent : identifiant de l'adhérent ayant fait l'emprunt
+				jeu : identifiant du jeu emprunté
+				date : date de l'emprunt
+	*/
 	FILE *flot;
-	flot=fopen("Emprunts.don","r");
+	flot=fopen("Emprunts.bin","rb");
 	Emprunt *e;
-	int emprunt,adherent,jeu;
+	int emprunt = 0, adherent = 0, jeu = 0;
 	Date date;
 	printf("\nChargement du fichier des emprunts en mémoire...\n");
-	if (flot==NULL) {
-		printf("Une erreur est survenue lors de l'ouverture du fichier des emprunts ! (fichier introuvable)\n");
-		exit(-1);
+	if (flot==NULL)
+	{
+		printf("Une erreur est survenue lors de l'ouverture du fichier des emprunts! (fichier introuvable)\n");
+		return NULL;
 	}
 	e=listenouv();
-	date=lireFichier(flot,&emprunt,&adherent,&jeu);
-	e=inserer(e,emprunt,adherent,jeu,date);
-	while(!feof(flot)) {
+	date=lireFichier(flot, &emprunt, &adherent, &jeu);
+	e=inserer(e, emprunt, adherent, jeu, date);
+
+	while(!feof(flot))
+	{
 		date=lireFichier(flot,&emprunt,&adherent,&jeu);
 		e=inserer(e,emprunt,adherent,jeu,date);		
 	}
-	printf("Chargement du fichier des emprunts en mémoire réussis !\n");
 	fclose(flot);
+	printf("Chargement du fichier des emprunts en mémoire réussis !\n");
 	return e;
 }
 
-Date lireFichier(FILE *flot, int *emprunt, int *adherent, int *jeu) {
+Date lireFichier(FILE *flot, int *emprunt, int *adherent, int *jeu)
+{
 /*
 nom : lireFichier
 finalité : lire une ligne du fichier de sauvegarde des emprunts et la renvoie à la fonction appelante
@@ -1650,7 +1868,11 @@ variable : 	flot : pointeur vers le fichier de sauvegarde
 			*d : date d'emprunt
 */
 	Date d;
-	fscanf(flot,"%d%d%d%d/%d/%d",emprunt,adherent,jeu,&d.jour,&d.mois,&d.annee);
+	fread(emprunt, sizeof(int), 1, flot);
+	fread(adherent, sizeof(int), 1, flot);
+	fread(jeu, sizeof(int), 1, flot);
+	fread(&d, sizeof(Date), 1, flot);
+	// fscanf(flot,"%d%d%d%d/%d/%d",emprunt,adherent,jeu,&d.jour,&d.mois,&d.annee);
 	return d;
 }
 
@@ -1683,9 +1905,10 @@ variable : 	s : liste des emprunts avant l'ajout
 */
 	Emprunt *e;
 	e=(Emprunt *)malloc(sizeof(Emprunt));
+
 	if (e==NULL) {
 		printf("Une erreur est survenue lors de la création de la liste ! (malloc)\n");
-		exit(-1);
+		return NULL;
 	}
 	e->idEmprunt=emprunt;
 	e->idAdherent=adherent;
@@ -1779,32 +2002,32 @@ nom : chargeListeResa
 finalité : charger en mémoire la liste des réservations
 description générale : 	la fonction ouvre le fichier de sauvegarde des réservations, créer une liste vide et la remplie avec le contenu du fichier de sauvegarde
 variable : 	flot : pointeur vers le fichier de sauvegarde
-			e : liste des réservations
+			r : liste des réservations
 			resa : identifiant de la réservation en cours de chargement
 			adherent : identifiant de l'adhérent ayant fait l'emprunt en cours de chargement
 			jeu : identifiant du jeu
 			date : date de réservation
 */
 	FILE *flot;
-	flot=fopen("Reservation.don","r");
-	Reservation *e;
+	flot=fopen("Reservation.bin","rb");
+	Reservation *r;
 	int resa,adherent,jeu;
 	Date date;
 	printf("Chargement du fichier des réservations en mémoire...\n");
 	if (flot==NULL) {
-		printf("Une erreur est survenur lors de l'ouverture du fichier des réservations ! (fichier introuvable)\n");
-		exit(-1);
+		printf("Une erreur est survenue lors de l'ouverture du fichier des réservations ! (fichier introuvable)\n");
+		return NULL;
 	}
-	e=listenouvR();
-	date=lireFichierR(flot,&resa,&adherent,&jeu);
-	e=insererR(e,resa,adherent,jeu,date);
+	r = listenouvR();
+	date = lireFichierR(flot,&resa,&adherent,&jeu);
+	r = insererR(r,resa,adherent,jeu,date);
 	while(!feof(flot)){
 		date=lireFichierR(flot,&resa,&adherent,&jeu);
-		e=insererR(e,resa,adherent,jeu,date);		
+		r =insererR(r, resa, adherent, jeu, date);		
 	}
 	printf("Chargement du fichier des réservations en mémoire réussis !\n");
 	fclose(flot);
-	return e;
+	return r;
 }
 
 Date lireFichierR(FILE *flot, int *resa, int *adherent, int *jeu) {
@@ -1822,7 +2045,11 @@ variable : 	flot : pointeur vers le fichier de sauvegarde
 			d : date de réservation
 */
 	Date d;
-	fscanf(flot,"%d%d%d%d/%d/%d",resa,adherent,jeu,&d.jour,&d.mois,&d.annee);
+	fread(resa, sizeof(int), 1, flot);
+	fread(adherent, sizeof(int), 1, flot);
+	fread(jeu, sizeof(int), 1, flot);
+	fread(&d, sizeof(Date), 1, flot);
+	// fscanf(flot,"%d%d%d%d/%d/%d",resa,adherent,jeu,&d.jour,&d.mois,&d.annee);
 	return d;
 }
 
@@ -1856,7 +2083,7 @@ variable : 	s : ancien premier maillon de la liste
 	r=(Reservation *)malloc(sizeof(Reservation));
 	if (r==NULL) {
 		printf("Une erreur est survenue lors de la création de la liste ! (malloc)\n");
-		exit(-1);
+		return NULL;
 	}
 	r->idRes=resa;
 	r->idAdherent=adherent;
@@ -1889,3 +2116,20 @@ variable : 	r : premier maillon de la liste
 	return r;
 }
 
+void afficheListeCompleteEmp(Emprunt *e)
+{
+	while(e != NULL)
+	{
+		printf("%d\t%d\t%d\t%02d/%02d/%02d\n", e->idEmprunt, e->idAdherent, e->idJeu, e->dateEmprunt.jour, e->dateEmprunt.mois, e->dateEmprunt.annee);
+		e = e->suiv;
+	}
+}
+
+void afficheListeCompleteRes(Reservation *r)
+{
+	while(r != NULL)
+	{
+		printf("%d\t%d\t%d\t%02d/%02d/%02d\n", r->idRes, r->idAdherent, r->idJeu, r->dateR.jour, r->dateR.mois, r->dateR.annee);
+		r = r->suiv;
+	}
+}
