@@ -505,8 +505,9 @@ Adherent** ajoutAdherent(Adherent* tAdherent[], int *taille_logique, int *taille
 		printf("%s\t%s\t%s\n", a.civilite, a.nom, a.prenom);
 		printf("Voulez vous ressaisir les informations? (n/N pour valider la saisie, o/O pour resaisir et q pour annuler)\n");
 		scanf("%c%*c", &validation);
-		while(choix != 'n' && choix != 'N' && choix != 'o' && choix != 'O' && choix != 'q' && choix != 'Q')
+		while(validation != 'n' && validation != 'N' && validation != 'o' && validation != 'O' && validation != 'q' && validation != 'Q')
 		{
+			fflush(stdin);
 			printf("Choix non reconnu. Voulez vous ressaisir les informations? (n/N pour valider la saisie, o/O pour resaisir et q pour annuler)\n");
 			scanf("%c%*c", &validation);
 		}
