@@ -757,7 +757,7 @@ Adherent** supressAdherent(Adherent** tAdherent, int *taille_logique)
 	return tAdherent;
 }
 
-void ajoutEmprunt(Emprunt* e, Jeux tJeux[], int taille_logique_tJeux, int idAdh, int *idJeu, Date date_emprunt)
+int ajoutEmprunt(Emprunt* e, Jeux tJeux[], int nbJeux, int taille_logique_tJeux, int idAdh, int *idJeu, Date date_emprunt)
 {
 	/*
 		Nom:		ajoutEmprunt
@@ -789,7 +789,7 @@ void ajoutEmprunt(Emprunt* e, Jeux tJeux[], int taille_logique_tJeux, int idAdh,
 			index_jeu				position où se trouve le jeu dans le tableau tJeux demandé dans l'emprunt
 	*/
 	Emprunt *e_parcours = e;
-	int idEmprunt = 0, nb_emp_cours = 0, index_jeu = 0;
+	int idEmprunt = 0, nb_emp_cours = 0, index_jeu = 0, i = 0;
 
 	// on check si l'emprunteur possède bien moins de 3 emprunts en cours, l est supposé comme existant dans la base de donnée en amont de la fonction
 	while( e_parcours != NULL)
@@ -801,7 +801,7 @@ void ajoutEmprunt(Emprunt* e, Jeux tJeux[], int taille_logique_tJeux, int idAdh,
 	if(nb_emp_cours >= 3)
 	{
 		printf("Vous avez déjà trois ou plus emprunts en cours! Vous ne pouvez plus empruntez!\n");
-		return;
+		return -1;
 	}
 
 	// on vérifie si le jeu demandé existe, et s'il est en stock, pour continuer l'emprunt
@@ -816,7 +816,7 @@ void ajoutEmprunt(Emprunt* e, Jeux tJeux[], int taille_logique_tJeux, int idAdh,
 	if(tJeux[index_jeu].quantite <= 0)
 	{
 		printf("Le jeu saisi n'est plus en stock, vous ne pouvez l'empruntez.\n");
-		return;
+		return -1;
 	}
 
 	// la saisie est donc valide, on prends un id d'emprunt de plus 1 par rapport au dernier
@@ -827,6 +827,19 @@ void ajoutEmprunt(Emprunt* e, Jeux tJeux[], int taille_logique_tJeux, int idAdh,
 	}
 	idEmprunt = e_parcours->idEmprunt + 1;
 	e = inserer(e, idEmprunt, idAdh, *idJeu, date_emprunt);
+
+	for(i = 0; i <= nbJeux-1; i++)
+	{
+		if (tJeux[i].idJeux == *idJeu && tJeux[i].quantite > 0)
+			tJeux[i].quantite = tJeux[i].quantite - 1;
+		if (tJeux[i].idJeux == *idJeu && tJeux[i].quantite <= 0)
+			{
+			printf("Ce jeu n'est plus en stock.\n");
+			return -1;
+			}
+	}
+	return 1;
+	saveEmp(e);
 }
 
 Date infoReserv(Adherent* tAdherent[], int taille_logique_tAdh, Jeux tJeux[], int taille_logique_tJeux, int *idAdh, int *idJeu, Date date_reserv)
@@ -899,7 +912,7 @@ Date infoReserv(Adherent* tAdherent[], int taille_logique_tAdh, Jeux tJeux[], in
 	else return saisie_date();
 }
 
-void ajoutReservation(Adherent* tAdherent[], int taille_logique_tAdh, Jeux tJeux[], int taille_logique_tJeux , Reservation* r)
+void ajoutReservation(Adherent* tAdherent[], int taille_logique_tAdh, Jeux tJeux[], int taille_logique_tJeux , Reservation* r, Emprunt * e)
 {
 	/*
 		Nom:		ajoutReservation
@@ -926,7 +939,7 @@ void ajoutReservation(Adherent* tAdherent[], int taille_logique_tAdh, Jeux tJeux
 			date_reservation_nouv	date de la réservation
 	*/
 	Reservation *r_parcours = r;
-	int idAdh_nouv = 0, idJeux_nouv = 0, idReservation = 0;
+	int idAdh_nouv = 0, idJeux_nouv = 0, idReservation = 0, rep = 0;
 	Date date_reservation_nouv;
 
 	// insertion et contrôle des données de la nouvelle réservation
@@ -938,7 +951,9 @@ void ajoutReservation(Adherent* tAdherent[], int taille_logique_tAdh, Jeux tJeux
 		r_parcours = r_parcours->suiv;
 	}
 	idReservation = r_parcours->idRes + 1;
-	r = insererR(r, idReservation, idAdh_nouv, idJeux_nouv, date_reservation_nouv);
+	rep = ajoutEmprunt(e, tJeux, taille_logique_tJeux, taille_logique_tJeux, idAdh_nouv, &idJeux_nouv, date_reservation_nouv);
+	if (rep == -1)
+		r = insererR(r, idReservation, idAdh_nouv, idJeux_nouv, date_reservation_nouv);
 }
 
 Jeux chargeJeux(FILE *flot)
@@ -1694,7 +1709,7 @@ void menu(void)
 						break;
 					case 2:
 						system("@cls||clear");
-						ajoutReservation(tAdherent, taille_logique_tAdh, tJeux, nbJeux, r);
+						ajoutReservation(tAdherent, taille_logique_tAdh, tJeux, nbJeux, r, e);
 						saveRes(r);
 						fflush(stdin);
 						getchar();

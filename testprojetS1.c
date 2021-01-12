@@ -207,7 +207,7 @@ void test_ajout_Reserv_Emp(void)
 	afficheListeCompleteRes(r);
 
 
-	ajoutReservation(tAdherent, taille_logique_tAdh, tJeux, taille_logique_tJeux, r);
+	//ajoutReservation(tAdherent, taille_logique_tAdh, tJeux, taille_logique_tJeux, r);
 	saveRes(r);
 
 	// ajoutEmprunt(e, tJeux, taille_logique_tJeux, idAdh, &idJeu, date_emprunt);
