@@ -6,13 +6,7 @@
 
 void global(void)
 {
-	/* Comme cela, à chaque fois que le programme se lancera, il chargera automatiquement les fichiers en mémoire */
-	
-	//chargeAdherent();
-	//chargeJeux();
-	//chargeEmprunt();
-	//chargeReservation();
-	//menu();
+	menu();
 }
 
 Date current_date(void)

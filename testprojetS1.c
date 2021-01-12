@@ -226,8 +226,9 @@ int main(void)
 	//global();
 	//testchargeJeux();
 	//testchargeTJeux();
-	test();
+	//test();
 	//test_saisie_date();
 	//test_ajout_Reserv_Emp();
+	global();
 	return 0;
 }
