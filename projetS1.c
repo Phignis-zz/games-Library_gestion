@@ -951,6 +951,8 @@ void ajoutReservation(Adherent* tAdherent[], int taille_logique_tAdh, Jeux tJeux
 		r_parcours = r_parcours->suiv;
 	}
 	idReservation = r_parcours->idRes + 1;
+	r = insererR(r, idReservation, idAdh_nouv, idJeux_nouv, date_reservation_nouv);
+	/*
 	rep = ajoutEmprunt(e, tJeux, taille_logique_tJeux, taille_logique_tJeux, idAdh_nouv, &idJeux_nouv, date_reservation_nouv);
 	printf("\n%d\n", rep);
 	if (rep == -1)
@@ -958,6 +960,7 @@ void ajoutReservation(Adherent* tAdherent[], int taille_logique_tAdh, Jeux tJeux
 		printf("\n------------------------\n");
 		r = insererR(r, idReservation, idAdh_nouv, idJeux_nouv, date_reservation_nouv);
 	}
+	*/
 }
 
 Jeux chargeJeux(FILE *flot)
