@@ -1694,8 +1694,8 @@ void menu(void)
 						break;
 					case 2:
 						system("@cls||clear");
-						afficherListeResa(r, tAdherent, taille_logique_tAdh, tJeux, nbJeux);
-						printf("\nAppuyez sur entrer pour continuer...\n");
+						ajoutReservation(tAdherent, taille_logique_tAdh, tJeux, nbJeux, r);
+						saveRes(r);
 						fflush(stdin);
 						getchar();
 						break;
