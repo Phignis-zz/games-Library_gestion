@@ -505,7 +505,7 @@ Adherent** ajoutAdherent(Adherent* tAdherent[], int *taille_logique, int *taille
 		printf("%s\t%s\t%s\n", a.civilite, a.nom, a.prenom);
 		printf("Voulez vous ressaisir les informations? (n/N pour valider la saisie, o/O pour resaisir et q pour annuler)\n");
 		scanf("%c%*c", &validation);
-		while(choix != 'n' && choix != 'N' && choix != 'o' && choix != 'O' && choix != 'q' && choix != 'Q')
+		while(validation != 'n' && validation != 'N' && validation != 'o' && validation != 'O' && validation != 'q' && validation != 'Q')
 		{
 			printf("Choix non reconnu. Voulez vous ressaisir les informations? (n/N pour valider la saisie, o/O pour resaisir et q pour annuler)\n");
 			scanf("%c%*c", &validation);
@@ -1324,7 +1324,6 @@ Jeux *supprimerJeux(Jeux tJeux[], int *nbJeux, int *tMax)
 		printf("Suppression impossible.");
 	else
 	{
-		free(&tJeux[rep]);
 		*nbJeux = *nbJeux - 1;
     	for (i = rep; i < *nbJeux; i++) //Décalage à droite pour supprimer du tableau.
          	tJeux[i] = tJeux[i+1];
@@ -1576,9 +1575,9 @@ void menu(void)
 	char get = '\n';
 	Jeux *tJeux;
 	Adherent **tAdherent;
-	int taille_physique = 9, taille_logique = 0;
+	int taille_physique_tAdh = 9, taille_logique_tAdh = 0;
 	char choix;
-	tAdherent = chargTAdherent( tAdherent, &taille_logique, &taille_physique);
+	tAdherent = chargTAdherent( tAdherent, &taille_logique_tAdh, &taille_physique_tAdh);
 	int tMax = 100, nbJeux = 0, i = 0;
 	tJeux = chargeTJeux(tJeux, &nbJeux, &tMax);
 	Emprunt *e;
@@ -1591,8 +1590,8 @@ void menu(void)
 		printf("Gestion d'une Ludothèque\n\n");
 		printf("1. Jeux\n");
 		printf("2. Adhérents\n");
-		printf("3. Emprunts\n");
-		printf("4. Réservations\n");
+		printf("3. Réservations\n");
+		printf("4. Afficher les emprunts en cours\n");
 		printf("\n9. Quitter le programme\n");
 		scanf("%d%*c", &rep);
 		switch(rep)
@@ -1643,25 +1642,86 @@ void menu(void)
 				break;
 			case 2:
 				system("@cls||clear");
-				// Fonction affichage emprunt
-				printf("\nAppuyez sur entrer pour continuer...\n");
-				fflush(stdin);
-				getchar();
+				printf("1. Afficher les adhérents\n2. Ajouter un adhérent\n");
+				printf("3. Modifier un adhérent\n4. Supprimer un adhérent\n");
+				printf("\n\n5. Retour au menu\n\n");
+				scanf("%d%*c", &rep);
+				switch(rep)
+				{
+					case 1:
+						system("@cls||clear");
+						afficheTAdherent(tAdherent, taille_logique_tAdh);
+						printf("\nAppuyez sur entrer pour continuer...\n");
+						fflush(stdin);
+						getchar();
+						break;
+					case 2:
+						system("@cls||clear");
+						tAdherent = ajoutAdherent(tAdherent, &taille_logique_tAdh, &taille_physique_tAdh);
+						EnregistrerTAdherent(tAdherent, taille_logique_tAdh);
+						printf("\nAppuyez sur entrer pour continuer...\n");
+						fflush(stdin);
+						getchar();
+						break;
+					case 3:
+						system("@cls||clear");
+						tAdherent = modifAdherent(tAdherent, taille_logique_tAdh);
+						EnregistrerTAdherent(tAdherent, taille_logique_tAdh);
+						printf("\nAppuyez sur entrer pour continuer...\n");
+						fflush(stdin);
+						getchar();
+						break;
+					case 4:
+						system("@cls||clear");
+						tAdherent = supressAdherent(tAdherent, &taille_logique_tAdh);
+						EnregistrerTAdherent(tAdherent, taille_logique_tAdh);
+						printf("\nAppuyez sur entrer pour continuer...\n");
+						fflush(stdin);
+						getchar();
+						break;
+					case 5:
+						break;
+				}
 				break;
 			case 3:
 				system("@cls||clear");
-				// Fonction affichage emprunt
-				printf("\nAppuyez sur entrer pour continuer...\n");
-				fflush(stdin);
-				getchar();
+				printf("1. Afficher les réservations\n2. Ajouter une réservation\n");
+				printf("3. Annuler une réservation\n");
+				printf("\n\n5. Retour au menu\n\n");
+				scanf("%d%*c", &rep);
+				switch(rep)
+				{
+					case 1:
+						system("@cls||clear");
+						afficherListeResa(r, tAdherent, taille_logique_tAdh, tJeux, nbJeux);
+						printf("\nAppuyez sur entrer pour continuer...\n");
+						fflush(stdin);
+						getchar();
+						break;
+					case 2:
+						system("@cls||clear");
+						afficherListeResa(r, tAdherent, taille_logique_tAdh, tJeux, nbJeux);
+						printf("\nAppuyez sur entrer pour continuer...\n");
+						fflush(stdin);
+						getchar();
+						break;
+					case 3:
+						system("@cls||clear");
+						suppRes(r);
+						fflush(stdin);
+						getchar();
+						break;
+					case 4:
+						break;
+				}
 				break;
 			case 4:
-				system("@cls||clear");
-				// Fonction affichage emprunt
-				printf("\nAppuyez sur entrer pour continuer...\n");
-				fflush(stdin);
-				getchar();
-				break;
+					system("@cls||clear");
+					afficherListeEmprunts(e, tJeux, nbJeux, taille_logique_tAdh, tAdherent);
+					printf("\nAppuyez sur entrer pour continuer...\n");
+					fflush(stdin);
+					getchar();
+					break;
 			case 5:
 				system("@cls||clear");
 				// Fonction affichage emprunt
@@ -1677,6 +1737,10 @@ void menu(void)
 				getchar();
 				break;
 			case 9:
+				saveEmp(e);
+				saveRes(r),
+				EnregistrerTAdherent(tAdherent, taille_logique_tAdh);
+				saveJeux(tJeux, nbJeux);
 				return;
 			default:
 				printf("\nErreur\n");

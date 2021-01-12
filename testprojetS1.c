@@ -108,6 +108,7 @@ void testAdherent(void)
 
 void test(void)
 {
+	/*
 	Adherent **tAdherent;
 	int idEmprunt;
 	Reservation *r_parcours;
@@ -123,7 +124,6 @@ void test(void)
 	Reservation *r;
 	e = chargeListeEmprunts();
 	r = chargeListeResa();
-	/*
 	r_parcours = r;
     e_parcours = e;
     while(e_parcours->suiv != NULL)
@@ -226,8 +226,8 @@ int main(void)
 	//global();
 	//testchargeJeux();
 	//testchargeTJeux();
-	//test();
+	test();
 	//test_saisie_date();
-	test_ajout_Reserv_Emp();
+	//test_ajout_Reserv_Emp();
 	return 0;
 }
