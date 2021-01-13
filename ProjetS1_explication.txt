@@ -1,17 +1,22 @@
 Explication du Projet tutoré S1 2020-2021:
 
+
+
 Membres du groupe:
+
 	FOUCRAS Baptiste 1A G1
 	GAUGIRARD Florian 1A G1
 	POLLET Matéo 1A G1
 
 
 Format des fichiers de ressources (jeux.don, adherant.don, emprunt.bin, reservation.bin):
+
 	Les fichiers répertoriant les jeux et adhérant seront susceptibles d'être ouvert pour édition ou consultations par divers ordinateurs (vendeurs, gérant de la ludothèque...), donc potentiellement plusieurs ordianteurs, avec divers systèmes d'exploitations (Linux, Windows...). Ces fichiers ont donc besoin d'une forte comptabilité inter-systèmes, ce qu'offre un fichier texte. De plus ces fichiers seront normalement bien moins édités et même consultés que les fichiers répertoriant les emprunts et réservations. Il est donc fait le choix de prendre le format texte pour les fichiers répertoriant les jeux et adherants.
 	En revanche, les fichiers enregistrant emprunts et réservations vont subir des consultations et très souvent des modifications. Ici, un accès lecture / écriture est justifiable par le grand nombre de tâches lourdes dessus (plusieurs ajouts ou délétion par jour). De plus, ces fichiers vont n'être essentiellement consultés que par les ordinateurs des vendeurs, et donc sûrement depuis le même système d'exploitation; le soucis de portabilité se pose donc moins ici. Pour ces raisons, le format binaire sera préféré pour les fichiers répertoriant emprunts et réservations.
 
 
 Structure de chaque fichier:
+
 	adherent.don:
 		On retrouve toutes les informations d'un adhérent sur une ligne, séparées par des tabluations.
 		On a dans l'ordre l'id d'adhérent, la civilité, le nom de famille, le prénom et la date d'inscription.
@@ -26,9 +31,53 @@ Structure de chaque fichier:
 		On a dans l'ordre l'id de la réservation, l'id de l'adhérent qui réserve, l'id du jeu réservé et la date de début de la réservation.
 
 
+Structures mises en place:
+
+	Date:
+		structure composée de trois entiers, représentant une date, avec un entier correspondant aux jours, un autre pour les mois et un pour les années.
+
+	Adhérent:
+		structure composée d'un entier, de trois tableaux de charactères et d'une date. Il rassemble toutes les informations à propos d'un adhérent, c'est à dire l'id d'adhérent (l'entier), la civilité (Mr ou Mme), le nom et le prénom (pouvant contenir des espaces), de longueur max de 20 charactères, et pouvant être avec espace. Le dernier élément est une date, celle de l'inscription.
+
+	Jeux:
+		structure composée de deux entiers et de deux tableaux de caractères. Il rassemble toutes les informations à propos d'un jeu, c'est à dire l'id du jeu
+		(l'entier), le nom et le type (pouvant contenir des espaces), et la quantité, le dernier élément étant un entier, et qui correspond au nombre de jeux en stock et non emprunté.
+
+	Emprunt:
+		structure correspondant à un maillon d'une liste chaînée. Il possède trois entiers, correspondant aux id de l'emprunt, de l'adhérent ayant emprunté, et du jeu emprunté. Un quatrième élément réfère la date de l'emprunt, et le dernier élément réfère un pointeur vers le prochain maillon de la liste chaînée.
+
+	Reservation:
+		structure correspondant à un maillon d'une liste chaînée. Il possède trois entiers, correspondant aux id de la réservation, de l'adhérent qui réserve, et du jeu réservé. Un quatrième élément réfère la date de la réservation, et le dernier élément réfère un pointeur vers le prochain maillon de la liste chaînée.
+
+
+Les tableaux et listes mises en place:
+
+	Adhérent:
+		Le choix du stockage des adhérents s'est porté sur un tableau de pointeurs sur des structures Adherent. En effet, les adhérents seront sûrement plus nombreux que les jeux de la ludothèque, et ainsi un espace contiguê plus faible est donc plus intéressant pour les Adhérents. De plus la structure Adherent est bien plus grande, en terme d'octet, que la structure Jeux; renforçant l'intérêt d'un espace contiguë minimisé. Or le tableau de pointeur offre cette possibilitée, en allouant dynamiquement la mémoire des Adhérents, sur la mémoire dîte "tas", et non la partie nommée"pile". Le tableau référence les pointeurs sur les espaces alloués dynamiquement des Adhérents, ce qui fait que l'espace contiguë du tableau est fortement minimisé, car une case possédant un pointeur prends moins de place qu'une référencant directement un Adherent. De plus, le tableau de pointeur est alloué dynamiquement, car on ne sais pas combien d'adhérent seront référencé (la ludothèque peut subitement s'extendre fortement, risquant la saturation du tableau s'il était alloué statiquement). De plus, la possibilitée d'une liste chaînée a été écarté, car le désaventage de la liste est pour l'accès aux données, qui est moins optimisé que sur un tableau, avec l'indexage et des fonctions de recherche optimisée, tel la recherche dichotomique. Le choix du tableau est donc favorable.
+
+	Jeux:
+		Le choix du stockage des jeux s'est porté sur un tableau de structures Jeux. Un tableau plutôt qu'une liste pour les mêmes raisons, on fait plus d'accès (modification des données, accès lors de création d'emprunts et de réservations) que de création ou suppression de données. Idéalement, un tableau de pointeur aurait été choisi, mais ici le but est aussi de montrer notre maîtrise des éléments, et comme la structure Jeux est bien plus légère que la structure Adherent, ce qui a départagé le choix entre un tableau de structure pour les Jeux.
+
+	Emprunt:
+		Le choix du stockage des emprunts s'est porté sur une liste chaînée. En effet, les emprunts vont normalement relativement peu être consulté, juste être créée et supprimer. Pour ces raisons, les désaventages de la listes sont minimes; et en plus, les emprunts et réservations sont les données en plus grand nombres, et un espace contiguë sera ici un désaventage, car une saturation risque de vite arriver. La liste chaînée va donc supprimer le soucis de l'espace contiguë, et donc permettre d'optimiser l'espace.
+
+	Réservation:
+		Le choix du stockage des réservations s'est porté sur une liste chaînée. Pour les raisons explicitées dans la structure des Emprunt, le choix s'est porté sur les listes chaînées.
+
+
+Listes des fonctionnalitées proposées:
+	
+	->	chargement des 4 fichiers, texte ou binaire en mémoire (fonctionnel)
+	->	date automatique (fonctionnel)
+	->	ajout d'un adhérent avec contrôle de saisie (fonctionnel)
+	->	modification d'un adhérent (fonctionnel)
+	->	suppression d'un adhérent (fonctionnel)
+	->	affichage du tableau tAdherent (fonctionnel)
+	->	enregistrement du tableau des adhérents dans son fichier (fonctionnel)
+	->	ajout d'un emprunt âvec contrôle de l'éligibilité à l'emprunt (fonctionnel)
+	->	ajout d'une réservation avec contrôle de saisie des informations (fonctionnel)
 
 
 un document texte (1) à rendre expliquant :
-◦ les structures, tableaux , listes... mis en place,
 ◦ la liste commentée des fonctionnalités proposées (en indiquant si la fonctionnalité
 fonctionne ou s’il y a un problème)
