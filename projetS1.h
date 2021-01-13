@@ -175,7 +175,7 @@ Adherent** supressAdherent(Adherent** tAdherent, int *taille_logique);
 	date:		07/01/21
 	finalité:	Ajouter un emprunt avec contrôle de la possibilité d'emprunter à la liste d'emprunt
 */
-void ajoutEmprunt(Emprunt* e, Jeux tJeux[], int taille_logique_tJeux, int idAdh, int *idJeu, Date date_emprunt);
+int ajoutEmprunt(Emprunt* e, Jeux tJeux[], int nbJeux, int taille_logique_tJeux, int idAdh, int *idJeu, Date date_emprunt);
 
 /*
 	programme:	infoReserv
@@ -191,7 +191,7 @@ Date infoReserv(Adherent* tAdherent[], int taille_logique_tAdh, Jeux tJeux[], in
 	date:		07/01/21
 	finalité:	Ajouter une réservation à la liste de réservations
 */
-void ajoutReservation(Adherent* tAdherent[], int taille_logique_tAdh, Jeux tJeux[], int taille_logique_tJeux , Reservation* r);
+void ajoutReservation(Adherent* tAdherent[], int taille_logique_tAdh, Jeux tJeux[], int taille_logique_tJeux , Reservation* r, Emprunt * e);
 /*
 	programme:	chargeJeux
 	auteur:		POLLET Matéo
