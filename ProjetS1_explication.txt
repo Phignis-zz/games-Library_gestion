@@ -76,6 +76,10 @@ Listes des fonctionnalitées proposées:
 	->	enregistrement du tableau des adhérents dans son fichier (fonctionnel)
 	->	ajout d'un emprunt âvec contrôle de l'éligibilité à l'emprunt (fonctionnel)
 	->	ajout d'une réservation avec contrôle de saisie des informations (fonctionnel)
+	->	affichage des réservations pour un jeu donnée (fonctionnel)
+	->	suppression d'une réservation (fonctionnel)
+	-> 	sauvegarde de la liste des réservations dans un fichier binaire (fonctionnel)
+	->	affichage de la liste des emprunts (fonctionnel)
 
 
 un document texte (1) à rendre expliquant :
