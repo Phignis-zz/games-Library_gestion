@@ -80,6 +80,15 @@ Listes des fonctionnalitées proposées:
 	->	suppression d'une réservation (fonctionnel)
 	-> 	sauvegarde de la liste des réservations dans un fichier binaire (fonctionnel)
 	->	affichage de la liste des emprunts (fonctionnel)
+	->	rechercher un Jeu dans le tableau tJeux (fonctionnel)
+	->	affichage du tableau tJeux (fonctionnel)
+	->	menu permettant de naviguer entre les fonctions (fonctionnel)
+	->	ajout d'un jeu (fonctionnel)
+	->	suppression d'un jeu (fonctionnel)
+	->	retour d'un jeu, et transformation d'une réservation en emprunt si nécéssaire (fonctionnel)
+	->	sauvegarde du tableau tJeux dans le fichier jeu (fonctionnel)
+	->	suppression d'un emprunt (fonctionnel)
+	->	sauvegarde de la liste des emprunts dans un fichier binaire (fonctionnel)
 
 
 un document texte (1) à rendre expliquant :
