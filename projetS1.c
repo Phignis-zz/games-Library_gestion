@@ -1867,25 +1867,29 @@ variable : 	*e : liste des emprunts
 			taille_logique_A : nombre d'élément dans le tableau tAdherent
 			tAdherent[] : tableau des adhérents 
 */
-	int adherent,jeu;
+	int adherent,jeu, x=0;
 	int i, trouve = 0;
 	printf("\nAffichage de la liste des emprunts en cours :\n");
 	printf("\nDate d'emprunt :\tId de l'emprunt\t\tNom et prénom de l'adhérent :\t\tNom du jeu :\n");
 	while (!vide(e)){
-		printf("%d/%d/%d\t\t\t%d\t\t",e->dateEmprunt.jour,e->dateEmprunt.mois,e->dateEmprunt.annee,e->idEmprunt);
-		adherent = recherchDich_Adhe(tAdherent, taille_logique_A, &trouve, e->idAdherent);
-		if (trouve == 0)
-			printf("Inconnu\t\t\t");
-		else
-			printf("%s %s\t\t", tAdherent[adherent]->nom,tAdherent[adherent]->prenom);
+		if (x!=0)
+		{
+			printf("%d/%d/%d\t\t\t%d\t\t",e->dateEmprunt.jour,e->dateEmprunt.mois,e->dateEmprunt.annee,e->idEmprunt);
+			adherent = recherchDich_Adhe(tAdherent, taille_logique_A, &trouve, e->idAdherent);
+			if (trouve == 0)
+				printf("Inconnu\t\t\t");
+			else
+				printf("%s %s\t\t", tAdherent[adherent]->nom,tAdherent[adherent]->prenom);
 
-		jeu = recherche_Jeux(tJeux, taille_logique, e->idJeu);
-		if (jeu == -1)
-			printf("Inconnu");
-		else
-			printf("\t%s\n",tJeux[jeu].nom);
-		printf("\n");
+			jeu = recherche_Jeux(tJeux, taille_logique, e->idJeu);
+			if (jeu == -1)
+				printf("Inconnu");
+			else
+				printf("\t%s\n",tJeux[jeu].nom);
+			printf("\n");
+		}
 		e=e->suiv;
+		x++;
 	}
 	printf("\n");
 }
